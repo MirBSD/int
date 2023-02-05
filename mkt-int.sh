@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MirOS: int/mkt-int.sh,v 1.2 2023/02/05 16:57:50 tg Exp $
+# $MirOS: int/mkt-int.sh,v 1.3 2023/02/05 16:58:31 tg Exp $
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -17,7 +17,7 @@ fi
 
 cd "$(dirname "$0")" || die cannot change to script directory
 rm -f mkt-int.t* || die cannot delete old files
-#trap 'rm -f mkt-int.t*' EXIT
+trap 'rm -f mkt-int.t*' EXIT
 
 echo >&2 'I: checking if we can build at all'
 set -e
