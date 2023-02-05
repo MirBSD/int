@@ -1,7 +1,15 @@
 #!/bin/sh
-# $MirOS: int/mkt-int.sh,v 1.3 2023/02/05 16:58:31 tg Exp $
+# $MirOS: int/mkt-int.sh,v 1.4 2023/02/05 18:01:05 tg Exp $
 #-
 # © 2023 mirabilos Ⓕ MirBSD
+
+# Warning: stress test, creates multiple multi-MiB object files and runs it!
+
+BC_ENV_ARGS=-qs LC_ALL=C LANGUAGE=C
+unset LANGUAGE
+export BC_ENV_ARGS LC_ALL
+nl='
+'
 
 die() {
 	echo >&2 "E: mkt-int.sh: $*"
@@ -17,7 +25,7 @@ fi
 
 cd "$(dirname "$0")" || die cannot change to script directory
 rm -f mkt-int.t* || die cannot delete old files
-trap 'rm -f mkt-int.t*' EXIT
+test -n "$DEBUG" || trap 'rm -f mkt-int.t*' EXIT
 
 echo >&2 'I: checking if we can build at all'
 set -e
@@ -145,7 +153,10 @@ $use_stdint
 #include "xxt-int.h"
 EOF
 
-cat >mkt-int.t-ff.c <<EOF
+fffile=0
+newfff() {
+	curfff=mkt-int.t-f$((fffile++)).c
+	cat >$curfff <<EOF
 #ifndef __STDC_WANT_LIB_EXT1__
 #define __STDC_WANT_LIB_EXT1__ 1
 #endif
@@ -158,6 +169,8 @@ $use_stdint
 #include "xxt-int.h"
 #include "mkt-int.t-ff.h"
 EOF
+}
+newfff
 
 cat >mkt-int.t-in.c <<EOF
 #ifndef __STDC_WANT_LIB_EXT1__
@@ -196,30 +209,44 @@ EOF
 }
 
 mbc1() {
-	want=$(( ($1) * 2))
-	bc >mkt-int.t-bc <<EOF
-define f(x) {
-$4
-}
-for (v = $2; v <= $3; ++v) {
-	v
-	f(v)
-}
-EOF
-	got=$(wc -l <mkt-int.t-bc)
-	test $got -eq $want || \
-	    die got $got lines, not "$want", from bc "'$4'"
+	:>mkt-int.t-bc
+	mbc1a "$@"
 }
 
 mbc1a() {
 	want=$(( ($1) * 2))
 	bc >mkt-int.t-bc2 <<EOF
 define f(x) {
-$4
+${4#$nl}
 }
 for (v = $2; v <= $3; ++v) {
 	v
 	f(v)
+}
+EOF
+	got=$(wc -l <mkt-int.t-bc2)
+	test $got -eq $want || \
+	    die got $got lines, not "$want", from bc "'$4'"
+	cat mkt-int.t-bc2 >>mkt-int.t-bc
+}
+
+mbc2() {
+	:>mkt-int.t-bc
+	mbc2a "$@"
+}
+
+mbc2a() {
+	want=$(( ($1) * 3))
+	bc >mkt-int.t-bc2 <<EOF
+define f(x,y) {
+${6#$nl}
+}
+for (v = $2; v <= $3; ++v) {
+	for (w = $4; w <= $5; ++w) {
+		v
+		w
+		f(v,w)
+	}
 }
 EOF
 	got=$(wc -l <mkt-int.t-bc2)
@@ -244,7 +271,23 @@ ubc1() {
 		echo "	tm1($2, $3, $1, $in, $out);"
 	done <mkt-int.t-bc
 	echo '}'
-    } >>mkt-int.t-ff.c
+    } >>$curfff
+}
+
+ubc2() {
+	fn=f$((numf++))
+	echo "	$fn();" >>mkt-int.t-in.c
+	echo "extern void $fn(void);" >>mkt-int.t-ff.h
+    {
+	echo "void $fn(void) {"
+	echo "	fstr = \"$1\";"
+	while read in1; do
+		read in2
+		read out
+		echo "	tm2($2, $3, $4, $1, $in1, $in2, $out);"
+	done <mkt-int.t-bc
+	echo '}'
+    } >>$curfff
 }
 
 t1 'mbiCOS(bst, -1, <, 2)' 1
@@ -326,8 +369,51 @@ mba	1024 0 \
 	2048 0
 ubc1 h_mbiMA_U2M hin1u houtu
 
+newfff
+
+mbc2 256 0 1 0 127 '
+	if (y == 0) return (0)
+	if (x == 0) return (y)
+	return (-y)'
+ubc2 b_mbiA_VZM2S bin1u bin2u bouts
+
+mbc2 4096 0 0 0 4095 'return (y % 512)'
+mbc2a 4096 1 1 0 4095 '
+	if ((y % 1024) == 0) return (0)
+	return (-((y - 1) % 512) - 1)'
+ubc2 h_mbiMA_VZM2S hin1u hin2u houts
+
+newfff
+
+mbc2 512 0 1 0 255 '
+	if (y == 0) return (0)
+	if (x == 0) return (y % 128)
+	a = (-((y - 1) % 128) - 1)
+	while (a < 0) a += 256
+	return (a)'
+ubc2 b_mbiA_VZM2U bin1u bin2u boutu
+
+mbc2 8192 0 1 0 4095 '
+	if ((y % 1024) == 0) return (0)
+	if (x == 0) return (y % 512)
+	a = (-((y - 1) % 512) - 1)
+	while (a < 0) a += 1024
+	return (a)'
+ubc2 h_mbiMA_VZM2U hin1u hin2u houtu
+
+newfff
+
+mbc2 512 0 1 0 255 'if (x != 0) y = -y
+while (y < 0) y += 256
+return (y)'
+ubc2 b_mbiA_VZU2U bin1u bin2u boutu
+
+mbc2 8192 0 1 0 4095 'if (x != 0) y = -y
+while (y < 0) y += 1024
+return (y % 1024)'
+ubc2 h_mbiMA_VZU2U hin1u hin2u houtu
+
 if false; then
-mbiMO	via mbiMA_VZM2S
 mbiOshl
 mbiOshr
 fi
@@ -339,13 +425,24 @@ cat >>mkt-int.t-in.c <<\EOF
 }
 EOF
 echo >&2 'I: running tests...'
+set -x
+rm -f mkt-int.t-*.o
 "$@" -c mkt-int.t-xx.c || die compiling tests-xx failed
 "$@" -c mkt-int.t-in.c || die compiling tests-mk failed
-"$@" -O0 -g0 -c mkt-int.t-ff.c || die compiling tests-mk failed
-"$@" -o mkt-int.t-t mkt-int.t-xx.o mkt-int.t-in.o mkt-int.t-ff.o || die linking tests failed
-if ./mkt-int.t-t; then
+ffcur=0
+while test $ffcur -lt $fffile; do
+	curfff=mkt-int.t-f$((ffcur++)).c
+	"$@" -O0 -g0 -c $curfff || die compiling $curfff failed
+done
+"$@" -o mkt-int.t-t mkt-int.t-*.o || die linking tests failed
+set +e
+./mkt-int.t-t
+rv=$?
+set +x
+if test "$rv" = 0; then
 	echo >&2 'I: tests passed'
 	exit 0
 fi
 echo >&2 'E: tests failed; press Return to continue'
 read dummy
+exit 1

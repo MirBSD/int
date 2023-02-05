@@ -1,4 +1,4 @@
-/* $MirOS: int/xxt-int.h,v 1.1 2023/02/05 16:55:01 tg Exp $ */
+/* $MirOS: int/xxt-int.h,v 1.2 2023/02/05 18:01:05 tg Exp $ */
 
 /* © 2023 mirabilos Ⓕ MirBSD */
 
@@ -33,6 +33,19 @@ extern const char *fstr;
 	}								\
 } while (/* CONSTCOND */ 0)
 
+#define tm2(nin1, nin2, nout, f, vin1, vin2, vout) do {			\
+	nin1 = (vin1);							\
+	nin2 = (vin2);							\
+	nout = f(nin1, nin2);						\
+	if (nout != (vout)) {						\
+		fprintf(stderr,						\
+		    "E: %s(%lu, %lu) failed, got %lu want %lu\n",	\
+		    fstr, (unsigned long)(vin1), (unsigned long)(vin2),	\
+		    (unsigned long)nout, (unsigned long)(vout));	\
+		rv = 1;							\
+	}								\
+} while (/* CONSTCOND */ 0)
+
 int b_mbiA_S2VZ(bst);
 int b_mbiA_U2VZ(but);
 int h_mbiMA_U2VZ(hut);
@@ -44,3 +57,9 @@ but b_mbiA_S2M(bst);
 hut h_mbiMA_S2M(hst);
 but b_mbiA_U2M(but);
 hut h_mbiMA_U2M(hut);
+bst b_mbiA_VZM2S(but, but);
+hst h_mbiMA_VZM2S(hut, hut);
+but b_mbiA_VZM2U(but, but);
+hut h_mbiMA_VZM2U(hut, hut);
+but b_mbiA_VZU2U(but, but);
+hut h_mbiMA_VZU2U(hut, hut);
