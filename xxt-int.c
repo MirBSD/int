@@ -1,4 +1,4 @@
-/* $MirOS: src/kern/include/xxt-int.c,v 1.1 2023/02/05 16:55:01 tg Exp $ */
+/* $MirOS: src/kern/include/xxt-int.c,v 1.2 2023/02/05 18:01:05 tg Exp $ */
 
 /* © 2023 mirabilos Ⓕ MirBSD */
 
@@ -44,4 +44,28 @@ but b_mbiA_U2M(but in) {
 
 hut h_mbiMA_U2M(hut in) {
 	return (mbiMA_U2M(hut, hfm, hhm, in));
+}
+
+bst b_mbiA_VZM2S(but in1, but in2) {
+	return (mbiA_VZM2S(but, bst, in1, in2));
+}
+
+hst h_mbiMA_VZM2S(hut in1, hut in2) {
+	return (mbiMA_VZM2S(hut, hst, hfm, hhm, in1, in2));
+}
+
+but b_mbiA_VZM2U(but in1, but in2) {
+	return (mbiA_VZM2U(but, bsm, in1, in2));
+}
+
+hut h_mbiMA_VZM2U(hut in1, hut in2) {
+	return (mbiMA_VZM2U(hut, hfm, hhm, in1, in2));
+}
+
+but b_mbiA_VZU2U(but in1, but in2) {
+	return (mbiA_VZU2U(but, in1, in2));
+}
+
+hut h_mbiMA_VZU2U(hut in1, hut in2) {
+	return (mbiMA_VZU2U(hut, hfm, in1, in2));
 }
