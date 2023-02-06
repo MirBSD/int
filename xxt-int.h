@@ -1,4 +1,4 @@
-/* $MirOS: int/xxt-int.h,v 1.2 2023/02/05 18:01:05 tg Exp $ */
+/* $MirOS: int/xxt-int.h,v 1.3 2023/02/06 01:33:55 tg Exp $ */
 
 /* © 2023 mirabilos Ⓕ MirBSD */
 
@@ -12,6 +12,11 @@ typedef signed char bst;
 #define hsm hhm
 typedef unsigned short hut;
 typedef signed short hst;
+#define xfm 0x0F
+#define xhm 0x07
+#define xsm xhm
+typedef unsigned char xut;
+typedef signed char xst;
 
 extern int rv;
 extern but bin1u, bin2u, boutu;
@@ -46,6 +51,12 @@ extern const char *fstr;
 	}								\
 } while (/* CONSTCOND */ 0)
 
+int th_rol(int, unsigned int, unsigned int);
+int th_ror(int, unsigned int, unsigned int);
+int th_shl(int, unsigned int, unsigned int);
+int th_shr(int, unsigned int, unsigned int);
+int th_sar(int, unsigned int, unsigned int);
+
 int b_mbiA_S2VZ(bst);
 int b_mbiA_U2VZ(but);
 int h_mbiMA_U2VZ(hut);
@@ -63,3 +74,19 @@ but b_mbiA_VZM2U(but, but);
 hut h_mbiMA_VZM2U(hut, hut);
 but b_mbiA_VZU2U(but, but);
 hut h_mbiMA_VZU2U(hut, hut);
+int b_mbiKcmp(but, but);
+int x_mbiMKcmp(xut, xut);
+but b_mbiKrol(but, but);
+but b_mbiKror(but, but);
+but b_mbiKshl(but, but);
+but b_mbiKsar(but, but);
+but b_mbiKshr(but, but);
+xut x_mbiMKrol(xut, xut);
+xut x_mbiMKror(xut, xut);
+xut x_mbiMKshl(xut, xut);
+xut x_mbiMKsar(xut, xut);
+xut x_mbiMKshr(xut, xut);
+but b_mbiKdiv(but, but);
+xut x_mbiMKdiv(xut, xut);
+but b_mbiKrem(but, but);
+xut x_mbiMKrem(xut, xut);
