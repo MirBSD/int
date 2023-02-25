@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MirOS: int/mkt-int.sh,v 1.5 2023/02/06 01:33:55 tg Exp $
+# $MirOS: int/mkt-int.sh,v 1.6 2023/02/25 22:57:25 tg Exp $
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -559,6 +559,20 @@ cat >>mkt-int.t-in.c <<\EOF
 			iouts = hin1s * hin2s;
 			houtu = (iouts < SCHAR_MIN) || (iouts > SCHAR_MAX);
 			C2s("mbiCASmul");
+#if 1 /* mbiCASlet validate overflow */
+			/*
+			 * note: these may also raise an implementation-defined
+			 * signal (C23§6.3.1.3(3)), in which case we lose here;
+			 * for these systems that do that, comment out the test
+			 */
+			hin1u = 0;
+			mbiCASlet(bst, bin1s, int, iouts);
+			if (hin1u != houtu) {
+				fprintf(stderr, "E: mbiCASlet(%d) unexpectedly %sed: %d",
+				    iouts, hin1u ? "fail" : "pass", bin1s);
+				rv = 1;
+			}
+#endif /* mbiCASlet validate overflow */
 		}
 
 	fprintf(stderr, "I: manual two’s komplement calculations...\n");
