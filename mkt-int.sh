@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MirOS: int/mkt-int.sh,v 1.6 2023/02/25 22:57:25 tg Exp $
+# $MirOS: int/mkt-int.sh,v 1.7 2023/02/25 23:33:47 tg Exp $
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -160,7 +160,8 @@ EOF
 
 fffile=0
 newfff() {
-	curfff=mkt-int.t-f$((fffile++)).c
+	curfff=mkt-int.t-f$fffile.c
+	fffile=$(($fffile + 1))
 	cat >$curfff <<EOF
 #ifndef __STDC_WANT_LIB_EXT1__
 #define __STDC_WANT_LIB_EXT1__ 1
@@ -302,7 +303,8 @@ mba() {
 }
 
 ubc1() {
-	fn=f$((numf++))
+	fn=f$numf
+	numf=$(($numf + 1))
 	echo "	$fn();" >>mkt-int.t-in.c
 	echo "extern void $fn(void);" >>mkt-int.t-ff.h
     {
@@ -317,7 +319,8 @@ ubc1() {
 }
 
 ubc2() {
-	fn=f$((numf++))
+	fn=f$numf
+	numf=$(($numf + 1))
 	echo "	$fn();" >>mkt-int.t-in.c
 	echo "extern void $fn(void);" >>mkt-int.t-ff.h
     {
@@ -722,7 +725,8 @@ rm -f mkt-int.t-*.o
 "$@" -c mkt-int.t-in.c || die compiling tests-mk failed
 ffcur=0
 while test $ffcur -lt $fffile; do
-	curfff=mkt-int.t-f$((ffcur++)).c
+	curfff=mkt-int.t-f$ffcur.c
+	ffcur=$(($ffcur + 1))
 	"$@" -O0 -g0 -c $curfff || die compiling $curfff failed
 done
 "$@" $LDFLAGS -o mkt-int.t-t mkt-int.t-*.o || die linking tests failed
