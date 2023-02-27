@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MirOS: src/kern/include/mkt-int.sh,v 1.8 2023/02/27 01:12:43 tg Exp $
+# $MirOS: src/kern/include/mkt-int.sh,v 1.9 2023/02/27 01:29:23 tg Exp $
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -49,7 +49,7 @@ int main(void) {
 EOF
 "$@" $LDFLAGS -o mkt-int.t-t mkt-int.t-in.c || die cannot build
 
-for flagtotest in -fno-lto -qnoipa; do
+for flagtotest in -fno-lto -qnoipa -xipo=0; do
 	echo >&2 "I: checking if we can add $flagtotest"
 	if "$@" $LDFLAGS $flagtotest -o mkt-int.t-t mkt-int.t-in.c; then
 		set -- "$@" $flagtotest
