@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MirOS: src/kern/include/mkt-int.sh,v 1.9 2023/02/27 01:29:23 tg Exp $
+# $MirOS: src/kern/include/mkt-int.sh,v 1.10 2023/02/27 02:33:15 tg Exp $
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -190,6 +190,7 @@ $use_stdint
 #include "mbsdint.h"
 #include <stdio.h>
 
+#define XXT_DO_STDIO_IMPLS
 #include "xxt-int.h"
 #include "mkt-int.t-ff.h"
 
@@ -732,6 +733,8 @@ while test $ffcur -lt $fffile; do
 	"$@" -O0 -g0 -c $curfff || die compiling $curfff failed
 done
 "$@" $LDFLAGS -o mkt-int.t-t mkt-int.t-*.o || die linking tests failed
+(ls -l mkt-int.t-t || :)
+(size mkt-int.t-t || :)
 set +e
 ./mkt-int.t-t
 rv=$?
