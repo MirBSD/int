@@ -1,4 +1,4 @@
-/* $MirOS: int/xxt-int.c,v 1.3 2023/02/06 01:33:55 tg Exp $ */
+/* $MirOS: int/xxt-int.c,v 1.4 2023/02/27 02:33:15 tg Exp $ */
 
 /* © 2023 mirabilos Ⓕ MirBSD */
 
@@ -193,17 +193,57 @@ xut x_mbiMKshr(xut in1, xut in2) {
 }
 
 but b_mbiKdiv(but in1, but in2) {
-	return (mbiKdiv(but, bsm, in1, in2));
+	but res, rd, rr;
+
+	res = mbiKdiv(but, bsm, in1, in2);
+	mbiKdivrem(rd, rr, but, bsm, in1, in2);
+	if (res != rd) {
+		xxt_divrem_err("b_mbiKdiv",
+		    (unsigned)in1, (unsigned)in2, (unsigned)res,
+		    (unsigned)rd, (unsigned)rr);
+		rv = 1;
+	}
+	return (res);
 }
 
 xut x_mbiMKdiv(xut in1, xut in2) {
-	return (mbiMKdiv(xut, xfm, xhm, in1, in2));
+	xut res, rd, rr;
+
+	res = mbiMKdiv(xut, xfm, xhm, in1, in2);
+	mbiMKdivrem(rd, rr, xut, xfm, xhm, in1, in2);
+	if (res != rd) {
+		xxt_divrem_err("x_mbiMKdiv",
+		    (unsigned)in1, (unsigned)in2, (unsigned)res,
+		    (unsigned)rd, (unsigned)rr);
+		rv = 1;
+	}
+	return (res);
 }
 
 but b_mbiKrem(but in1, but in2) {
-	return (mbiKrem(but, bsm, in1, in2));
+	but res, rd, rr;
+
+	res = mbiKrem(but, bsm, in1, in2);
+	mbiKdivrem(rd, rr, but, bsm, in1, in2);
+	if (res != rr) {
+		xxt_divrem_err("b_mbiKrem",
+		    (unsigned)in1, (unsigned)in2, (unsigned)res,
+		    (unsigned)rd, (unsigned)rr);
+		rv = 1;
+	}
+	return (res);
 }
 
 xut x_mbiMKrem(xut in1, xut in2) {
-	return (mbiMKrem(xut, xfm, xhm, in1, in2));
+	xut res, rd, rr;
+
+	res = mbiMKrem(xut, xfm, xhm, in1, in2);
+	mbiMKdivrem(rd, rr, xut, xfm, xhm, in1, in2);
+	if (res != rr) {
+		xxt_divrem_err("x_mbiMKrem",
+		    (unsigned)in1, (unsigned)in2, (unsigned)res,
+		    (unsigned)rd, (unsigned)rr);
+		rv = 1;
+	}
+	return (res);
 }

@@ -1,4 +1,4 @@
-/* $MirOS: int/xxt-int.h,v 1.3 2023/02/06 01:33:55 tg Exp $ */
+/* $MirOS: int/xxt-int.h,v 1.4 2023/02/27 02:33:16 tg Exp $ */
 
 /* © 2023 mirabilos Ⓕ MirBSD */
 
@@ -50,6 +50,19 @@ extern const char *fstr;
 		rv = 1;							\
 	}								\
 } while (/* CONSTCOND */ 0)
+
+extern void xxt_divrem_err(const char *fn, unsigned int in1, unsigned int in2,
+    unsigned int res, unsigned int divres, unsigned int remres);
+
+#ifdef XXT_DO_STDIO_IMPLS
+void
+xxt_divrem_err(const char *fn, unsigned int in1, unsigned int in2,
+    unsigned int res, unsigned int divres, unsigned int remres)
+{
+	fprintf(stderr, "E: %s(%u, %u) = %u, div=%u mod=%u\n",
+	    fn, in1, in2, res, divres, remres);
+}
+#endif
 
 int th_rol(int, unsigned int, unsigned int);
 int th_ror(int, unsigned int, unsigned int);
