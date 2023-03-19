@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MirOS: int/mkt-int.sh,v 1.11 2023/03/19 22:12:04 tg Exp $
+# $MirOS: int/mkt-int.sh,v 1.12 2023/03/19 22:35:03 tg Exp $
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -304,6 +304,8 @@ static void cf_(const char *where) {
 } while (/* CONSTCOND */ 0)
 
 int main(void) {
+	unsigned int b_rsz = 0, b_sz = 0, b_ptr = 0, b_mbi;
+
 	fprintf(stderr, "I: initial tests...\n");
 EOF
 
@@ -824,18 +826,18 @@ t1 'mbi_nil == NULL' 1
 cat >>mkt-int.t-in.c <<\EOF
 
 	fprintf(stderr, "I: architecture infos (0 may mean unknown):\n");
-	fprintf(stderr, "N: CHAR_BIT = %d\n", (int)CHAR_BIT);
+	fprintf(stderr, "N: CHAR_BIT: %d\n", (int)CHAR_BIT);
 
 #define ts(x) #x
 #define ti(t,min,max) if (mbiTYPE_ISF(t)) \
 	fprintf(stderr, "N: %18s: floatish, %u chars, min(%s) max(%s)\n", \
-	    ts(t), (unsigned)sizeof(t), ts(min), ts(max)); \
+	    #t, (unsigned)sizeof(t), ts(min), ts(max)); \
     else if (mbiTYPE_ISU(t)) \
 	fprintf(stderr, "N: %18s: unsigned, %u chars, %u bits, max(%s) w=%u\n", \
-	    ts(t), (unsigned)sizeof(t), mbiTYPE_ISU(t)?mbiTYPE_UBITS(t):0, ts(max), max==0?0:mbiMASK_BITS(max)); \
+	    #t, (unsigned)sizeof(t), mbiTYPE_ISU(t)?mbiTYPE_UBITS(t):0, ts(max), max==0?0:mbiMASK_BITS(max)); \
     else \
 	fprintf(stderr, "N: %18s:   signed, %u chars, min(%s), max(%s) w=%u\n", \
-	    ts(t), (unsigned)sizeof(t), ts(min), ts(max), max==0?0:(mbiMASK_BITS(max) + 1))
+	    #t, (unsigned)sizeof(t), ts(min), ts(max), max==0?0:(mbiMASK_BITS(max) + 1))
 
 	ti(char, CHAR_MIN, CHAR_MAX);
 	ti(signed char, SCHAR_MIN, SCHAR_MAX);
@@ -888,6 +890,20 @@ cat >>mkt-int.t-in.c <<\EOF
 #else
 	fprintf(stderr, "N: no %s\n", #off_t);
 #endif
+	fprintf(stderr, "N: format specifiers: mbiLARGE_S %%%s / mbiHUGE_S %%%s\n",
+	    mbiLARGE_P(d), mbiHUGE_P(d));
+#ifdef RSIZE_MAX
+	b_rsz = mbiMASK_BITS(RSIZE_MAX);
+#endif
+#ifdef SIZE_MAX
+	b_sz = mbiMASK_BITS(SIZE_MAX);
+#endif
+#ifdef PTRDIFF_MAX
+	b_ptr = mbiMASK_BITS(PTRDIFF_MAX);
+#endif
+	b_mbi = mbiMASK_BITS(mbiSIZEMAX);
+	fprintf(stderr, "N: bits of: RSIZE_MAX=%u SIZE_MAX=%u PTRDIFF_MAX=%u mbiSIZEMAX=%u\n",
+	    b_rsz, b_sz, b_ptr, b_mbi);
 
 	return (rv);
 }
