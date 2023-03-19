@@ -1,4 +1,4 @@
-/* $MirOS: src/kern/include/xxt-int.h,v 1.4 2023/02/27 02:33:16 tg Exp $ */
+/* $MirOS: src/kern/include/xxt-int.h,v 1.5 2023/03/19 22:12:04 tg Exp $ */
 
 /* © 2023 mirabilos Ⓕ MirBSD */
 
@@ -12,8 +12,8 @@ typedef signed char bst;
 #define hsm hhm
 typedef unsigned short hut;
 typedef signed short hst;
-#define xfm 0x0F
-#define xhm 0x07
+#define xfm 0x3F
+#define xhm 0x1F
 #define xsm xhm
 typedef unsigned char xut;
 typedef signed char xst;
@@ -64,11 +64,11 @@ xxt_divrem_err(const char *fn, unsigned int in1, unsigned int in2,
 }
 #endif
 
-int th_rol(int, unsigned int, unsigned int);
-int th_ror(int, unsigned int, unsigned int);
-int th_shl(int, unsigned int, unsigned int);
-int th_shr(int, unsigned int, unsigned int);
-int th_sar(int, unsigned int, unsigned int);
+int th_rol(unsigned int, unsigned int, unsigned int);
+int th_ror(unsigned int, unsigned int, unsigned int);
+int th_shl(unsigned int, unsigned int, unsigned int);
+int th_shr(unsigned int, unsigned int, unsigned int);
+int th_sar(unsigned int, unsigned int, unsigned int);
 
 int b_mbiA_S2VZ(bst);
 int b_mbiA_U2VZ(but);
