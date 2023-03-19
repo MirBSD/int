@@ -1,59 +1,64 @@
-/* $MirOS: int/xxt-int.c,v 1.4 2023/02/27 02:33:15 tg Exp $ */
+/* $MirOS: int/xxt-int.c,v 1.5 2023/03/19 22:12:04 tg Exp $ */
 
 /* © 2023 mirabilos Ⓕ MirBSD */
 
 /* test helpers */
 
-int th_rol(int bits, unsigned int v1, unsigned int v2) {
-	unsigned int mask = bits == 4 ? 0x0FU : 0xFFU;
+int th_rol(unsigned int bits, unsigned int v1, unsigned int v2) {
+	unsigned int mask = bits == 6 ? 0x3FU : 0xFFU;
 
 	v1 &= mask;
-	v2 &= (bits - 1);
+	while (v2 >= bits)
+		v2 -= bits;
 	if (!v2)
 		return (v1);
 	v1 = (v1 << v2) | (v1 >> (bits - v2));
 	return (v1 & mask);
 }
 
-int th_ror(int bits, unsigned int v1, unsigned int v2) {
-	unsigned int mask = bits == 4 ? 0x0FU : 0xFFU;
+int th_ror(unsigned int bits, unsigned int v1, unsigned int v2) {
+	unsigned int mask = bits == 6 ? 0x3FU : 0xFFU;
 
 	v1 &= mask;
-	v2 &= (bits - 1);
+	while (v2 >= bits)
+		v2 -= bits;
 	if (!v2)
 		return (v1);
 	v1 = (v1 >> v2) | (v1 << (bits - v2));
 	return (v1 & mask);
 }
 
-int th_shl(int bits, unsigned int v1, unsigned int v2) {
-	unsigned int mask = bits == 4 ? 0x0FU : 0xFFU;
+int th_shl(unsigned int bits, unsigned int v1, unsigned int v2) {
+	unsigned int mask = bits == 6 ? 0x3FU : 0xFFU;
 
 	v1 &= mask;
-	v2 &= (bits - 1);
+	while (v2 >= bits)
+		v2 -= bits;
 	if (!v2)
 		return (v1);
 	v1 = (v1 << v2);
 	return (v1 & mask);
 }
 
-int th_shr(int bits, unsigned int v1, unsigned int v2) {
-	unsigned int mask = bits == 4 ? 0x0FU : 0xFFU;
+int th_shr(unsigned int bits, unsigned int v1, unsigned int v2) {
+	unsigned int mask = bits == 6 ? 0x3FU : 0xFFU;
 
 	v1 &= mask;
-	v2 &= (bits - 1);
+	while (v2 >= bits)
+		v2 -= bits;
 	if (!v2)
 		return (v1);
 	v1 = (v1 >> v2);
 	return (v1 & mask);
 }
 
-int th_sar(int bits, unsigned int v1, unsigned int v2) {
-	unsigned int mask = bits == 4 ? 0x0FU : 0xFFU;
-	unsigned int sgnb = bits == 4 ? 0x08U : 0x80U;
+int th_sar(unsigned int bits, unsigned int v1, unsigned int v2) {
+	unsigned int mask = bits == 6 ? 0x3FU : 0xFFU;
+	unsigned int sgnb = bits == 6 ? 0x20U : 0x80U;
 
 	v1 &= mask;
-	v2 &= (bits - 1);
+	while (v2 >= bits)
+		v2 -= bits;
 	if (!v2)
 		return (v1);
 	v1 = (((v1 & sgnb) ? mask : 0U) << (bits - v2)) | (v1 >> v2);
