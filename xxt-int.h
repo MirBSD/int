@@ -1,4 +1,4 @@
-/* $MirOS: src/kern/include/xxt-int.h,v 1.5 2023/03/19 22:12:04 tg Exp $ */
+/* $MirOS: src/kern/include/xxt-int.h,v 1.6 2023/03/26 21:01:49 tg Exp $ */
 
 /* © 2023 mirabilos Ⓕ MirBSD */
 
@@ -69,6 +69,8 @@ int th_ror(unsigned int, unsigned int, unsigned int);
 int th_shl(unsigned int, unsigned int, unsigned int);
 int th_shr(unsigned int, unsigned int, unsigned int);
 int th_sar(unsigned int, unsigned int, unsigned int);
+
+unsigned char bitrepr(signed char);
 
 int b_mbiA_S2VZ(bst);
 int b_mbiA_U2VZ(but);
