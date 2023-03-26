@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MirOS: src/kern/include/mkt-int.sh,v 1.12 2023/03/19 22:35:03 tg Exp $
+# $MirOS: src/kern/include/mkt-int.sh,v 1.13 2023/03/26 17:20:55 tg Exp $
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -826,7 +826,9 @@ t1 'mbi_nil == NULL' 1
 cat >>mkt-int.t-in.c <<\EOF
 
 	fprintf(stderr, "I: architecture infos (0 may mean unknown):\n");
-	fprintf(stderr, "N: CHAR_BIT: %d\n", (int)CHAR_BIT);
+	fprintf(stderr, "N: CHAR_BIT: %d\t\tsigned using %s\n", (int)CHAR_BIT,
+	    mbiSAFECOMPLEMENT ? "two’s complement" :
+	    "!! sign-and-magnitude or one’s complement");
 
 #define ts(x) #x
 #define ti(t,min,max) if (mbiTYPE_ISF(t)) \
