@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MirOS: int/mkt-int.sh,v 1.13 2023/03/26 17:20:55 tg Exp $
+# $MirOS: int/mkt-int.sh,v 1.14 2023/03/26 21:01:49 tg Exp $
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -225,6 +225,7 @@ $use_stdint
 #undef MBSDINT_H_SKIP_CTAS
 #include "mbsdint.h"
 #include "xxt-int.h"
+#include <string.h>
 EOF
 
 for x in 0 1 2; do
@@ -305,6 +306,7 @@ static void cf_(const char *where) {
 
 int main(void) {
 	unsigned int b_rsz = 0, b_sz = 0, b_ptr = 0, b_mbi;
+	const char *whichrepr;
 
 	fprintf(stderr, "I: initial tests...\n");
 EOF
@@ -825,10 +827,24 @@ t1 'mbi_nil == NULL' 1
 
 cat >>mkt-int.t-in.c <<\EOF
 
+	switch ((unsigned int)bitrepr(-1)) {
+	case 0xFFU:
+		whichrepr = "two’s complement";
+		break;
+	case 0xFEU:
+		whichrepr = "one’s complement";
+		break;
+	case 0x81U:
+		whichrepr = "sign-and-magnitude";
+		break;
+	default:
+		whichrepr = "an illegal (per ISO C) representation";
+		break;
+	}
+
 	fprintf(stderr, "I: architecture infos (0 may mean unknown):\n");
-	fprintf(stderr, "N: CHAR_BIT: %d\t\tsigned using %s\n", (int)CHAR_BIT,
-	    mbiSAFECOMPLEMENT ? "two’s complement" :
-	    "!! sign-and-magnitude or one’s complement");
+	fprintf(stderr, "N: CHAR_BIT: %d\t\tcomplement: %s using %s\n",
+	    (int)CHAR_BIT, mbiSAFECOMPLEMENT ? "safe" : "UNSAFE", whichrepr);
 
 #define ts(x) #x
 #define ti(t,min,max) if (mbiTYPE_ISF(t)) \

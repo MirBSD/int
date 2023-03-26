@@ -1,4 +1,4 @@
-/* $MirOS: int/xxt-int.c,v 1.5 2023/03/19 22:12:04 tg Exp $ */
+/* $MirOS: int/xxt-int.c,v 1.6 2023/03/26 21:01:49 tg Exp $ */
 
 /* © 2023 mirabilos Ⓕ MirBSD */
 
@@ -63,6 +63,13 @@ int th_sar(unsigned int bits, unsigned int v1, unsigned int v2) {
 		return (v1);
 	v1 = (((v1 & sgnb) ? mask : 0U) << (bits - v2)) | (v1 >> v2);
 	return (v1 & mask);
+}
+
+unsigned char bitrepr(signed char val) {
+	unsigned char res;
+
+	memcpy(&res, &val, sizeof(res));
+	return (res);
 }
 
 /* test wrappers */
