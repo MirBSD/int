@@ -1,7 +1,8 @@
-/* $MirOS: int/xxt-int.h,v 1.6 2023/03/26 21:01:49 tg Exp $ */
+/* $MirOS: int/xxt-int.h,v 1.7 2023/04/17 01:39:04 tg Exp $ */
 
 /* © 2023 mirabilos Ⓕ MirBSD */
 
+#define bs_MAX SCHAR_MAX
 #define bfm 0xFF
 #define bhm 0x7F
 #define bsm bhm
