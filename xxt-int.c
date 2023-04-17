@@ -1,4 +1,4 @@
-/* $MirOS: int/xxt-int.c,v 1.6 2023/03/26 21:01:49 tg Exp $ */
+/* $MirOS: int/xxt-int.c,v 1.7 2023/04/17 01:39:03 tg Exp $ */
 
 /* © 2023 mirabilos Ⓕ MirBSD */
 
@@ -72,6 +72,14 @@ unsigned char bitrepr(signed char val) {
 	return (res);
 }
 
+#define e_CAsafe(name,vz,v) do {				\
+	if (vz == 2)						\
+		fprintf(stderr, "E: %s(%u)", name, v);		\
+	else							\
+		fprintf(stderr, "E: %s(%u, %u)", name, vz, v);	\
+	rv = 1;							\
+} while (/* CONSTCOND */ 0)
+
 /* test wrappers */
 
 int b_mbiA_S2VZ(bst in) {
@@ -87,7 +95,10 @@ int h_mbiMA_U2VZ(hut in) {
 }
 
 bst b_mbiA_U2S(but in) {
+#define mbiCfail e_CAsafe("b_mbiA_U2S", 2, in)
+	mbiCAsafeU2S(bs, but, in);
 	return (mbiA_U2S(but, bst, bsm, in));
+#undef mbiCfail
 }
 
 hst h_mbiMA_U2S(hut in) {
@@ -119,7 +130,10 @@ hut h_mbiMA_U2M(hut in) {
 }
 
 bst b_mbiA_VZM2S(but in1, but in2) {
+#define mbiCfail e_CAsafe("b_mbiA_VZM2S", in1, in2)
+	mbiCAsafeVZM2S(bs, but, in1, in2);
 	return (mbiA_VZM2S(but, bst, in1, in2));
+#undef mbiCfail
 }
 
 hst h_mbiMA_VZM2S(hut in1, hut in2) {
