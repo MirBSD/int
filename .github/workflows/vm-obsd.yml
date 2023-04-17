@@ -1,0 +1,28 @@
+{
+  "jobs": {
+    "vm-obsd": {
+      "runs-on": "macos-12",
+      "steps": [
+        {
+          "uses": "actions/checkout@v3.5.0"
+        },
+        {
+          "run": "(git gc || :)"
+        },
+        {
+          "uses": "vmactions/openbsd-vm@v0.1.1",
+          "with": {
+            "copyback": false,
+            "mem": 2048,
+            "run": ": \"${CC=cc}${CFLAGS=-O2}\"; export LDFLAGS; exec sh mkt-int.sh $CC $CPPFLAGS $CFLAGS -Wall -Wextra -Wformat",
+            "usesh": true
+          }
+        }
+      ]
+    }
+  },
+  "name": "vm-obsd",
+  "on": {
+    "workflow_dispatch": null
+  }
+}
