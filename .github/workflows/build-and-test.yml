@@ -1,0 +1,100 @@
+{
+  "jobs": {
+    "bt-asan": {
+      "runs-on": "ubuntu-22.04",
+      "steps": [
+        {
+          "name": "Cancel previous runs",
+          "uses": "styfle/cancel-workflow-action@0.11.0",
+          "with": {
+            "access_token": "${{ github.token }}",
+            "all_but_latest": true
+          }
+        },
+        {
+          "uses": "actions/checkout@v3.5.0"
+        },
+        {
+          "run": "(git gc || :)"
+        },
+        {
+          "run": "ASAN_OPTIONS=check_initialization_order=true:detect_stack_use_after_return=true:detect_invalid_pointer_pairs=2:dump_instruction_bytes=true:color=never:strict_string_checks=true:exitcode=251 && export ASAN_OPTIONS && : \"${CC=cc}${CFLAGS=-O2}\"; eval \"$(env DEB_BUILD_MAINT_OPTIONS='future=+all qa=+all,-canary optimize=+all,-lto hardening=+all reproducible=+all' dpkg-buildflags --export=sh || :)\"; export LDFLAGS; ulimit -dS \"$(ulimit -dH)\"; exec sh mkt-int.sh $CC $CPPFLAGS $CFLAGS -Og -fstack-protector-strong -Wformat -Werror=format-security -Wall -Wextra -fsanitize=address -fno-omit-frame-pointer -fno-common -fsanitize=pointer-compare -fsanitize=pointer-subtract -fsanitize=undefined -fsanitize=shift -fsanitize=shift-exponent -fsanitize=shift-base -fsanitize=integer-divide-by-zero -fsanitize=unreachable -fsanitize=vla-bound -fsanitize=null -fsanitize=signed-integer-overflow -fsanitize=bounds -fsanitize=bounds-strict -fsanitize=alignment -fsanitize=object-size -fsanitize=nonnull-attribute -fsanitize=returns-nonnull-attribute -fsanitize=bool -fsanitize=enum -fsanitize=vptr -fsanitize=pointer-overflow -fsanitize=builtin -fsanitize-address-use-after-scope -fstack-clash-protection"
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "bt-normal": {
+      "runs-on": "${{ matrix.os }}",
+      "steps": [
+        {
+          "uses": "actions/checkout@v3.5.0"
+        },
+        {
+          "run": "(git gc || :)"
+        },
+        {
+          "run": ": \"${CC=cc}${CFLAGS=-O2}\"; eval \"$(env DEB_BUILD_MAINT_OPTIONS='future=+all qa=+all,-canary optimize=+all,-lto hardening=+all reproducible=+all' dpkg-buildflags --export=sh || :)\"; export LDFLAGS; ulimit -dS \"$(ulimit -dH)\"; exec sh mkt-int.sh $CC $CPPFLAGS $CFLAGS -Wall -Wextra"
+        }
+      ],
+      "strategy": {
+        "fail-fast": true,
+        "matrix": {
+          "os": [
+            "ubuntu-20.04",
+            "macos-11",
+            "macos-12"
+          ]
+        }
+      }
+    },
+    "chroot-alpine": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v3.5.0"
+        },
+        {
+          "run": "(git gc || :)"
+        },
+        {
+          "uses": "jirutka/setup-alpine@v1.1.1",
+          "with": {
+            "arch": "${{ matrix.alpinearch }}",
+            "branch": "edge",
+            "packages": "build-base"
+          }
+        },
+        {
+          "run": ": \"${CC=cc}${CFLAGS=-O2}\"; eval \"$(env DEB_BUILD_MAINT_OPTIONS='future=+all qa=+all,-canary optimize=+all,-lto hardening=+all reproducible=+all' dpkg-buildflags --export=sh || :)\"; export LDFLAGS; ulimit -dS \"$(ulimit -dH)\"; exec sh mkt-int.sh $CC $CPPFLAGS $CFLAGS -Wall -Wextra",
+          "shell": "alpine.sh {0}"
+        }
+      ],
+      "strategy": {
+        "fail-fast": true,
+        "matrix": {
+          "alpinearch": [
+            "aarch64",
+            "armhf",
+            "armv7",
+            "ppc64le",
+            "riscv64",
+            "s390x",
+            "x86",
+            "x86_64"
+          ]
+        }
+      }
+    }
+  },
+  "name": "build-and-test",
+  "on": {
+    "push": {
+      "branches": [
+        "GHA"
+      ]
+    },
+    "workflow_dispatch": null
+  }
+}
