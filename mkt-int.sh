@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MirOS: src/kern/include/mkt-int.sh,v 1.15 2023/04/17 00:51:31 tg Exp $
+# $MirOS: src/kern/include/mkt-int.sh,v 1.16 2023/04/17 01:39:03 tg Exp $
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -586,6 +586,20 @@ cat >>mkt-int.t-in.c <<\EOF
 	tm2(bin1u, bin2u, bouts, b_mbiA_VZM2S, 1, 128, -128);
 #else
 	fprintf(stderr, "I: one's complement or sign-and-magnitude system!\n");
+#define mbiCfail hin1s = 0
+	hin1s = 1;
+	mbiCAsafeU2S(bs, but, 128);
+	if (hin1s) {
+		fprintf(stderr, "E: %s did not trigger\n", "mbiCAsafeU2S(128)");
+		rv = 1;
+	}
+	hin1s = 1;
+	mbiCAsafeVZM2S(bs, but, 1, 128);
+	if (hin1s) {
+		fprintf(stderr, "E: %s did not trigger\n", "mbiCAsafeVZM2S(1, 128)");
+		rv = 1;
+	}
+#undef mbiCfail
 #endif
 
 	fprintf(stderr, "I: overflow/underflow-checking unsigned...\n");
