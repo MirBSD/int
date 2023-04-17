@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MirOS: int/mkt-int.sh,v 1.14 2023/03/26 21:01:49 tg Exp $
+# $MirOS: int/mkt-int.sh,v 1.15 2023/04/17 00:51:31 tg Exp $
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -305,7 +305,7 @@ static void cf_(const char *where) {
 } while (/* CONSTCOND */ 0)
 
 int main(void) {
-	unsigned int b_rsz = 0, b_sz = 0, b_ptr = 0, b_mbi;
+	unsigned int b_rsz = 0, b_sz = 0, b_ptr = 0, b_mbi = 0, f_mbi;
 	const char *whichrepr;
 
 	fprintf(stderr, "I: initial tests...\n");
@@ -878,10 +878,10 @@ cat >>mkt-int.t-in.c <<\EOF
 #else
 	fprintf(stderr, "N: no %s\n", intmax_t);
 #endif
-	ti(mbiLARGE_S, mbiLARGE_MIN, mbiLARGE_MAX);
-	ti(mbiLARGE_U, 0, mbiLARGE_UMAX);
-	ti(mbiHUGE_S, mbiHUGE_MIN, mbiHUGE_MAX);
-	ti(mbiHUGE_U, 0, mbiHUGE_UMAX);
+	ti(mbiLARGE_S, mbiLARGE_S_MIN, mbiLARGE_S_MAX);
+	ti(mbiLARGE_U, 0, mbiLARGE_U_MAX);
+	ti(mbiHUGE_S, mbiHUGE_S_MIN, mbiHUGE_S_MAX);
+	ti(mbiHUGE_U, 0, mbiHUGE_U_MAX);
 #ifdef SSIZE_MAX
 	ti(ssize_t, 0, SSIZE_MAX);
 #else
@@ -919,9 +919,11 @@ cat >>mkt-int.t-in.c <<\EOF
 #ifdef PTRDIFF_MAX
 	b_ptr = mbiMASK_BITS(PTRDIFF_MAX);
 #endif
-	b_mbi = mbiMASK_BITS(mbiSIZEMAX);
-	fprintf(stderr, "N: bits of: RSIZE_MAX=%u SIZE_MAX=%u PTRDIFF_MAX=%u mbiSIZEMAX=%u\n",
-	    b_rsz, b_sz, b_ptr, b_mbi);
+	if (mbiMASK_CHK(mbiSIZE_MAX))
+		b_mbi = mbiMASK_BITS(mbiSIZE_MAX);
+	f_mbi = mbiTYPE_UBITS(size_t) / (unsigned)((CHAR_BIT) - 1);
+	fprintf(stderr, "N: bits of: RSIZE_MAX=%u SIZE_MAX=%u PTRDIFF_MAX=%u mbiSIZE_MAX=%u(0x%0*zX)\n",
+	    b_rsz, b_sz, b_ptr, b_mbi, (int)f_mbi, (size_t)mbiSIZE_MAX);
 
 	return (rv);
 }
