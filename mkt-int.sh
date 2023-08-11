@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MirOS: src/kern/include/mkt-int.sh,v 1.16 2023/04/17 01:39:03 tg Exp $
+# $MirOS: src/kern/include/mkt-int.sh,v 1.17 2023/08/11 21:50:03 tg Exp $
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -938,6 +938,10 @@ cat >>mkt-int.t-in.c <<\EOF
 	f_mbi = mbiTYPE_UBITS(size_t) / (unsigned)((CHAR_BIT) - 1);
 	fprintf(stderr, "N: bits of: RSIZE_MAX=%u SIZE_MAX=%u PTRDIFF_MAX=%u mbiSIZE_MAX=%u(0x%0*zX)\n",
 	    b_rsz, b_sz, b_ptr, b_mbi, (int)f_mbi, (size_t)mbiSIZE_MAX);
+#if !defined(HAVE_INTCONSTEXPR_RSIZE_MAX) && defined(RSIZE_MAX)
+	fprintf(stderr, "W: RSIZE_MAX found but not an integer constant expression\n");
+	fprintf(stderr, "N: please review the sizes/limits above for suitability!\n");
+#endif
 
 	return (rv);
 }
