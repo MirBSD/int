@@ -1,26 +1,17 @@
 {
   "jobs": {
-    "build32": {
+    "build": {
       "runs-on": "windows-latest",
       "steps": [
         {
           "uses": "actions/checkout@v3.5.3"
         },
         {
+          "name": "build i386",
           "run": "cmd /c mkt-int.bat x86"
-        }
-      ],
-      "strategy": {
-        "fail-fast": true
-      }
-    },
-    "build64": {
-      "runs-on": "windows-latest",
-      "steps": [
-        {
-          "uses": "actions/checkout@v3.5.3"
         },
         {
+          "name": "build amd64",
           "run": "cmd /c mkt-int.bat amd64"
         }
       ],
