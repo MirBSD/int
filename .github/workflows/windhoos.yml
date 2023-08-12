@@ -29,6 +29,7 @@
       }
     }
   },
+  "name": "Win32",
   "on": {
     "push": {
       "branches": [
