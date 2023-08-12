@@ -7,6 +7,16 @@
           "uses": "actions/checkout@v3.5.3"
         },
         {
+          "uses": "Vampire/setup-wsl@v2.0.1",
+          "with": {
+            "additional-packages": [
+              "bc",
+              "build-essential"
+            ],
+            "update": true
+          }
+        },
+        {
           "name": "build i386",
           "run": "cmd /c mkt-int.bat x86"
         },
