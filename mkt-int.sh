@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MirOS: src/kern/include/mkt-int.sh,v 1.21 2023/08/12 05:04:15 tg Exp $
+# $MirOS: src/kern/include/mkt-int.sh,v 1.22 2023/08/12 05:48:08 tg Exp $
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -204,6 +204,9 @@ typedef unsigned char but;
 typedef signed char bst;
 typedef unsigned short hut;
 typedef signed short hst;
+#ifdef _MSC_VER
+#pragma warning(disable:4310)
+#endif
 int tstarr[((int)(RSIZE_MAX) & 1) + 1] = {0};
 #if defined(INTMAX_MIN)
 #define mbiHUGE_U		uintmax_t
@@ -370,6 +373,7 @@ int main(void) {
 	const char *mbiPTR_casttgt;
 
 	fprintf(stderr, "I: initial tests...\n");
+	mbsdint__Wd(4127);
 EOF
 
 echo "/* NeXTstep bug workaround */" >mkt-int.t-ff.h
@@ -520,6 +524,7 @@ t1 'mbiMM(hut, hfm, (hut)0xFFFFUL)' hfm
 t1 'mbiMM(hut, hhm, (hut)0xFFFFUL)' hhm
 
 cat >>mkt-int.t-in.c <<\EOF
+	mbsdint__Wpop;
 	fprintf(stderr, "I: manual two’s complement in unsigned...\n");
 EOF
 
@@ -664,6 +669,7 @@ cat >>mkt-int.t-in.c <<\EOF
 #endif
 
 	fprintf(stderr, "I: overflow/underflow-checking unsigned...\n");
+	mbsdint__Wd(4242 4244);
 
 #define mbiCfail hin1s = 1
 	for (hin1u = 0; hin1u < UCHAR_MAX; ++hin1u)
@@ -832,6 +838,8 @@ cat >>mkt-int.t-in.c <<\EOF
 			iouts = th_sar(6, hin1u, hin2u);
 			c2("x_mbiMKsar");
 		}
+
+	mbsdint__Wpop;
 EOF
 
 mbc2 65280 0 255 1 255 '
@@ -896,6 +904,7 @@ ubc2 x_mbiMKrem bin1u bin2u boutu
 
 cat >>mkt-int.t-in.c <<\EOF
 	fprintf(stderr, "I: final tests...\n");
+	mbsdint__Wd(4127);
 EOF
 
 t1 'mbi_nil == NULL' 1
@@ -1006,6 +1015,7 @@ cat >>mkt-int.t-in.c <<\EOF
 	if (mbiMASK_CHK(mbiSIZE_MAX))
 		b_mbi = mbiMASK_BITS(mbiSIZE_MAX);
 	f_mbi = mbiTYPE_UBITS(size_t) / (unsigned)((CHAR_BIT) - 1);
+	mbsdint__Wpop;
 	fprintf(stderr, "N: bits of:"
 	    " SIZE_MAX=%u RSIZE_MAX=%u PTRDIFF_MAX=%u mbiSIZE_MAX=%u(0x%0*zX)\n",
 	    b_sz, b_rsz, b_ptr, b_mbi, (int)f_mbi, (size_t)mbiSIZE_MAX);
