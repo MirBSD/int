@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MirOS: src/kern/include/mkt-int.sh,v 1.23 2023/08/12 05:57:38 tg Exp $
+# $MirOS: src/kern/include/mkt-int.sh,v 1.24 2023/08/12 05:58:43 tg Exp $
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -98,7 +98,7 @@ MirBSD)
 esac
 case $* in
 *\ do-cl.bat\ *)
-	flagstotest= ;;
+	flagstotest='/WX' ;;
 esac
 for flagtotest in $flagstotest; do
 	varname=$(echo "X$flagtotest" | sed \
