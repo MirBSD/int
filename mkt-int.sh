@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MirOS: src/kern/include/mkt-int.sh,v 1.17 2023/08/11 21:50:03 tg Exp $
+# $MirOS: src/kern/include/mkt-int.sh,v 1.18 2023/08/12 02:08:23 tg Exp $
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -164,6 +164,7 @@ int tst2[((mbiHUGE_U)(RSIZE_MAX) == (mbiHUGE_U)(size_t)(RSIZE_MAX)) ? 1 : -1];
 int main(void) { tst2[0] = tstarr[0]; return (printf("Hi!\\n")); }
 EOF
 "$@" $LDFLAGS $use_icexp_rsmax -o mkt-int.t-t mkt-int.t-in.c || use_icexp_rsmax=
+set -- "$@" $use_icexp_rsmax
 
 echo >&2 'I: checking for off_t'
 cat >mkt-int.t-in.c <<EOF
@@ -182,7 +183,7 @@ typedef unsigned short hut;
 typedef signed short hst;
 int main(void) { return ((int)sizeof(off_t)); }
 EOF
-"$@" $LDFLAGS $use_icexp_rsmax -o mkt-int.t-t mkt-int.t-in.c || have_offt=0
+"$@" $LDFLAGS -o mkt-int.t-t mkt-int.t-in.c || have_offt=0
 set -- "$@" -DHAVE_OFF_T=$have_offt
 
 xset() {
@@ -936,8 +937,10 @@ cat >>mkt-int.t-in.c <<\EOF
 	if (mbiMASK_CHK(mbiSIZE_MAX))
 		b_mbi = mbiMASK_BITS(mbiSIZE_MAX);
 	f_mbi = mbiTYPE_UBITS(size_t) / (unsigned)((CHAR_BIT) - 1);
-	fprintf(stderr, "N: bits of: RSIZE_MAX=%u SIZE_MAX=%u PTRDIFF_MAX=%u mbiSIZE_MAX=%u(0x%0*zX)\n",
-	    b_rsz, b_sz, b_ptr, b_mbi, (int)f_mbi, (size_t)mbiSIZE_MAX);
+	fprintf(stderr, "N: bits of: mbiPTR=%u"
+	    " SIZE_MAX=%u RSIZE_MAX=%u PTRDIFF_MAX=%u mbiSIZE_MAX=%u(0x%0*zX)\n",
+	    mbiTYPE_UBITS(mbiPTR_U) /* == mbiMASK_BITS(mbiPTR_U_MAX) */,
+	    b_sz, b_rsz, b_ptr, b_mbi, (int)f_mbi, (size_t)mbiSIZE_MAX);
 #if !defined(HAVE_INTCONSTEXPR_RSIZE_MAX) && defined(RSIZE_MAX)
 	fprintf(stderr, "W: RSIZE_MAX found but not an integer constant expression\n");
 	fprintf(stderr, "N: please review the sizes/limits above for suitability!\n");
