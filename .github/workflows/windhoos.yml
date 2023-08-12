@@ -1,0 +1,26 @@
+{
+  "jobs": {
+    "build32": {
+      "runs-on": "windows-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v3.5.3"
+        },
+        {
+          "run": "mkt-int.bat x86"
+        }
+      ]
+    },
+    "build64": {
+      "runs-on": "windows-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v3.5.3"
+        },
+        {
+          "run": "mkt-int.bat amd64"
+        }
+      ]
+    }
+  }
+}
