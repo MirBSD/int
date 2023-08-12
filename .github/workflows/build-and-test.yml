@@ -90,6 +90,11 @@
   },
   "name": "build-and-test",
   "on": {
+    "push": {
+      "branches": [
+        "GHA"
+      ]
+    },
     "workflow_dispatch": null
   }
 }
