@@ -7,6 +7,9 @@
 
 set -ex
 
+if test -e foobarbaz; then exit 1; fi
+touch foobarbaz
+
 BC_ENV_ARGS=-qs LC_ALL=C LANGUAGE=C
 unset LANGUAGE
 export BC_ENV_ARGS LC_ALL
