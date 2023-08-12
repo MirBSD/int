@@ -1,0 +1,49 @@
+{
+  "jobs": {
+    "analyse": {
+      "permissions": {
+        "actions": "read",
+        "contents": "read",
+        "security-events": "write"
+      },
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "name": "Cancel previous runs",
+          "uses": "styfle/cancel-workflow-action@0.11.0",
+          "with": {
+            "access_token": "${{ github.token }}",
+            "all_but_latest": true
+          }
+        },
+        {
+          "uses": "actions/checkout@v3.5.3"
+        },
+        {
+          "run": "(git gc || :)"
+        },
+        {
+          "name": "Initialise CodeQL",
+          "uses": "github/codeql-action/init@v2",
+          "with": {
+            "languages": "cpp"
+          }
+        },
+        {
+          "run": ": \"${CC=cc}${CFLAGS=-O2}\"; eval \"$(env DEB_BUILD_MAINT_OPTIONS='future=+all qa=+all,-canary optimize=+all,-lto hardening=+all reproducible=+all' dpkg-buildflags --export=sh || :)\"; export LDFLAGS; exec sh mkt-int.sh $CC $CPPFLAGS $CFLAGS -Wall -Wextra"
+        },
+        {
+          "name": "Perform CodeQL Analysis",
+          "uses": "github/codeql-action/analyze@v2"
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    }
+  },
+  "name": "CodeQL",
+  "on": {
+    "workflow_dispatch": null
+  }
+}
