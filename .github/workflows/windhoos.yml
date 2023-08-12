@@ -9,10 +9,7 @@
         {
           "uses": "Vampire/setup-wsl@v2.0.1",
           "with": {
-            "additional-packages": [
-              "bc",
-              "build-essential"
-            ],
+            "additional-packages": "bc build-essential",
             "update": true
           }
         },
