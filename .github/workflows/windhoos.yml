@@ -9,7 +9,10 @@
         {
           "run": "mkt-int.bat x86"
         }
-      ]
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
     },
     "build64": {
       "runs-on": "windows-latest",
@@ -20,7 +23,18 @@
         {
           "run": "mkt-int.bat amd64"
         }
-      ]
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
     }
+  },
+  "on": {
+    "push": {
+      "branches": [
+        "GHA"
+      ]
+    },
+    "workflow_dispatch": null
   }
 }
