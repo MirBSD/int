@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MirOS: src/kern/include/mkt-int.sh,v 1.22 2023/08/12 05:48:08 tg Exp $
+# $MirOS: src/kern/include/mkt-int.sh,v 1.23 2023/08/12 05:57:38 tg Exp $
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -101,6 +101,22 @@ case $* in
 	flagstotest= ;;
 esac
 for flagtotest in $flagstotest; do
+	varname=$(echo "X$flagtotest" | sed \
+	    -e 's!^X[/-]*!HAVE_CAN_!' | tr \
+	    qwertyuiopasdfghjklzxcvbnm/=- \
+	    QWERTYUIOPASDFGHJKLZXCVBNM___)
+	eval "varvalue=\${$varname-x}"
+	case $varvalue in
+	0)
+		echo >&2 "I: skipping trying to add $flagtotest"
+		continue
+		;;
+	1)
+		echo >&2 "I: forcing to add $flagtotest"
+		set -- "$@" $flagtotest
+		continue
+		;;
+	esac
 	echo >&2 "I: checking if we can add $flagtotest"
 	if v "$@" $LDFLAGS $flagtotest ${Fe}mkt-int.t-t mkt-int.t-in.c; then
 		set -- "$@" $flagtotest
