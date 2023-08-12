@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MirOS: src/kern/include/mkt-int.sh,v 1.19 2023/08/12 03:53:28 tg Exp $
+# $MirOS: src/kern/include/mkt-int.sh,v 1.20 2023/08/12 04:42:19 tg Exp $
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -357,6 +357,7 @@ static void cf_(const char *where) {
 int main(void) {
 	unsigned int b_rsz = 0, b_sz = 0, b_ptr = 0, b_mbi = 0, f_mbi;
 	const char *whichrepr;
+	const char *mbiPTR_casttgt;
 
 	fprintf(stderr, "I: initial tests...\n");
 EOF
@@ -973,8 +974,16 @@ cat >>mkt-int.t-in.c <<\EOF
 #else
 	fprintf(stderr, "N: no %s\n", "off_t");
 #endif
-	fprintf(stderr, "N: format specifiers: mbiLARGE_S %%%s / mbiHUGE_S %%%s\n",
-	    mbiLARGE_P(d), mbiHUGE_P(d));
+#if MBSDINT_H_MBIPTR_IS_SIZET || \
+    (!defined(__CHERI__) && !defined(UINTPTR_MAX))
+	mbiPTR_casttgt = "size_t";
+#elif MBSDINT_H_MBIPTR_IN_LARGE
+	mbiPTR_casttgt = "mbiLARGE_U";
+#else
+	mbiPTR_casttgt = "mbiHUGE_U";
+#endif
+	fprintf(stderr, "N: format specifiers: mbiLARGE_S %%%s / mbiHUGE_S %%%s / mbiPTR_U %%%s (with cast to %s)\n",
+	    mbiLARGE_P(d), mbiHUGE_P(d), mbiPTR_P(X), mbiPTR_casttgt);
 #ifdef RSIZE_MAX
 	b_rsz = mbiMASK_BITS(RSIZE_MAX);
 #endif
