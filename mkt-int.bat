@@ -16,8 +16,12 @@ echo call "%VSINSTALLDIR%VC\Auxiliary\Build\vcvarsall.bat" %* >>do-cl.bat
 echo cl %%* >>do-cl.bat
 call do-cl.bat /version
 wsl /bin/sh mkt-int.sh "$(wslpath "%COMSPEC%")" /c do-cl.bat -DWINVER=0x0602 -D_WIN32_WINNT=0x0602 -DNTDDI_VERSION=NTDDI_WIN8 /Wall -D__STDC_WANT_SECURE_LIB__=1 /wd5045 /nologo
+if errorlevel 1 goto doerror
 del do-cl.bat
 goto out
+:doerror
+del do-cl.bat
+exit 1
 :dohelp
 "%VSINSTALLDIR%VC\Auxiliary\Build\vcvarsall.bat" /help
 :out
