@@ -5,7 +5,7 @@
 
 # Warning: stress test, creates multiple multi-MiB .c files, .o about half each
 
-set -e
+set -ex
 
 BC_ENV_ARGS=-qs LC_ALL=C LANGUAGE=C
 unset LANGUAGE
