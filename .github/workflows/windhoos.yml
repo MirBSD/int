@@ -7,7 +7,7 @@
           "uses": "actions/checkout@v3.5.3"
         },
         {
-          "run": "mkt-int.bat x86"
+          "run": "cmd /c mkt-int.bat x86"
         }
       ],
       "strategy": {
@@ -21,7 +21,7 @@
           "uses": "actions/checkout@v3.5.3"
         },
         {
-          "run": "mkt-int.bat amd64"
+          "run": "cmd /c mkt-int.bat amd64"
         }
       ],
       "strategy": {
