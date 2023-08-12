@@ -1,9 +1,11 @@
 #!/bin/sh
-# $MirOS: int/mkt-int.sh,v 1.20 2023/08/12 04:42:19 tg Exp $
+# $MirOS: int/mkt-int.sh,v 1.21 2023/08/12 05:04:15 tg Exp $
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
 # Warning: stress test, creates multiple multi-MiB .c files, .o about half each
+
+set -e
 
 BC_ENV_ARGS=-qs LC_ALL=C LANGUAGE=C
 unset LANGUAGE
@@ -53,8 +55,16 @@ case $* in
 	;;
 esac
 
+echo >&2 'I: testing whether we can detect configure failures...'
+canfail=false
+cat >mkt-int.t-in.c <<EOF
+extern int thiswillneverbedefinedIhope(void);
+int main(void) { return (thiswillneverbedefinedIhope()); }
+EOF
+v "$@" $LDFLAGS ${Fe}mkt-int.t-t mkt-int.t-in.c || canfail=true
+$canfail || die cannot fail
+
 echo >&2 'I: checking if we can build at all'
-set -e
 cat >mkt-int.t-in.c <<EOF
 #ifndef __STDC_WANT_LIB_EXT1__
 #define __STDC_WANT_LIB_EXT1__ 1
