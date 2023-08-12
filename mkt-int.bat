@@ -5,6 +5,7 @@ REM (c) 2023 mirabilos (F) CC0
 REM
 set __VSCMD_ARG_NO_LOGO=1
 set VSCMD_SKIP_SENDTELEMETRY=1
+if "%COMSPEC%" == "" (set COMSPEC=C:\WINDOWS\system32\cmd.exe)
 for /F "usebackq tokens=*" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -property installationPath`) do (set "VSINSTALLDIR=%%i\")
 if "%1" == "" goto dohelp
 echo @echo off >do-cl.bat
