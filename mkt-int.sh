@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MirOS: int/mkt-int.sh,v 1.24 2023/08/12 05:58:43 tg Exp $
+# $MirOS: int/mkt-int.sh,v 1.25 2023/08/14 12:27:44 tg Exp $
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -382,6 +382,9 @@ static void cf_(const char *where) {
 	    (bouts != iouts))			\
 		cs_(where);			\
 } while (/* CONSTCOND */ 0)
+
+typedef long larr[3];
+typedef larr *larrp;
 
 int main(void) {
 	unsigned int b_rsz = 0, b_sz = 0, b_ptr = 0, b_mbi = 0, f_mbi;
@@ -1035,6 +1038,9 @@ cat >>mkt-int.t-in.c <<\EOF
 	fprintf(stderr, "N: bits of:"
 	    " SIZE_MAX=%u RSIZE_MAX=%u PTRDIFF_MAX=%u mbiSIZE_MAX=%u(0x%0*zX)\n",
 	    b_sz, b_rsz, b_ptr, b_mbi, (int)f_mbi, (size_t)mbiSIZE_MAX);
+	fprintf(stderr, "N: sizes of pointers:"
+	    " void=%zu char=%zu int=%zu long[]=%zu func=%zu\n",
+	    sizeof(void *), sizeof(char *), sizeof(int *), sizeof(larrp), sizeof(void (*)(void)));
 #if !defined(HAVE_INTCONSTEXPR_RSIZE_MAX) && defined(RSIZE_MAX)
 	fprintf(stderr, "W: RSIZE_MAX found but not an integer constant expression\n");
 	fprintf(stderr, "N: please review the sizes/limits above for suitability!\n");
