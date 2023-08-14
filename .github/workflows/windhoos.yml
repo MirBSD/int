@@ -33,11 +33,6 @@
   },
   "name": "Win32",
   "on": {
-    "push": {
-      "branches": [
-        "GHA"
-      ]
-    },
     "workflow_dispatch": null
   }
 }
