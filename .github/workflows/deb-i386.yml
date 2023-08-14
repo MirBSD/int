@@ -101,6 +101,23 @@
       "strategy": {
         "fail-fast": true
       }
+    },
+    "i386-time64-asan-ss1": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v3.5.3"
+        },
+        {
+          "uses": "docker://i386/debian:sid-slim",
+          "with": {
+            "args": "sh .github/i386.sh time64 asan ss1"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
     }
   },
   "name": "deb-i386",

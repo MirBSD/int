@@ -7,6 +7,7 @@ dbmo_q=qa=+all,-canary
 dbmo_o=optimize=+all,-lto
 dbmo_h=hardening=+all
 dbmo_r=reproducible=+all
+cfs=
 cft=
 cfx=
 cfx_asan='-fsanitize=address -fno-omit-frame-pointer -fno-common -fsanitize=pointer-compare -fsanitize=pointer-subtract -fsanitize=undefined -fsanitize=shift -fsanitize=shift-exponent -fsanitize=shift-base -fsanitize=integer-divide-by-zero -fsanitize=unreachable -fsanitize=vla-bound -fsanitize=null -fsanitize=signed-integer-overflow -fsanitize=bounds -fsanitize=bounds-strict -fsanitize=alignment -fsanitize=object-size -fsanitize=nonnull-attribute -fsanitize=returns-nonnull-attribute -fsanitize=bool -fsanitize=enum -fsanitize=vptr -fsanitize=pointer-overflow -fsanitize=builtin -fsanitize-address-use-after-scope -fstack-clash-protection'
@@ -26,6 +27,9 @@ while test $# -gt 0; do
 		dbmo_f=future=+all,-time64
 		cft='-D_TIME_BITS=64'
 		;;
+	(ss[123])
+		cfs=-DMBSDINT_H_SMALL_SYSTEM=${1#ss}
+		;;
 	(*)
 		echo >&2 "E: unknown option: $1"
 		exit 1 ;;
@@ -39,7 +43,7 @@ apt-get install -y bc build-essential
 : "${CC=cc}${CFLAGS=-O2}"
 eval "$(env DEB_BUILD_MAINT_OPTIONS="$dbmo" dpkg-buildflags --export=sh || :)"
 export LDFLAGS
-exec sh mkt-int.sh $CC $CPPFLAGS $cft $CFLAGS -Wall -Wextra $cfx \
+exec sh mkt-int.sh $CC $CPPFLAGS $cfs $cft $CFLAGS -Wall -Wextra $cfx \
     -DMBSDINT_H_WANT_PTR_IN_SIZET \
     -DMBSDINT_H_WANT_SIZET_IN_LONG \
     -DMBSDINT_H_WANT_INT32 \
