@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MirOS: int/mkt-int.sh,v 1.25 2023/08/14 12:27:44 tg Exp $
+# $MirOS: int/mkt-int.sh,v 1.26 2023/08/14 12:34:14 tg Exp $
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -37,6 +37,13 @@ if test -z "$1"; then
 	echo >&2 'E: usage: LDFLAGS=$LDFLAGS sh mkt-int.sh $CC $CPPFLAGS $CFLAGS [-Dextra...]'
 	echo >&2 'N: extra definitions can be:'
 	echo >&2 'N:  -DMBSDINT_H_SMALL_SYSTEM=1/2/3'
+	echo >&2 'N:  -DMBSDINT_H_MBIPTR_IS_SIZET=0 (if sizet_mbiPTRU fails)'
+	echo >&2 'N:  -DMBSDINT_H_MBIPTR_IN_LARGE=0 (+ mbiPTRU_inlarge, do report!)'
+	echo >&2 'N:  -DMBSDINT_H_WANT_PTR_IN_SIZET (extra check, see below)'
+	echo >&2 'N:  -DMBSDINT_H_WANT_SIZET_IN_LONG (extra check, !Win64)'
+	echo >&2 'N:  -DMBSDINT_H_WANT_INT32 (extra check, POSIX guaranteed)'
+	echo >&2 'N:  -DMBSDINT_H_WANT_LRG64 (ensure a 64-bit type exists)'
+	echo >&2 'N:  -DMBSDINT_H_WANT_SAFEC (test safe twos complement)'
 	exit 3
 fi
 
