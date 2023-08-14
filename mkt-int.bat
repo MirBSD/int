@@ -1,5 +1,5 @@
 @echo off
-REM $MirOS: int/mkt-int.bat,v 1.4 2023/08/14 12:21:18 tg Exp $
+REM $MirOS: int/mkt-int.bat,v 1.5 2023/08/14 17:58:14 tg Exp $
 REM
 REM (c) 2023 mirabilos (F) CC0
 REM
@@ -13,7 +13,7 @@ echo set VSCMD_SKIP_SENDTELEMETRY=1 >>do-cl.bat
 REM echo call "%VSINSTALLDIR%Common7\Tools\VsDevCmd.bat" >>do-cl.bat
 echo call "%VSINSTALLDIR%VC\Auxiliary\Build\vcvarsall.bat" %* >>do-cl.bat
 echo cl %%* >>do-cl.bat
-wsl /bin/sh mkt-int.sh "$(wslpath "%COMSPEC%")" /c do-cl.bat -DWINVER=0x0602 -D_WIN32_WINNT=0x0602 -DNTDDI_VERSION=NTDDI_WIN8 /Wall -D__STDC_WANT_SECURE_LIB__=1 /wd5045 /nologo
+wsl /bin/sh mkt-int.sh "$(wslpath "%COMSPEC%")" /c do-cl.bat -DWINVER=0x0602 -D_WIN32_WINNT=0x0602 -DNTDDI_VERSION=NTDDI_WIN8 /Wall -D__STDC_WANT_SECURE_LIB__=1 /wd5045 -DMBSDINT_H_WANT_PTR_IN_SIZET -DMBSDINT_H_WANT_INT32 -DMBSDINT_H_WANT_LRG64 -DMBSDINT_H_WANT_SAFEC /nologo
 if errorlevel 1 goto doerror
 del do-cl.bat
 exit /b 0
