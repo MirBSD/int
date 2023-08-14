@@ -39,4 +39,9 @@ apt-get install -y bc build-essential
 : "${CC=cc}${CFLAGS=-O2}"
 eval "$(env DEB_BUILD_MAINT_OPTIONS="$dbmo" dpkg-buildflags --export=sh || :)"
 export LDFLAGS
-exec sh mkt-int.sh $CC $CPPFLAGS $cft $CFLAGS -Wall -Wextra $cfx
+exec sh mkt-int.sh $CC $CPPFLAGS $cft $CFLAGS -Wall -Wextra $cfx \
+    -DMBSDINT_H_WANT_PTR_IN_SIZET \
+    -DMBSDINT_H_WANT_SIZET_IN_LONG \
+    -DMBSDINT_H_WANT_INT32 \
+    -DMBSDINT_H_WANT_LRG64 \
+    -DMBSDINT_H_WANT_SAFEC
