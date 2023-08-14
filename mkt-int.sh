@@ -1,5 +1,5 @@
 #!/bin/sh
-# $MirOS: int/mkt-int.sh,v 1.24 2023/08/12 05:58:43 tg Exp $
+# $MirOS: int/mkt-int.sh,v 1.26 2023/08/14 12:34:14 tg Exp $
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -37,6 +37,13 @@ if test -z "$1"; then
 	echo >&2 'E: usage: LDFLAGS=$LDFLAGS sh mkt-int.sh $CC $CPPFLAGS $CFLAGS [-Dextra...]'
 	echo >&2 'N: extra definitions can be:'
 	echo >&2 'N:  -DMBSDINT_H_SMALL_SYSTEM=1/2/3'
+	echo >&2 'N:  -DMBSDINT_H_MBIPTR_IS_SIZET=0 (if sizet_mbiPTRU fails)'
+	echo >&2 'N:  -DMBSDINT_H_MBIPTR_IN_LARGE=0 (+ mbiPTRU_inlarge, do report!)'
+	echo >&2 'N:  -DMBSDINT_H_WANT_PTR_IN_SIZET (extra check, see below)'
+	echo >&2 'N:  -DMBSDINT_H_WANT_SIZET_IN_LONG (extra check, !Win64)'
+	echo >&2 'N:  -DMBSDINT_H_WANT_INT32 (extra check, POSIX guaranteed)'
+	echo >&2 'N:  -DMBSDINT_H_WANT_LRG64 (ensure a 64-bit type exists)'
+	echo >&2 'N:  -DMBSDINT_H_WANT_SAFEC (test safe twos complement)'
 	exit 3
 fi
 
@@ -382,6 +389,9 @@ static void cf_(const char *where) {
 	    (bouts != iouts))			\
 		cs_(where);			\
 } while (/* CONSTCOND */ 0)
+
+typedef long larr[3];
+typedef larr *larrp;
 
 int main(void) {
 	unsigned int b_rsz = 0, b_sz = 0, b_ptr = 0, b_mbi = 0, f_mbi;
@@ -1035,6 +1045,9 @@ cat >>mkt-int.t-in.c <<\EOF
 	fprintf(stderr, "N: bits of:"
 	    " SIZE_MAX=%u RSIZE_MAX=%u PTRDIFF_MAX=%u mbiSIZE_MAX=%u(0x%0*zX)\n",
 	    b_sz, b_rsz, b_ptr, b_mbi, (int)f_mbi, (size_t)mbiSIZE_MAX);
+	fprintf(stderr, "N: sizes of pointers:"
+	    " void=%zu char=%zu int=%zu long[]=%zu func=%zu\n",
+	    sizeof(void *), sizeof(char *), sizeof(int *), sizeof(larrp), sizeof(void (*)(void)));
 #if !defined(HAVE_INTCONSTEXPR_RSIZE_MAX) && defined(RSIZE_MAX)
 	fprintf(stderr, "W: RSIZE_MAX found but not an integer constant expression\n");
 	fprintf(stderr, "N: please review the sizes/limits above for suitability!\n");
