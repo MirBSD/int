@@ -1,3 +1,7 @@
+LC_ALL=C.UTF-8 DEBIAN_FRONTEND=noninteractive
+export LC_ALL DEBIAN_FRONTEND
+unset LANGUAGE
+# more once #539617 is fixed
 dbmo_f=future=+all,-lfs,-time64
 dbmo_q=qa=+all,-canary
 dbmo_o=optimize=+all,-lto
