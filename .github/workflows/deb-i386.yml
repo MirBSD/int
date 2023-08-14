@@ -1,0 +1,28 @@
+{
+  "jobs": {
+    "i386-default": {
+      "container": {
+        "image": "i386/debian:bookworm-slim"
+      },
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v3.5.3"
+        },
+        {
+          "run": "apt-get update && apt-get install -y bc build-essential"
+        },
+        {
+          "run": ": \"${CC=cc}${CFLAGS=-O2}\"; eval \"$(env DEB_BUILD_MAINT_OPTIONS='future=+all qa=+all,-canary optimize=+all,-lto hardening=+all reproducible=+all' dpkg-buildflags --export=sh || :)\"; export LDFLAGS; exec sh mkt-int.sh $CC $CPPFLAGS $CFLAGS -Wall -Wextra"
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    }
+  },
+  "name": "deb-i386",
+  "on": {
+    "workflow_dispatch": null
+  }
+}
