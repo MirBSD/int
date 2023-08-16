@@ -9,7 +9,7 @@
         {
           "uses": "docker://i386/debian:sid-slim",
           "with": {
-            "args": "sh .github/i386.sh"
+            "args": "sh .extra/i386.sh"
           }
         }
       ],
@@ -26,7 +26,7 @@
         {
           "uses": "docker://i386/debian:sid-slim",
           "with": {
-            "args": "sh .github/i386.sh asan"
+            "args": "sh .extra/i386.sh asan"
           }
         }
       ],
@@ -43,7 +43,7 @@
         {
           "uses": "docker://i386/debian:sid-slim",
           "with": {
-            "args": "sh .github/i386.sh lfs"
+            "args": "sh .extra/i386.sh lfs"
           }
         }
       ],
@@ -60,7 +60,7 @@
         {
           "uses": "docker://i386/debian:sid-slim",
           "with": {
-            "args": "sh .github/i386.sh lfs asan"
+            "args": "sh .extra/i386.sh lfs asan"
           }
         }
       ],
@@ -77,7 +77,7 @@
         {
           "uses": "docker://i386/debian:sid-slim",
           "with": {
-            "args": "sh .github/i386.sh time64"
+            "args": "sh .extra/i386.sh time64"
           }
         }
       ],
@@ -94,7 +94,7 @@
         {
           "uses": "docker://i386/debian:sid-slim",
           "with": {
-            "args": "sh .github/i386.sh time64 asan"
+            "args": "sh .extra/i386.sh time64 asan"
           }
         }
       ],
@@ -111,7 +111,7 @@
         {
           "uses": "docker://i386/debian:sid-slim",
           "with": {
-            "args": "sh .github/i386.sh time64 asan ss1"
+            "args": "sh .extra/i386.sh time64 asan ss1"
           }
         }
       ],
