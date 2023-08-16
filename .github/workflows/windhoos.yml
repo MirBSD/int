@@ -19,11 +19,13 @@
         },
         {
           "name": "build i386",
-          "run": "cmd /c mkt-int.bat x86"
+          "run": "mkt-int.bat x86",
+          "shell": "cmd"
         },
         {
           "name": "build amd64",
-          "run": "cmd /c mkt-int.bat amd64"
+          "run": "mkt-int.bat amd64",
+          "shell": "cmd"
         }
       ],
       "strategy": {
