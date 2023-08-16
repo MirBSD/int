@@ -37,6 +37,15 @@ while test $# -gt 0; do
 	shift
 done
 dbmo="$dbmo_f $dbmo_q $dbmo_o $dbmo_h $dbmo_r"
+cat >/etc/apt/apt.conf.d/92bla <<\EOF
+debug::pkgproblemresolver "true";
+Dpkg::Progress-Fancy "false";
+// undo lenny breakage
+APT::Install-Recommends "0";
+APT::Install-Suggests "0";
+APT::Get::Always-Include-Phased-Updates "true";
+APT::Periodic::Enable "0";
+EOF
 apt-get update
 apt-get --purge -y dist-upgrade
 apt-get install -y bc build-essential
