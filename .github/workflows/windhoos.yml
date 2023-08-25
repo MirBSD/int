@@ -26,6 +26,11 @@
           "name": "build amd64",
           "run": "mkt-int.bat amd64",
           "shell": "cmd"
+        },
+        {
+          "name": "unfortunately GHA does not support running this on ARM",
+          "run": "rem",
+          "shell": "cmd"
         }
       ],
       "strategy": {
