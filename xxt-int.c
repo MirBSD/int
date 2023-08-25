@@ -1,4 +1,4 @@
-/* $MirOS: src/kern/include/xxt-int.c,v 1.7 2023/04/17 01:39:03 tg Exp $ */
+const char xxtc_rcsid[] = "$MirOS: src/kern/include/xxt-int.c,v 1.8 2023/08/25 18:12:55 tg Exp $";
 
 /* © 2023 mirabilos Ⓕ MirBSD */
 
