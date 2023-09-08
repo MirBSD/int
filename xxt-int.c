@@ -1,4 +1,5 @@
-const char xxtc_rcsid[] = "$MirOS: src/kern/include/xxt-int.c,v 1.8 2023/08/25 18:12:55 tg Exp $";
+extern const char xxtc_rcsid[];
+const char xxtc_rcsid[] = "$MirOS: src/kern/include/xxt-int.c,v 1.9 2023/09/08 05:57:58 tg Exp $";
 
 /* © 2023 mirabilos Ⓕ MirBSD */
 
