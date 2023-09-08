@@ -85,6 +85,125 @@
         "fail-fast": true
       }
     },
+    "i386-cxx03": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v3.5.3"
+        },
+        {
+          "uses": "docker://i386/debian:sid-slim",
+          "with": {
+            "args": "sh .extra/i386.sh -std=c++03"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "i386-cxx11": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v3.5.3"
+        },
+        {
+          "uses": "docker://i386/debian:sid-slim",
+          "with": {
+            "args": "sh .extra/i386.sh -std=c++11"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "i386-cxx14": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v3.5.3"
+        },
+        {
+          "uses": "docker://i386/debian:sid-slim",
+          "with": {
+            "args": "sh .extra/i386.sh -std=c++14"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "i386-cxx17": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v3.5.3"
+        },
+        {
+          "uses": "docker://i386/debian:sid-slim",
+          "with": {
+            "args": "sh .extra/i386.sh -std=c++17"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "i386-cxx20": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v3.5.3"
+        },
+        {
+          "uses": "docker://i386/debian:sid-slim",
+          "with": {
+            "args": "sh .extra/i386.sh -std=c++20"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "i386-cxx23": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v3.5.3"
+        },
+        {
+          "uses": "docker://i386/debian:sid-slim",
+          "with": {
+            "args": "sh .extra/i386.sh -std=c++2b"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "i386-cxx98": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v3.5.3"
+        },
+        {
+          "uses": "docker://i386/debian:sid-slim",
+          "with": {
+            "args": "sh .extra/i386.sh -std=c++98"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
     "i386-default": {
       "runs-on": "ubuntu-latest",
       "steps": [
