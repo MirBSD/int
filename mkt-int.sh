@@ -1,5 +1,5 @@
 #!/bin/sh
-rcsid='$MirOS: int/mkt-int.sh,v 1.29 2023/09/08 05:10:32 tg Exp $'
+rcsid='$MirOS: int/mkt-int.sh,v 1.30 2023/09/08 05:57:58 tg Exp $'
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -540,7 +540,7 @@ int main(void) {
 	struct want_fam *fam;
 
 	/* check FAMs don’t warn */
-	fam = malloc(offsetof(struct want_fam, label) + sizeof(faml));
+	fam = (struct want_fam *)malloc(offsetof(struct want_fam, label) + sizeof(faml));
 	if (!fam) {
 		fprintf(stderr, "E: malloc failed\n");
 		return (1);
@@ -636,6 +636,7 @@ ubc1() {
 	echo "	$fn();" >>mkt-int.t-in.c
 	echo "extern void $fn(void);" >>mkt-int.t-ff.h
     {
+	echo >&4 "extern const $ti ${fn}_i[];"
 	echo >&4 "const $ti ${fn}_i[] = {"
 	echo "extern const $ti ${fn}_i[];"
 	echo "static const $to ${fn}_o[] = {"
@@ -666,8 +667,10 @@ ubc2() {
 	echo "	$fn();" >>mkt-int.t-in.c
 	echo "extern void $fn(void);" >>mkt-int.t-ff.h
     {
+	echo >&4 "extern const $ta ${fn}_a[];"
 	echo >&4 "const $ta ${fn}_a[] = {"
 	echo "extern const $ta ${fn}_a[];"
+	echo >&5 "extern const $tb ${fn}_b[];"
 	echo >&5 "const $tb ${fn}_b[] = {"
 	echo "extern const $tb ${fn}_b[];"
 	echo "static const $ty ${fn}_y[] = {"
