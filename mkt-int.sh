@@ -1,5 +1,5 @@
 #!/bin/sh
-rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.28 2023/09/08 03:10:43 tg Exp $'
+rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.29 2023/09/08 05:10:32 tg Exp $'
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -389,6 +389,8 @@ $use_basetsd
 #define MBSDINT_H_SKIP_CTAS 1
 #include "mbsdint.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define XXT_DO_STDIO_IMPLS
 #include "xxt-int.h"
@@ -513,10 +515,40 @@ static const char dMBSDINT_H_WANT_SAFEC[] = "undef";
 #endif
 #undef s
 
+/* ensure flexible array members can be used */
+struct want_fam {
+	int blahfoo;
+	char moo;
+	mbi__FAM(char, label);
+};
+
+mbiCTAS_BEG(fieldsizeof);
+ mbiCTA(o0, offsetof(struct want_fam, blahfoo) == 0);
+ mbiCTA(s0, mbi__FSZ(struct want_fam, blahfoo) == sizeof(int));
+ mbiCTA(o1, offsetof(struct want_fam, moo) >= sizeof(int));
+ mbiCTA(s1, mbi__FSZ(struct want_fam, moo) == sizeof(char));
+ mbiCTA(o2, offsetof(struct want_fam, label) >=
+    (offsetof(struct want_fam, moo) + sizeof(char)));
+mbiCTAS_END(fieldsizeof);
+
+static const char faml[] = "FAM label";
+
 int main(void) {
 	unsigned int b_rsz = 0, b_sz = 0, b_ptr = 0, b_mbi = 0, f_mbi;
 	const char *whichrepr;
 	const char *mbiPTR_casttgt;
+	struct want_fam *fam;
+
+	/* check FAMs don’t warn */
+	fam = malloc(offsetof(struct want_fam, label) + sizeof(faml));
+	if (!fam) {
+		fprintf(stderr, "E: malloc failed\n");
+		return (1);
+	}
+	memcpy(&fam->label, faml, sizeof(faml));
+	fprintf(stderr, "I: the following text should read '%s':\n", faml);
+	fflush(stderr);
+	fprintf(stderr, "N: %s\n", fam->label);
 
 	fprintf(stderr, "I: initial tests...\n");
 	mbsdint__Wd(4127);
