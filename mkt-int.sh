@@ -1,5 +1,5 @@
 #!/bin/sh
-rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.27 2023/08/25 18:12:55 tg Exp $'
+rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.28 2023/09/08 03:10:43 tg Exp $'
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -475,8 +475,7 @@ static const int xMBSDINT_H_WANT_LRG64 =
 static const int xMBSDINT_H_WANT_SAFEC =
 	mbiSAFECOMPLEMENT == 1;
 
-#define S(x) #x
-#define s(x) "'" S(x) "'"
+#define s(x) "'" mbi__S(x) "'"
 #ifdef MBSDINT_H_MBIPTR_IS_SIZET
 static const char dMBSDINT_H_MBIPTR_IS_SIZET[] = s(MBSDINT_H_MBIPTR_IS_SIZET);
 #else
@@ -513,7 +512,6 @@ static const char dMBSDINT_H_WANT_SAFEC[] = s(MBSDINT_H_WANT_SAFEC);
 static const char dMBSDINT_H_WANT_SAFEC[] = "undef";
 #endif
 #undef s
-#undef S
 
 int main(void) {
 	unsigned int b_rsz = 0, b_sz = 0, b_ptr = 0, b_mbi = 0, f_mbi;
@@ -1078,16 +1076,15 @@ cat >>mkt-int.t-in.c <<\EOF
 	fprintf(stderr, "N: CHAR_BIT: %d\t\tcomplement: %s using %s\n",
 	    (int)CHAR_BIT, mbiSAFECOMPLEMENT ? "safe" : "UNSAFE", whichrepr);
 
-#define ts(x) #x
 #define ti(t,min,max) if (mbiTYPE_ISF(t)) \
 	fprintf(stderr, "N: %18s: floatish, %u chars, min(%s) max(%s)\n", \
-	    #t, (unsigned)sizeof(t), ts(min), ts(max)); \
+	    #t, (unsigned)sizeof(t), mbi__S(min), mbi__S(max)); \
     else if (mbiTYPE_ISU(t)) \
 	fprintf(stderr, "N: %18s: unsigned, %u chars, %u bits, max(%s) w=%u\n", \
-	    #t, (unsigned)sizeof(t), mbiTYPE_ISU(t)?mbiTYPE_UBITS(t):0, ts(max), max==0?0:mbiMASK_BITS(max)); \
+	    #t, (unsigned)sizeof(t), mbiTYPE_ISU(t)?mbiTYPE_UBITS(t):0, mbi__S(max), max==0?0:mbiMASK_BITS(max)); \
     else \
 	fprintf(stderr, "N: %18s:   signed, %u chars, min(%s), max(%s) w=%u\n", \
-	    #t, (unsigned)sizeof(t), ts(min), ts(max), max==0?0:(mbiMASK_BITS(max) + 1))
+	    #t, (unsigned)sizeof(t), mbi__S(min), mbi__S(max), max==0?0:(mbiMASK_BITS(max) + 1))
 
 	ti(char, CHAR_MIN, CHAR_MAX);
 	ti(signed char, SCHAR_MIN, SCHAR_MAX);
