@@ -1,5 +1,5 @@
 #!/bin/sh
-rcsid='$MirOS: int/mkt-int.sh,v 1.30 2023/09/08 05:57:58 tg Exp $'
+rcsid='$MirOS: int/mkt-int.sh,v 1.31 2023/09/08 06:15:38 tg Exp $'
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -549,6 +549,7 @@ int main(void) {
 	fprintf(stderr, "I: the following text should read '%s':\n", faml);
 	fflush(stderr);
 	fprintf(stderr, "N: %s\n", fam->label);
+	free(fam);
 
 	fprintf(stderr, "I: initial tests...\n");
 	mbsdint__Wd(4127);
