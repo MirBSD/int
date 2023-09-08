@@ -238,6 +238,40 @@
         "fail-fast": true
       }
     },
+    "i386-dietlibc": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v3.5.3"
+        },
+        {
+          "uses": "docker://i386/debian:sid-slim",
+          "with": {
+            "args": "sh .extra/i386.sh dietlibc"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "i386-klibc": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v3.5.3"
+        },
+        {
+          "uses": "docker://i386/debian:sid-slim",
+          "with": {
+            "args": "sh .extra/i386.sh klibc"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
     "i386-lfs": {
       "runs-on": "ubuntu-latest",
       "steps": [

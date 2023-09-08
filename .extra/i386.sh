@@ -11,6 +11,8 @@ cfs=
 cft=
 cfx=
 cfx_asan='-fsanitize=address -fno-omit-frame-pointer -fno-common -fsanitize=pointer-compare -fsanitize=pointer-subtract -fsanitize=undefined -fsanitize=shift -fsanitize=shift-exponent -fsanitize=shift-base -fsanitize=integer-divide-by-zero -fsanitize=unreachable -fsanitize=vla-bound -fsanitize=null -fsanitize=signed-integer-overflow -fsanitize=bounds -fsanitize=bounds-strict -fsanitize=alignment -fsanitize=object-size -fsanitize=nonnull-attribute -fsanitize=returns-nonnull-attribute -fsanitize=bool -fsanitize=enum -fsanitize=vptr -fsanitize=pointer-overflow -fsanitize=builtin -fsanitize-address-use-after-scope -fstack-clash-protection'
+libc=
+xpkg=
 set -ex
 while test $# -gt 0; do
 	case $1 in
@@ -33,6 +35,14 @@ while test $# -gt 0; do
 	(ss[123])
 		cfs=-DMBSDINT_H_SMALL_SYSTEM=${1#ss}
 		;;
+	(dietlibc)
+		libc=$1
+		xpkg=dietlibc-dev
+		;;
+	(klibc)
+		libc=$1
+		xpkg=libklibc-dev
+		;;
 	(*)
 		echo >&2 "E: unknown option: $1"
 		exit 1 ;;
@@ -51,9 +61,41 @@ APT::Periodic::Enable "0";
 EOF
 apt-get update
 apt-get --purge -y dist-upgrade
-apt-get install -y bc build-essential
+apt-get install -y bc build-essential $xpkg
 : "${CC=cc}${CXX=c++}${CFLAGS=-O2}"
 eval "$(env DEB_BUILD_MAINT_OPTIONS="$dbmo" dpkg-buildflags --export=sh || :)"
+if test -n "$libc"; then
+	sCFLAGS=
+	for x in $CFLAGS; do
+		case $x in
+		(-O*|-g*|-fstack-protector*|-fPIE|-specs=*) ;;
+		(*) sCFLAGS="$sCFLAGS $x" ;;
+		esac
+	done
+	sLDFLAGS=
+	for x in $LDFLAGS; do
+		case $x in
+		(-pie|-fPIE|-specs=*) ;;
+		(*) sLDFLAGS="$sLDFLAGS $x" ;;
+		esac
+	done
+	case $libc in
+	(dietlibc)
+		CC="diet -v -Os $CC"
+		CFLAGS=$sCFLAGS
+		CPPFLAGS=$sCPPFLAGS
+		LDFLAGS=$sLDFLAGS
+		;;
+	(klibc)
+		CC=klcc
+		CFLAGS="$(klcc -print-klibc-optflags) $sCFLAGS"
+		CPPFLAGS=$sCPPFLAGS
+		LDFLAGS="$sLDFLAGS -static"
+		;;
+	(*)
+		exit 1 ;;
+	esac
+fi
 export LDFLAGS
 case $cfx in
 (*'++'*) CC=$CXX CFLAGS=$CXXFLAGS ;;
