@@ -1,5 +1,5 @@
 #!/bin/sh
-rcsid='$MirOS: int/mkt-int.sh,v 1.27 2023/08/25 18:12:55 tg Exp $'
+rcsid='$MirOS: int/mkt-int.sh,v 1.29 2023/09/08 05:10:32 tg Exp $'
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -389,6 +389,8 @@ $use_basetsd
 #define MBSDINT_H_SKIP_CTAS 1
 #include "mbsdint.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define XXT_DO_STDIO_IMPLS
 #include "xxt-int.h"
@@ -475,8 +477,7 @@ static const int xMBSDINT_H_WANT_LRG64 =
 static const int xMBSDINT_H_WANT_SAFEC =
 	mbiSAFECOMPLEMENT == 1;
 
-#define S(x) #x
-#define s(x) "'" S(x) "'"
+#define s(x) "'" mbi__S(x) "'"
 #ifdef MBSDINT_H_MBIPTR_IS_SIZET
 static const char dMBSDINT_H_MBIPTR_IS_SIZET[] = s(MBSDINT_H_MBIPTR_IS_SIZET);
 #else
@@ -513,12 +514,41 @@ static const char dMBSDINT_H_WANT_SAFEC[] = s(MBSDINT_H_WANT_SAFEC);
 static const char dMBSDINT_H_WANT_SAFEC[] = "undef";
 #endif
 #undef s
-#undef S
+
+/* ensure flexible array members can be used */
+struct want_fam {
+	int blahfoo;
+	char moo;
+	mbi__FAM(char, label);
+};
+
+mbiCTAS_BEG(fieldsizeof);
+ mbiCTA(o0, offsetof(struct want_fam, blahfoo) == 0);
+ mbiCTA(s0, mbi__FSZ(struct want_fam, blahfoo) == sizeof(int));
+ mbiCTA(o1, offsetof(struct want_fam, moo) >= sizeof(int));
+ mbiCTA(s1, mbi__FSZ(struct want_fam, moo) == sizeof(char));
+ mbiCTA(o2, offsetof(struct want_fam, label) >=
+    (offsetof(struct want_fam, moo) + sizeof(char)));
+mbiCTAS_END(fieldsizeof);
+
+static const char faml[] = "FAM label";
 
 int main(void) {
 	unsigned int b_rsz = 0, b_sz = 0, b_ptr = 0, b_mbi = 0, f_mbi;
 	const char *whichrepr;
 	const char *mbiPTR_casttgt;
+	struct want_fam *fam;
+
+	/* check FAMs don’t warn */
+	fam = malloc(offsetof(struct want_fam, label) + sizeof(faml));
+	if (!fam) {
+		fprintf(stderr, "E: malloc failed\n");
+		return (1);
+	}
+	memcpy(&fam->label, faml, sizeof(faml));
+	fprintf(stderr, "I: the following text should read '%s':\n", faml);
+	fflush(stderr);
+	fprintf(stderr, "N: %s\n", fam->label);
 
 	fprintf(stderr, "I: initial tests...\n");
 	mbsdint__Wd(4127);
@@ -1078,16 +1108,15 @@ cat >>mkt-int.t-in.c <<\EOF
 	fprintf(stderr, "N: CHAR_BIT: %d\t\tcomplement: %s using %s\n",
 	    (int)CHAR_BIT, mbiSAFECOMPLEMENT ? "safe" : "UNSAFE", whichrepr);
 
-#define ts(x) #x
 #define ti(t,min,max) if (mbiTYPE_ISF(t)) \
 	fprintf(stderr, "N: %18s: floatish, %u chars, min(%s) max(%s)\n", \
-	    #t, (unsigned)sizeof(t), ts(min), ts(max)); \
+	    #t, (unsigned)sizeof(t), mbi__S(min), mbi__S(max)); \
     else if (mbiTYPE_ISU(t)) \
 	fprintf(stderr, "N: %18s: unsigned, %u chars, %u bits, max(%s) w=%u\n", \
-	    #t, (unsigned)sizeof(t), mbiTYPE_ISU(t)?mbiTYPE_UBITS(t):0, ts(max), max==0?0:mbiMASK_BITS(max)); \
+	    #t, (unsigned)sizeof(t), mbiTYPE_ISU(t)?mbiTYPE_UBITS(t):0, mbi__S(max), max==0?0:mbiMASK_BITS(max)); \
     else \
 	fprintf(stderr, "N: %18s:   signed, %u chars, min(%s), max(%s) w=%u\n", \
-	    #t, (unsigned)sizeof(t), ts(min), ts(max), max==0?0:(mbiMASK_BITS(max) + 1))
+	    #t, (unsigned)sizeof(t), mbi__S(min), mbi__S(max), max==0?0:(mbiMASK_BITS(max) + 1))
 
 	ti(char, CHAR_MIN, CHAR_MAX);
 	ti(signed char, SCHAR_MIN, SCHAR_MAX);
