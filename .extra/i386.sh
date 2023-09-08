@@ -14,6 +14,9 @@ cfx_asan='-fsanitize=address -fno-omit-frame-pointer -fno-common -fsanitize=poin
 set -ex
 while test $# -gt 0; do
 	case $1 in
+	(-std=*)
+		cfx=$1
+		;;
 	(lfs)
 		dbmo_f=future=+all,-time64
 		;;
@@ -49,9 +52,12 @@ EOF
 apt-get update
 apt-get --purge -y dist-upgrade
 apt-get install -y bc build-essential
-: "${CC=cc}${CFLAGS=-O2}"
+: "${CC=cc}${CXX=c++}${CFLAGS=-O2}"
 eval "$(env DEB_BUILD_MAINT_OPTIONS="$dbmo" dpkg-buildflags --export=sh || :)"
 export LDFLAGS
+case $cfx in
+(*'++'*) CC=$CXX CFLAGS=$CXXFLAGS ;;
+esac
 exec sh mkt-int.sh $CC $CPPFLAGS $cfs $cft $CFLAGS -Wall -Wextra $cfx \
     -DMBSDINT_H_WANT_PTR_IN_SIZET \
     -DMBSDINT_H_WANT_SIZET_IN_LONG \

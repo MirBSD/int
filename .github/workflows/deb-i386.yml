@@ -1,5 +1,90 @@
 {
   "jobs": {
+    "i386-c11": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v3.5.3"
+        },
+        {
+          "uses": "docker://i386/debian:sid-slim",
+          "with": {
+            "args": "sh .extra/i386.sh -std=c11"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "i386-c17": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v3.5.3"
+        },
+        {
+          "uses": "docker://i386/debian:sid-slim",
+          "with": {
+            "args": "sh .extra/i386.sh -std=c17"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "i386-c23": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v3.5.3"
+        },
+        {
+          "uses": "docker://i386/debian:sid-slim",
+          "with": {
+            "args": "sh .extra/i386.sh -std=c2x"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "i386-c89": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v3.5.3"
+        },
+        {
+          "uses": "docker://i386/debian:sid-slim",
+          "with": {
+            "args": "sh .extra/i386.sh -std=c89"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "i386-c99": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v3.5.3"
+        },
+        {
+          "uses": "docker://i386/debian:sid-slim",
+          "with": {
+            "args": "sh .extra/i386.sh -std=c99"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
     "i386-default": {
       "runs-on": "ubuntu-latest",
       "steps": [
