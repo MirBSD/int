@@ -1087,11 +1087,13 @@ ubc2 x_mbiMKrem bin1u bin2u boutu
 cat >>mkt-int.t-in.c <<\EOF
 	fprintf(stderr, "I: final tests...\n");
 	mbsdint__Wd(4127);
+#ifndef __cplusplus
 EOF
 
 t1 'mbi_nil == NULL' 1
 
 cat >>mkt-int.t-in.c <<\EOF
+#endif /* !__cplusplus */
 
 	switch ((unsigned int)bitrepr(-1)) {
 	case 0xFFU:
