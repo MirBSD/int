@@ -133,9 +133,7 @@
 #define mbi__FAM(type,name)	type name[1] /* SOL */ mbsdint__Ws(4820)
 #endif
 /* field sizeof */
-#ifdef __cplusplus
-#define mbi__FSZ(struc,memb)	(sizeof((struc){}.memb))
-#elif (defined(__STDC_VERSION__) && ((__STDC_VERSION__) >= 199901L))
+#if (defined(__STDC_VERSION__) && ((__STDC_VERSION__) >= 199901L))
 #define mbi__FSZ(struc,memb)	(sizeof(((struc){0}).memb))
 #else
 #define mbi__FSZ(struc,memb)	(sizeof(((struc *)0)->memb))
