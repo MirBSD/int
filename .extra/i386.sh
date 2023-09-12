@@ -106,7 +106,7 @@ if test -n "$libc"; then
 fi
 export LDFLAGS
 case $cfx in
-(*'++'*) CC=$CXX CFLAGS=$CXXFLAGS CPPFLAGS="$CPPFLAGS -x c++" ;;
+(*'++'*) CC=$CXX CFLAGS=$CXXFLAGS ;;
 esac
 exec sh mkt-int.sh $CC $CPPFLAGS $cfs $cft $CFLAGS -Wall -Wextra $cfx \
     -DMBSDINT_H_WANT_PTR_IN_SIZET \
