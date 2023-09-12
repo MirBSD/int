@@ -1,6 +1,6 @@
 {
   "jobs": {
-    "clang++03": {
+    "clang-cxx03": {
       "runs-on": "ubuntu-latest",
       "steps": [
         {
@@ -17,7 +17,7 @@
         "fail-fast": true
       }
     },
-    "clang++11": {
+    "clang-cxx11": {
       "runs-on": "ubuntu-latest",
       "steps": [
         {
@@ -34,7 +34,7 @@
         "fail-fast": true
       }
     },
-    "clang++14": {
+    "clang-cxx14": {
       "runs-on": "ubuntu-latest",
       "steps": [
         {
@@ -51,7 +51,7 @@
         "fail-fast": true
       }
     },
-    "clang++17": {
+    "clang-cxx17": {
       "runs-on": "ubuntu-latest",
       "steps": [
         {
@@ -68,7 +68,7 @@
         "fail-fast": true
       }
     },
-    "clang++20": {
+    "clang-cxx20": {
       "runs-on": "ubuntu-latest",
       "steps": [
         {
@@ -85,7 +85,7 @@
         "fail-fast": true
       }
     },
-    "clang++2b": {
+    "clang-cxx2b": {
       "runs-on": "ubuntu-latest",
       "steps": [
         {
@@ -102,7 +102,7 @@
         "fail-fast": true
       }
     },
-    "clang++98": {
+    "clang-cxx98": {
       "runs-on": "ubuntu-latest",
       "steps": [
         {
