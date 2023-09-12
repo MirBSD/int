@@ -43,6 +43,10 @@ while test $# -gt 0; do
 		libc=$1
 		xpkg=libklibc-dev
 		;;
+	(clang)
+		libc=$1
+		xpkg=clang
+		;;
 	(*)
 		echo >&2 "E: unknown option: $1"
 		exit 1 ;;
@@ -91,6 +95,10 @@ if test -n "$libc"; then
 		CFLAGS="$(klcc -print-klibc-optflags) $sCFLAGS"
 		CPPFLAGS=$sCPPFLAGS
 		LDFLAGS="$sLDFLAGS -static"
+		;;
+	(clang)
+		CC=clang
+		CXX=clang++
 		;;
 	(*)
 		exit 1 ;;
