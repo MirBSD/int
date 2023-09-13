@@ -18,13 +18,43 @@
           "uses": "actions/checkout@v3.5.3"
         },
         {
-          "name": "build i386",
-          "run": "mkt-int.bat x86",
+          "name": "prepare i386 C",
+          "run": "find-cl.bat x86",
           "shell": "cmd"
         },
         {
-          "name": "build amd64",
-          "run": "mkt-int.bat amd64",
+          "name": "build i386 C",
+          "run": "mkt-int.bat",
+          "shell": "cmd"
+        },
+        {
+          "name": "prepare amd64 C",
+          "run": "find-cl.bat amd64",
+          "shell": "cmd"
+        },
+        {
+          "name": "build amd64 C",
+          "run": "mkt-int.bat",
+          "shell": "cmd"
+        },
+        {
+          "name": "prepare i386 C++",
+          "run": "find-cl.bat x86",
+          "shell": "cmd"
+        },
+        {
+          "name": "build i386 C++",
+          "run": "mkt-int.bat -cxx",
+          "shell": "cmd"
+        },
+        {
+          "name": "prepare amd64 C++",
+          "run": "find-cl.bat amd64",
+          "shell": "cmd"
+        },
+        {
+          "name": "build amd64 C++",
+          "run": "mkt-int.bat -cxx",
           "shell": "cmd"
         },
         {
