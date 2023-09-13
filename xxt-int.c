@@ -1,5 +1,5 @@
 extern const char xxtc_rcsid[];
-const char xxtc_rcsid[] = "$MirOS: src/kern/include/xxt-int.c,v 1.9 2023/09/08 05:57:58 tg Exp $";
+const char xxtc_rcsid[] = "$MirOS: src/kern/include/xxt-int.c,v 1.10 2023/09/13 00:59:21 tg Exp $";
 
 /* © 2023 mirabilos Ⓕ MirBSD */
 
@@ -12,9 +12,9 @@ int th_rol(unsigned int bits, unsigned int v1, unsigned int v2) {
 	while (v2 >= bits)
 		v2 -= bits;
 	if (!v2)
-		return (v1);
+		return ((int)v1);
 	v1 = (v1 << v2) | (v1 >> (bits - v2));
-	return (v1 & mask);
+	return ((int)(v1 & mask));
 }
 
 int th_ror(unsigned int bits, unsigned int v1, unsigned int v2) {
@@ -24,9 +24,9 @@ int th_ror(unsigned int bits, unsigned int v1, unsigned int v2) {
 	while (v2 >= bits)
 		v2 -= bits;
 	if (!v2)
-		return (v1);
+		return ((int)v1);
 	v1 = (v1 >> v2) | (v1 << (bits - v2));
-	return (v1 & mask);
+	return ((int)(v1 & mask));
 }
 
 int th_shl(unsigned int bits, unsigned int v1, unsigned int v2) {
@@ -36,9 +36,9 @@ int th_shl(unsigned int bits, unsigned int v1, unsigned int v2) {
 	while (v2 >= bits)
 		v2 -= bits;
 	if (!v2)
-		return (v1);
+		return ((int)v1);
 	v1 = (v1 << v2);
-	return (v1 & mask);
+	return ((int)(v1 & mask));
 }
 
 int th_shr(unsigned int bits, unsigned int v1, unsigned int v2) {
@@ -48,9 +48,9 @@ int th_shr(unsigned int bits, unsigned int v1, unsigned int v2) {
 	while (v2 >= bits)
 		v2 -= bits;
 	if (!v2)
-		return (v1);
+		return ((int)v1);
 	v1 = (v1 >> v2);
-	return (v1 & mask);
+	return ((int)(v1 & mask));
 }
 
 int th_sar(unsigned int bits, unsigned int v1, unsigned int v2) {
@@ -61,9 +61,9 @@ int th_sar(unsigned int bits, unsigned int v1, unsigned int v2) {
 	while (v2 >= bits)
 		v2 -= bits;
 	if (!v2)
-		return (v1);
+		return ((int)v1);
 	v1 = (((v1 & sgnb) ? mask : 0U) << (bits - v2)) | (v1 >> v2);
-	return (v1 & mask);
+	return ((int)(v1 & mask));
 }
 
 unsigned char bitrepr(signed char val) {

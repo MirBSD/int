@@ -1,5 +1,5 @@
 #!/bin/sh
-rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.32 2023/09/13 00:54:11 tg Exp $'
+rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.33 2023/09/13 00:59:20 tg Exp $'
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -1100,11 +1100,13 @@ ubc2 x_mbiMKrem bin1u bin2u boutu
 cat >>mkt-int.t-in.$srcext <<\EOF
 	fprintf(stderr, "I: final tests...\n");
 	mbsdint__Wd(4127);
+#ifndef __cplusplus
 EOF
 
 t1 'mbi_nil == NULL' 1
 
 cat >>mkt-int.t-in.$srcext <<\EOF
+#endif /* !__cplusplus */
 
 	switch ((unsigned int)bitrepr(-1)) {
 	case 0xFFU:
