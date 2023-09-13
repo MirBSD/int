@@ -1,5 +1,5 @@
 #!/bin/sh
-rcsid='$MirOS: int/mkt-int.sh,v 1.33 2023/09/13 00:59:20 tg Exp $'
+rcsid='$MirOS: int/mkt-int.sh,v 1.34 2023/09/13 01:01:03 tg Exp $'
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -13,6 +13,7 @@ export BC_ENV_ARGS LC_ALL
 nl='
 '
 ht='	'
+rcsid="$rcsid ($*|$LDFLAGS)"
 
 die() {
 	w=false
