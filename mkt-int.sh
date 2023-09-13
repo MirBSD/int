@@ -33,6 +33,13 @@ v() (
 	exec "$@"
 )
 
+if test x"$1" = x"-cxx"; then
+	shift
+	usecxx=true
+else
+	usecxx=false
+fi
+
 if test x"$1" = x"-x"; then
 	shift
 	cross=true
@@ -40,18 +47,21 @@ else
 	cross=false
 fi
 
-if test -z "$1"; then
-	echo >&2 'E: usage: LDFLAGS=$LDFLAGS sh mkt-int.sh [-x] $CC $CPPFLAGS $CFLAGS [-Dextra...]'
-	echo >&2 'N: -x = cross-compile'
-	echo >&2 'N: extra definitions can be:'
-	echo >&2 'N:  -DMBSDINT_H_SMALL_SYSTEM=1/2/3'
-	echo >&2 'N:  -DMBSDINT_H_MBIPTR_IS_SIZET=0 (if sizet_mbiPTRU fails)'
-	echo >&2 'N:  -DMBSDINT_H_MBIPTR_IN_LARGE=0 (+ mbiPTRU_inlarge, do report!)'
-	echo >&2 'N:  -DMBSDINT_H_WANT_PTR_IN_SIZET (extra check, see below)'
-	echo >&2 'N:  -DMBSDINT_H_WANT_SIZET_IN_LONG (extra check, !Win64)'
-	echo >&2 'N:  -DMBSDINT_H_WANT_INT32 (extra check, POSIX guaranteed)'
-	echo >&2 'N:  -DMBSDINT_H_WANT_LRG64 (ensure a 64-bit type exists)'
-	echo >&2 'N:  -DMBSDINT_H_WANT_SAFEC (test safe twos complement)'
+if test -z "$1"; then cat >&2 <<\EOF
+E: usage: LDFLAGS=$LDFLAGS sh mkt-int.sh [-cxx] [-x] \
+              $CC $CPPFLAGS $CFLAGS [-Dextra...]
+N: -cxx = build as CFrustFrust
+N: -x = cross-compile
+N: extra definitions can be:
+N:  -DMBSDINT_H_SMALL_SYSTEM=1/2/3
+N:  -DMBSDINT_H_MBIPTR_IS_SIZET=0 (if sizet_mbiPTRU fails)
+N:  -DMBSDINT_H_MBIPTR_IN_LARGE=0 (+ mbiPTRU_inlarge, do report!)
+N:  -DMBSDINT_H_WANT_PTR_IN_SIZET (extra check, see below)
+N:  -DMBSDINT_H_WANT_SIZET_IN_LONG (extra check, !Win64)
+N:  -DMBSDINT_H_WANT_INT32 (extra check, POSIX guaranteed)
+N:  -DMBSDINT_H_WANT_LRG64 (ensure a 64-bit type exists)
+N:  -DMBSDINT_H_WANT_SAFEC (test safe twos complement)
+EOF
 	exit 3
 fi
 
@@ -64,16 +74,12 @@ case $* in
 *\ do-cl.bat\ *)
 	Fe=/Fe
 	objext=obj
-	case " $* " in
-	(*\ /TP\ *) srcext=cxx ;;
-	esac
+	$usecxx && srcext=cxx || :
 	;;
 *)
 	Fe='-o '
 	objext=o
-	case " $* " in
-	(*\ -std=c++*) srcext=cc ;;
-	esac
+	$usecxx && srcext=cc || :
 	;;
 esac
 
