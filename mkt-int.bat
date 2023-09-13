@@ -1,5 +1,5 @@
 @echo off
-REM $MirOS: src/kern/include/mkt-int.bat,v 1.8 2023/09/13 00:55:12 tg Exp $
+REM $MirOS: src/kern/include/mkt-int.bat,v 1.9 2023/09/13 01:00:03 tg Exp $
 REM
 REM (c) 2023 mirabilos (F) CC0
 REM
@@ -19,7 +19,7 @@ set x=-x
 set args=%args:~3%
 shift
 :nocross
-wsl /bin/sh mkt-int.sh %cxx% %x% "$(wslpath "%COMSPEC%")" /c do-cl.bat -DWINVER=0x0602 -D_WIN32_WINNT=0x0602 -DNTDDI_VERSION=NTDDI_WIN8 /Wall -D__STDC_WANT_SECURE_LIB__=1 /wd5045 -DMBSDINT_H_WANT_PTR_IN_SIZET -DMBSDINT_H_WANT_INT32 -DMBSDINT_H_WANT_LRG64 -DMBSDINT_H_WANT_SAFEC %args% /nologo
+wsl /bin/sh mkt-int.sh %cxx% %x% "$(wslpath "%COMSPEC%")" /c do-cl.bat -DWINVER=0x0602 -D_WIN32_WINNT=0x0602 -DNTDDI_VERSION=NTDDI_WIN8 /Wall -D__STDC_WANT_SECURE_LIB__=1 /wd4514 /wd5045 -DMBSDINT_H_WANT_PTR_IN_SIZET -DMBSDINT_H_WANT_INT32 -DMBSDINT_H_WANT_LRG64 -DMBSDINT_H_WANT_SAFEC %args% /nologo
 if errorlevel 1 goto doerror
 del do-cl.bat
 exit /b 0
