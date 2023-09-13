@@ -1,5 +1,5 @@
 @echo off
-REM $MirOS: int/mkt-int.bat,v 1.6 2023/08/25 18:12:55 tg Exp $
+REM $MirOS: int/find-cl.bat,v 1.1 2023/09/13 00:55:12 tg Exp $
 REM
 REM (c) 2023 mirabilos (F) CC0
 REM
