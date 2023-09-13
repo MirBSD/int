@@ -128,7 +128,7 @@
     defined(__cpp_flexible_array_members)
 #define mbi__FAM(type,name)	type name[]
 #elif defined(__GNUC__) || defined(__cplusplus)
-#define mbi__FAM(type,name)	type name[0]
+#define mbi__FAM(type,name)	type name[0] mbsdint__Ws(4200 4820)
 #else
 #define mbi__FAM(type,name)	type name[1] /* SOL */ mbsdint__Ws(4820)
 #endif
