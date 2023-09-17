@@ -1,5 +1,5 @@
 #!/bin/sh
-rcsid='$MirOS: int/mkt-int.sh,v 1.34 2023/09/13 01:01:03 tg Exp $'
+rcsid='$MirOS: int/mkt-int.sh,v 1.35 2023/09/17 00:44:41 tg Exp $'
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -99,18 +99,19 @@ cat >mkt-int.t-in.$srcext <<EOF
 #define __STDC_WANT_LIB_EXT1__ 1
 #endif
 #include <limits.h>
-#include <stddef.h>
 #include <stdio.h>
 #include <time.h>
+#include "mbsdcc.h"
 typedef unsigned char but;
 typedef signed char bst;
 typedef unsigned short hut;
 typedef signed short hst;
-/* it can easily be ported to allow CHAR_BIT ≠ 8 if needed */
-int testsuite_assumes_char_has_8_bits[(CHAR_BIT) == 8 ? 1 : -1];
+mbCTA_BEG(check);
+ /* it can easily be ported to allow CHAR_BIT ≠ 8, if needed */
+ mbCTA(testsuite_assumes_char_has_8_bits, (CHAR_BIT) == 8);
+mbCTA_END(check);
 int main(void) {
-	return ((int)sizeof(testsuite_assumes_char_has_8_bits) +
-	    printf("Hi!\\n"));
+	return (printf("Hi!\\n"));
 }
 EOF
 v "$@" $LDFLAGS ${Fe}mkt-int.t-t.exe mkt-int.t-in.$srcext || die cannot build
@@ -243,8 +244,8 @@ $use_inttypes
 $use_stdint
 $use_basetsd
 #include <limits.h>
-#include <stddef.h>
 #include <stdio.h>
+#include "mbsdcc.h"
 typedef unsigned char but;
 typedef signed char bst;
 typedef unsigned short hut;
@@ -260,8 +261,10 @@ int tstarr[((int)(RSIZE_MAX) & 1) + 1] = {0};
 #else
 #define mbiHUGE_U		unsigned long
 #endif
-int tst2[((mbiHUGE_U)(RSIZE_MAX) == (mbiHUGE_U)(size_t)(RSIZE_MAX)) ? 1 : -1];
-int main(void) { tst2[0] = tstarr[0]; return (printf("Hi!\\n")); }
+mbCTA_BEG(check);
+ mbCTA(fits_sizet, (mbiHUGE_U)(RSIZE_MAX) == (mbiHUGE_U)(size_t)(RSIZE_MAX));
+mbCTA_END(check);
+int main(void) { return (printf("Hi! %d\\n", tstarr[0])); }
 EOF
 v "$@" $LDFLAGS $use_icexp_rsmax ${Fe}mkt-int.t-t.exe mkt-int.t-in.$srcext || use_icexp_rsmax=
 set -- "$@" $use_icexp_rsmax
@@ -313,6 +316,7 @@ $use_inttypes
 $use_stdint
 $use_basetsd
 #undef MBSDINT_H_SKIP_CTAS
+#include "mbsdcc.h"
 #include "mbsdint.h"
 #include <stdio.h>
 int main(void) { return (printf("Hi!\\n")); }
@@ -329,6 +333,7 @@ $use_inttypes
 $use_stdint
 $use_basetsd
 #undef MBSDINT_H_SKIP_CTAS
+#include "mbsdcc.h"
 #include "mbsdint.h"
 #include "xxt-int.h"
 #include <string.h>
@@ -344,6 +349,7 @@ $use_inttypes
 $use_stdint
 $use_basetsd
 #define MBSDINT_H_SKIP_CTAS 1
+#include "mbsdcc.h"
 #include "mbsdint.h"
 #include <stdio.h>
 
@@ -401,6 +407,7 @@ $use_inttypes
 $use_stdint
 $use_basetsd
 #define MBSDINT_H_SKIP_CTAS 1
+#include "mbsdcc.h"
 #include "mbsdint.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -491,7 +498,7 @@ static const int xMBSDINT_H_WANT_LRG64 =
 static const int xMBSDINT_H_WANT_SAFEC =
 	mbiSAFECOMPLEMENT == 1;
 
-#define s(x) "'" mbi__S(x) "'"
+#define s(x) "'" mbccS(x) "'"
 #ifdef MBSDINT_H_MBIPTR_IS_SIZET
 static const char dMBSDINT_H_MBIPTR_IS_SIZET[] = s(MBSDINT_H_MBIPTR_IS_SIZET);
 #else
@@ -533,17 +540,18 @@ static const char dMBSDINT_H_WANT_SAFEC[] = "undef";
 struct want_fam {
 	int blahfoo;
 	char moo;
-	mbi__FAM(char, label);
+	mbccFAM(char, label);
 };
 
-mbiCTAS_BEG(fieldsizeof);
- mbiCTA(o0, offsetof(struct want_fam, blahfoo) == 0);
- mbiCTA(s0, mbi__FSZ(struct want_fam, blahfoo) == sizeof(int));
- mbiCTA(o1, offsetof(struct want_fam, moo) >= sizeof(int));
- mbiCTA(s1, mbi__FSZ(struct want_fam, moo) == sizeof(char));
- mbiCTA(o2, offsetof(struct want_fam, label) >=
+mbCTA_BEG(fieldsizeof);
+ mbCTA(o0, offsetof(struct want_fam, blahfoo) == 0);
+ mbCTA(s0, mbccFSZ(struct want_fam, blahfoo) == sizeof(int));
+ mbCTA(o1, offsetof(struct want_fam, moo) >= sizeof(int));
+ mbCTA(s1, mbccFSZ(struct want_fam, moo) == sizeof(char));
+ mbCTA(o2, offsetof(struct want_fam, label) >=
     (offsetof(struct want_fam, moo) + sizeof(char)));
-mbiCTAS_END(fieldsizeof);
+ mbCTA(oe, offsetof(struct want_fam, label) == offsetof(struct want_fam, label[0]));
+mbCTA_END(fieldsizeof);
 
 static const char faml[] = "FAM label";
 
@@ -566,7 +574,7 @@ int main(void) {
 	free(fam);
 
 	fprintf(stderr, "I: initial tests...\n");
-	mbsdint__Wd(4127);
+	mbmscWd(4127);
 EOF
 
 echo "/* NeXTstep bug workaround */" >mkt-int.t-ff.h
@@ -720,7 +728,7 @@ t1 'mbiMM(hut, hfm, (hut)0xFFFFUL)' hfm
 t1 'mbiMM(hut, hhm, (hut)0xFFFFUL)' hhm
 
 cat >>mkt-int.t-in.$srcext <<\EOF
-	mbsdint__Wpop;
+	mbmscWpop;
 	fprintf(stderr, "I: manual two’s complement in unsigned...\n");
 EOF
 
@@ -865,7 +873,7 @@ cat >>mkt-int.t-in.$srcext <<\EOF
 #endif
 
 	fprintf(stderr, "I: overflow/underflow-checking unsigned...\n");
-	mbsdint__Wd(4242 4244);
+	mbmscWd(4242 4244);
 
 #define mbiCfail hin1s = 1
 	for (hin1u = 0; hin1u < UCHAR_MAX; ++hin1u)
@@ -1035,7 +1043,7 @@ cat >>mkt-int.t-in.$srcext <<\EOF
 			c2("x_mbiMKsar");
 		}
 
-	mbsdint__Wpop;
+	mbmscWpop;
 EOF
 
 mbc2 65280 0 255 1 255 '
@@ -1100,11 +1108,11 @@ ubc2 x_mbiMKrem bin1u bin2u boutu
 
 cat >>mkt-int.t-in.$srcext <<\EOF
 	fprintf(stderr, "I: final tests...\n");
-	mbsdint__Wd(4127);
+	mbmscWd(4127);
 #ifndef __cplusplus
 EOF
 
-t1 'mbi_nil == NULL' 1
+t1 'mbnil == NULL' 1
 
 cat >>mkt-int.t-in.$srcext <<\EOF
 #endif /* !__cplusplus */
@@ -1130,13 +1138,13 @@ cat >>mkt-int.t-in.$srcext <<\EOF
 
 #define ti(t,min,max) if (mbiTYPE_ISF(t)) \
 	fprintf(stderr, "N: %18s: floatish, %u chars, min(%s) max(%s)\n", \
-	    #t, (unsigned)sizeof(t), mbi__S(min), mbi__S(max)); \
+	    #t, (unsigned)sizeof(t), mbccS(min), mbccS(max)); \
     else if (mbiTYPE_ISU(t)) \
 	fprintf(stderr, "N: %18s: unsigned, %u chars, %u bits, max(%s) w=%u\n", \
-	    #t, (unsigned)sizeof(t), mbiTYPE_ISU(t)?mbiTYPE_UBITS(t):0, mbi__S(max), max==0?0:mbiMASK_BITS(max)); \
+	    #t, (unsigned)sizeof(t), mbiTYPE_ISU(t)?mbiTYPE_UBITS(t):0, mbccS(max), max==0?0:mbiMASK_BITS(max)); \
     else \
 	fprintf(stderr, "N: %18s:   signed, %u chars, min(%s), max(%s) w=%u\n", \
-	    #t, (unsigned)sizeof(t), mbi__S(min), mbi__S(max), max==0?0:(mbiMASK_BITS(max) + 1))
+	    #t, (unsigned)sizeof(t), mbccS(min), mbccS(max), max==0?0:(mbiMASK_BITS(max) + 1))
 
 	ti(char, CHAR_MIN, CHAR_MAX);
 	ti(signed char, SCHAR_MIN, SCHAR_MAX);
@@ -1212,7 +1220,7 @@ cat >>mkt-int.t-in.$srcext <<\EOF
 	if (mbiMASK_CHK(mbiSIZE_MAX))
 		b_mbi = mbiMASK_BITS(mbiSIZE_MAX);
 	f_mbi = mbiTYPE_UBITS(size_t) / (unsigned)((CHAR_BIT) - 1);
-	mbsdint__Wpop;
+	mbmscWpop;
 	fprintf(stderr, "N: bits of:"
 	    " SIZE_MAX=%u RSIZE_MAX=%u PTRDIFF_MAX=%u mbiSIZE_MAX=%u(0x%0*zX)\n",
 	    b_sz, b_rsz, b_ptr, b_mbi, (int)f_mbi, (size_t)mbiSIZE_MAX);
@@ -1240,6 +1248,7 @@ cat >>mkt-int.t-in.$srcext <<\EOF
 	fprintf(stderr, "/* you passed -DMBSDINT_H_SMALL_SYSTEM=%u which may or may not be necessary */\n",
 	    (unsigned)MBSDINT_H_SMALL_SYSTEM);
 #endif
+	fprintf(stderr, "%s\n", "#include \"mbsdcc.h\" /* or whereever it lies */");
 	fprintf(stderr, "\nI: state of the extra assertions:\n");
 #define a(n,D) fprintf(stderr, "%-31s\tcan be %d; used %s\tdefault %d; %s\n", \
 		   #n, x##n, d##n, D, o##n)
@@ -1253,8 +1262,9 @@ cat >>mkt-int.t-in.$srcext <<\EOF
 #undef a
 
 	fprintf(stderr, "\nI: tests finished with errorlevel %d\n"
-	    "N: by %s\nN: and %s\nN: with %s\nN: for %s\n",
-	    rv, test_rcsid, xxtc_rcsid, XXTH_RCSID, SYSKERN_MBSDINT_H);
+	    "N: by %s\nN: and %s\nN: with %s\nN: for %s\nN: and %s\n",
+	    rv, test_rcsid, xxtc_rcsid, XXTH_RCSID, SYSKERN_MBSDCC_H,
+	    SYSKERN_MBSDINT_H);
 	return (rv);
 }
 EOF
