@@ -1,5 +1,5 @@
 #!/bin/sh
-rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.35 2023/09/17 00:44:41 tg Exp $'
+rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.36 2023/09/17 01:54:08 tg Exp $'
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -550,7 +550,6 @@ mbCTA_BEG(fieldsizeof);
  mbCTA(s1, mbccFSZ(struct want_fam, moo) == sizeof(char));
  mbCTA(o2, offsetof(struct want_fam, label) >=
     (offsetof(struct want_fam, moo) + sizeof(char)));
- mbCTA(oe, offsetof(struct want_fam, label) == offsetof(struct want_fam, label[0]));
 mbCTA_END(fieldsizeof);
 
 static const char faml[] = "FAM label";
@@ -1109,14 +1108,14 @@ ubc2 x_mbiMKrem bin1u bin2u boutu
 cat >>mkt-int.t-in.$srcext <<\EOF
 	fprintf(stderr, "I: final tests...\n");
 	mbmscWd(4127);
-#ifndef __cplusplus
 EOF
 
 t1 'mbnil == NULL' 1
 
-cat >>mkt-int.t-in.$srcext <<\EOF
-#endif /* !__cplusplus */
+# the latter is possibly no intconstexpr in MSVC and on SCO and Xenix
+t1 'offsetof(struct want_fam, label)' 'offsetof(struct want_fam, label[0])'
 
+cat >>mkt-int.t-in.$srcext <<\EOF
 	switch ((unsigned int)bitrepr(-1)) {
 	case 0xFFU:
 		whichrepr = "two’s complement";
