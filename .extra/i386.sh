@@ -100,6 +100,8 @@ if test -n "$libc"; then
 	(clang)
 		CC=clang
 		CXX=clang++
+		CFLAGS=$(printf '%s\n' "$CFLAGS" | sed 's/-Werror=clobbered\>//g')
+		CXXFLAGS=$(printf '%s\n' "$CXXFLAGS" | sed 's/-Werror=clobbered\>//g')
 		;;
 	(*)
 		exit 1 ;;
