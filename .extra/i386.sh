@@ -109,6 +109,10 @@ export LDFLAGS
 case $cfx in
 (*'++'*) usecxx=-cxx CC=$CXX CFLAGS=$CXXFLAGS ;;
 esac
+case $CC in
+(*clang*) ;;
+(*) CFLAGS="$CFLAGS -Wvla" ;;
+esac
 exec sh mkt-int.sh $usecxx \
     $CC $CPPFLAGS $cfs $cft $CFLAGS -Wall -Wextra $cfx \
     -DMBSDINT_H_WANT_PTR_IN_SIZET \
