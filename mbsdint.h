@@ -128,9 +128,9 @@
 /* limits of types */
 #define mbiTYPE_UMAX(type)	((type)~(type)0U)
 #define mbiTYPE_UBITS(type)	mbiMASK_BITS(mbiTYPE_UMAX(type))
-/* calculation by Hallvard B Furuseth (via comp.lang.c), ≤ 2039 bit */
-#define mbiMASK__lh(maxv)	((maxv) / ((maxv) % 255 + 1) / 255 % 255 * 8)
-#define mbiMASK__rh(maxv)	(7 - 86 / ((maxv) % 255 + 12))
+/* calculation by Hallvard B Furuseth (via comp.lang.c), ≤ 2039 bits */
+#define mbiMASK__lh(maxv)	((maxv) / ((int)((maxv) % 255) + 1) / 255 % 255 * 8)
+#define mbiMASK__rh(maxv)	(7 - 86 / ((int)((maxv) % 255) + 12))
 /* mbiMASK_BITS everywhere except #if uses (castless) mbiMASK__BITS */
 #define mbiMASK__BITS(maxv)	(mbiMASK__lh(maxv) + mbiMASK__rh(maxv))
 #define mbiMASK__type(maxv)	(mbiMASK__lh(maxv) + (int)mbiMASK__rh(maxv))
