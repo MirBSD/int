@@ -586,7 +586,7 @@ int main(void) {
 	const char *mbiPTR_casttgt;
 	struct want_fam *fam;
 	struct fam_t *fam2;
-	struct ChkTest ct = { { 0 }, (unsigned int)-1 };
+	struct ChkTest ct = { { 0 }, -1 };
 	union pre1_fam p1fam;
 	union pre5_fam p5fam;
 
