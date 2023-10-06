@@ -1,5 +1,5 @@
 #!/bin/sh
-rcsid='$MirOS: int/mkt-int.sh,v 1.36 2023/09/17 01:54:08 tg Exp $'
+rcsid='$MirOS: int/mkt-int.sh,v 1.37 2023/10/06 21:56:47 tg Exp $'
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -536,11 +536,29 @@ static const char dMBSDINT_H_WANT_SAFEC[] = "undef";
 #endif
 #undef s
 
+struct ChkTest {
+	char expr1[mbccChkExpr(3*3) + 1];
+	mbmscWs(4820) /* padding warning */
+	unsigned int expr2 : mbccCEX(3*3);
+};
+
 /* ensure flexible array members can be used */
 struct want_fam {
 	int blahfoo;
 	char moo;
-	mbccFAM(char, label);
+	mbccFAMslot(char, label);
+};
+union pre1_fam {
+	struct want_fam s;
+	char storage[mbccFAMSZ(struct want_fam, label, 1)];
+};
+union pre5_fam {
+	struct want_fam s;
+	char storage[mbccFAMSZ(struct want_fam, label, 5)];
+};
+struct fam_t {
+	int count;
+	mbccFAMslot(time_t, value);
 };
 
 mbCTA_BEG(fieldsizeof);
@@ -550,27 +568,53 @@ mbCTA_BEG(fieldsizeof);
  mbCTA(s1, mbccFSZ(struct want_fam, moo) == sizeof(char));
  mbCTA(o2, offsetof(struct want_fam, label) >=
     (offsetof(struct want_fam, moo) + sizeof(char)));
+ mbCTA(e1, mbccFSZ(struct ChkTest, expr1) == 1);
 mbCTA_END(fieldsizeof);
 
 static const char faml[] = "FAM label";
+
+void dfam(const char *what, const char *exp, struct want_fam *fam);
+void dfam(const char *what, const char *exp, struct want_fam *fam) {
+	fprintf(stderr, "I: %s: the following text should read '%s':\n", what, exp);
+	fflush(stderr);
+	fprintf(stderr, "N: '%s'\n", fam->label);
+}
 
 int main(void) {
 	unsigned int b_rsz = 0, b_sz = 0, b_ptr = 0, b_mbi = 0, f_mbi;
 	const char *whichrepr;
 	const char *mbiPTR_casttgt;
 	struct want_fam *fam;
+	struct fam_t *fam2;
+	struct ChkTest ct = { { 0 }, (unsigned int)-1 };
+	union pre1_fam p1fam;
+	union pre5_fam p5fam;
 
 	/* check FAMs don’t warn */
-	fam = (struct want_fam *)malloc(offsetof(struct want_fam, label) + sizeof(faml));
+	fam = (struct want_fam *)malloc(mbccFAMSZ(struct want_fam, label, sizeof(faml)));
 	if (!fam) {
 		fprintf(stderr, "E: malloc failed\n");
 		return (1);
 	}
 	memcpy(&fam->label, faml, sizeof(faml));
-	fprintf(stderr, "I: the following text should read '%s':\n", faml);
-	fflush(stderr);
-	fprintf(stderr, "N: %s\n", fam->label);
+	dfam("faml", faml, fam);
 	free(fam);
+	fam2 = (struct fam_t *)malloc(mbccFAMSZ(struct fam_t, value, sizeof(time_t[5])));
+	fam2->count = 5;
+	free(fam2);
+	(void)mbccFAMsz(struct fam_t, value, sizeof(time_t[5]));
+#undef mbccABEND
+#define mbccABEND(reasonstr) (fprintf(stderr, "E: mbccABEND: %s\n", (reasonstr)), abort())
+	fam2 = (struct fam_t *)malloc(mbccFAMsz(struct fam_t, value, sizeof(time_t[5])));
+	free(fam2);
+	p1fam.s.label[0] = '\0';
+	p5fam.s.label[0] = 'm';
+	p5fam.s.label[1] = 'i';
+	p5fam.s.label[2] = 'a';
+	p5fam.s.label[3] = 'u';
+	p5fam.s.label[4] = '\0';
+	dfam("p1", "", (struct want_fam *)&p1fam);
+	dfam("p5", "miau", (struct want_fam *)&p5fam);
 
 	fprintf(stderr, "I: initial tests...\n");
 	mbmscWd(4127);
@@ -1114,6 +1158,9 @@ t1 'mbnil == NULL' 1
 
 # the latter is possibly no intconstexpr in MSVC and on SCO and Xenix
 t1 'offsetof(struct want_fam, label)' 'offsetof(struct want_fam, label[0])'
+t1 'offsetof(struct fam_t, value)' 'offsetof(struct fam_t, value[0])'
+
+t1 'ct.expr2' 511
 
 cat >>mkt-int.t-in.$srcext <<\EOF
 	switch ((unsigned int)bitrepr(-1)) {
