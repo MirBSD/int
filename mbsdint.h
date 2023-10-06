@@ -129,13 +129,15 @@
 #define mbiTYPE_UMAX(type)	((type)~(type)0U)
 #define mbiTYPE_UBITS(type)	mbiMASK_BITS(mbiTYPE_UMAX(type))
 /* mbiMASK_BITS everywhere except #if uses (castless) mbiMASK__BITS */
-#define mbiMASK__BITS(maxv)	mbiMASK_BITS_i(maxv, mbi__castNO)
-#define mbiMASK_BITS(maxv)	mbi__cast_u(mbiMASK_BITS_i(maxv, mbi__cast_u))
-#define mbi__castNO(v)		(v)
-#define mbi__cast_u(v)		((unsigned int)(v))
+#define mbiMASK__BITS(maxv)	mbiMASK_BITS_w((maxv), mbi__castNO)
+#define mbiMASK_BITS(maxv)	mbiMASK_BITS_w((maxv), mbi__cast_u)
 /* calculation by Hallvard B Furuseth (via comp.lang.c), ≤ 2039 bits */
 #define mbiMASK_BITS_i(v,cfn)	((v) / (cfn((v) % 255) + 1) / 255 % 255 * 8 + \
 				    7 - cfn(86 / (cfn((v) % 255) + 12)))
+/* wrapping for cpp / C/C++ (including mbiTYPE_ISU ternary check) */
+#define mbi__castNO(v)		(v)
+#define mbi__cast_u(v)		((unsigned int)(v))
+#define mbiMASK_BITS_w(v,cfn)	cfn(v < 1 ? 0U : mbiMASK_BITS_i(v, cfn))
 
 /* ensure v is a positive (2ⁿ-1) number (n>0), up to 279 (or less) bits */
 #define mbiMASK_CHK(v)		mbmscWd(4296) \
