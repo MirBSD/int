@@ -35,6 +35,9 @@
 #define offsetof(struc,memb)	__builtin_offsetof(struc, memb)
 #endif
 
+/* ternary for hard avoidance of side effects for idiot compilers */
+#define mbccTY(cond,t,f)	((cond) ? (t) : (f))
+
 /* mbsdint.h replaces this with mbiSIZE_MAX */
 #undef mbccSIZE_MAX
 #if defined(SIZE_MAX)
