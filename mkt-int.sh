@@ -1,5 +1,5 @@
 #!/bin/sh
-rcsid='$MirOS: int/mkt-int.sh,v 1.37 2023/10/06 21:56:47 tg Exp $'
+rcsid='$MirOS: int/mkt-int.sh,v 1.38 2023/10/07 01:34:53 tg Exp $'
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -253,7 +253,7 @@ typedef signed short hst;
 #ifdef _MSC_VER
 #pragma warning(disable:4310)
 #endif
-int tstarr[((int)(RSIZE_MAX) & 1) + 1] = {0};
+int tstarr[((int)mbccCEX(RSIZE_MAX) & 1) + 1] = {0};
 #if defined(INTMAX_MIN)
 #define mbiHUGE_U		uintmax_t
 #elif defined(LLONG_MIN)
@@ -586,9 +586,10 @@ int main(void) {
 	const char *mbiPTR_casttgt;
 	struct want_fam *fam;
 	struct fam_t *fam2;
-	struct ChkTest ct = { { 0 }, (unsigned int)-1 };
-	union pre1_fam p1fam;
-	union pre5_fam p5fam;
+	struct ChkTest ct = { { 0 }, 1 };
+
+	--ct.expr2;
+	--ct.expr2;
 
 	/* check FAMs don’t warn */
 	fam = (struct want_fam *)malloc(mbccFAMSZ(struct want_fam, label, sizeof(faml)));
@@ -607,6 +608,12 @@ int main(void) {
 #define mbccABEND(reasonstr) (fprintf(stderr, "E: mbccABEND: %s\n", (reasonstr)), abort())
 	fam2 = (struct fam_t *)malloc(mbccFAMsz(struct fam_t, value, sizeof(time_t[5])));
 	free(fam2);
+/* CFrustFrust has no support for FAMs, so omit triggering -Warray-bounds */
+#if !defined(__cplusplus) || defined(__cpp_flexible_array_members) || defined(_MSC_VER)
+    {
+	union pre1_fam p1fam;
+	union pre5_fam p5fam;
+
 	p1fam.s.label[0] = '\0';
 	p5fam.s.label[0] = 'm';
 	p5fam.s.label[1] = 'i';
@@ -615,6 +622,8 @@ int main(void) {
 	p5fam.s.label[4] = '\0';
 	dfam("p1", "", (struct want_fam *)&p1fam);
 	dfam("p5", "miau", (struct want_fam *)&p5fam);
+    }
+#endif
 
 	fprintf(stderr, "I: initial tests...\n");
 	mbmscWd(4127);
@@ -1152,9 +1161,15 @@ ubc2 x_mbiMKrem bin1u bin2u boutu
 cat >>mkt-int.t-in.$srcext <<\EOF
 	fprintf(stderr, "I: final tests...\n");
 	mbmscWd(4127);
+#ifndef __cplusplus
+/* web+ap://toot.mirbsd.org/@mirabilos/statuses/01HC3SH1WGHVR48BT1G975MFT5 */
 EOF
 
 t1 'mbnil == NULL' 1
+
+cat >>mkt-int.t-in.$srcext <<\EOF
+#endif /* !__cplusplus */
+EOF
 
 # the latter is possibly no intconstexpr in MSVC and on SCO and Xenix
 t1 'offsetof(struct want_fam, label)' 'offsetof(struct want_fam, label[0])'
