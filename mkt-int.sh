@@ -253,7 +253,7 @@ typedef signed short hst;
 #ifdef _MSC_VER
 #pragma warning(disable:4310)
 #endif
-int tstarr[((int)(RSIZE_MAX) & 1) + 1] = {0};
+int tstarr[((int)mbccCEX(RSIZE_MAX) & 1) + 1] = {0};
 #if defined(INTMAX_MIN)
 #define mbiHUGE_U		uintmax_t
 #elif defined(LLONG_MIN)
