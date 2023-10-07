@@ -77,10 +77,10 @@
 #ifdef __cplusplus
 template<bool> struct mbccChkExpr_sa;
 template<> struct mbccChkExpr_sa<true>{};
-#define mbccChkExpr(test)	(sizeof((mbccChkExpr_sa<!!(test)>())) * 0)
+#define mbccChkExpr(test)	(sizeof((mbccChkExpr_sa<!!(0+(test))>())) * 0)
 #else
 #define mbccChkExpr(test)	mbmscWs(4116) \
-				(sizeof(struct { int (mbccChkExpr):((test) ? 1 : -1); }) * 0)
+				(sizeof(struct { int (mbccChkExpr):((0+(test)) ? 1 : -1); }) * 0)
 #endif
 
 /* ensure value x is a constant expression */
