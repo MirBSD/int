@@ -1155,9 +1155,15 @@ ubc2 x_mbiMKrem bin1u bin2u boutu
 cat >>mkt-int.t-in.$srcext <<\EOF
 	fprintf(stderr, "I: final tests...\n");
 	mbmscWd(4127);
+#ifndef __cplusplus
+/* web+ap://toot.mirbsd.org/@mirabilos/statuses/01HC3SH1WGHVR48BT1G975MFT5 */
 EOF
 
 t1 'mbnil == NULL' 1
+
+cat >>mkt-int.t-in.$srcext <<\EOF
+#endif /* !__cplusplus */
+EOF
 
 # the latter is possibly no intconstexpr in MSVC and on SCO and Xenix
 t1 'offsetof(struct want_fam, label)' 'offsetof(struct want_fam, label[0])'
