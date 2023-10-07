@@ -1187,7 +1187,7 @@ cat >>mkt-int.t-in.$srcext <<\EOF
 	    #t, (unsigned)sizeof(t), mbccS(min), mbccS(max)); \
     else if (mbiTYPE_ISU(t)) \
 	fprintf(stderr, "N: %18s: unsigned, %u chars, %u bits, max(%s) w=%u\n", \
-	    #t, (unsigned)sizeof(t), mbiTYPE_IFU(t, mbiTYPE_UBITS(t), 0), mbccS(max), max==0?0:mbiMASK_BITS(max)); \
+	    #t, (unsigned)sizeof(t), mbiTYPE_ISU(t)?mbiTYPE_UBITS(t):0, mbccS(max), max==0?0:mbiMASK_BITS(max)); \
     else \
 	fprintf(stderr, "N: %18s:   signed, %u chars, min(%s), max(%s) w=%u\n", \
 	    #t, (unsigned)sizeof(t), mbccS(min), mbccS(max), max==0?0:(mbiMASK_BITS(max) + 1))

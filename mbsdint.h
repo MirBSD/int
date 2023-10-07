@@ -125,20 +125,16 @@
 #define mbiTYPE_ISF(type)	((double)0.5 == (double)(type)0.5)
 	/* compile-time and runtime */
 #define mbiTYPE_ISU(type)	((type)-1 > (type)0)
-#define mbiTYPE_IFU(type,t,f)	mbccTY(mbiTYPE_ISU(type), (t), (f))
 /* limits of types */
 #define mbiTYPE_UMAX(type)	((type)~(type)0U)
 #define mbiTYPE_UBITS(type)	mbiMASK_BITS(mbiTYPE_UMAX(type))
+/* calculation by Hallvard B Furuseth (via comp.lang.c), ≤ 2039 bit */
+#define mbiMASK__lh(maxv)	((maxv) / ((maxv) % 255 + 1) / 255 % 255 * 8)
+#define mbiMASK__rh(maxv)	(7 - 86 / ((maxv) % 255 + 12))
 /* mbiMASK_BITS everywhere except #if uses (castless) mbiMASK__BITS */
-#define mbiMASK__BITS(maxv)	mbiMASK_BITS_w((maxv), mbi__castNO)
-#define mbiMASK_BITS(maxv)	mbiMASK_BITS_w((maxv), mbi__cast_u)
-/* calculation by Hallvard B Furuseth (via comp.lang.c), ≤ 2039 bits */
-#define mbiMASK_BITS_i(v,cfn)	v / (cfn(v % 255) + 1) / 255 % 255 * 8 + \
-				    7 - cfn(86 / (cfn(v % 255) + 12))
-/* wrapping for cpp / C/C++ */
-#define mbi__castNO(v)		(v)
-#define mbi__cast_u(v)		((unsigned int)(v))
-#define mbiMASK_BITS_w(v,cfn)	cfn(v < 1 ? 0U : mbiMASK_BITS_i(v, cfn))
+#define mbiMASK__BITS(maxv)	(mbiMASK__lh(maxv) + mbiMASK__rh(maxv))
+#define mbiMASK__type(maxv)	(mbiMASK__lh(maxv) + (int)mbiMASK__rh(maxv))
+#define mbiMASK_BITS(maxv)	((unsigned int)mbiMASK__type(maxv))
 
 /* ensure v is a positive (2ⁿ-1) number (n>0), up to 279 (or less) bits */
 #define mbiMASK_CHK(v)		mbmscWd(4296) \
@@ -904,8 +900,8 @@ mbCTA_END(mbsdint_h);
 #define mbi__halftmax(stmax)		mbi__totypeof(stmax, \
 	(mbi__totypeof(stmax, 1) << (mbiMASK_BITS(stmax) / 2U)))
 /* note: must constant-evaluate even for signed ut */
-#define mbi__halftype(ut)		mbiTYPE_IFU(ut, \
-	mbiOshl(ut, 1U, mbiTYPE_UBITS(ut) / 2U), (ut)2)
+#define mbi__halftype(ut)		mbiOT(ut, mbiTYPE_ISU(ut), \
+	mbiOshl(ut, 1U, mbiTYPE_UBITS(ut) / 2U), 2)
 #define mbi__uabovehalftype(ut,a,b)	(((ut)a | (ut)b) >= mbi__halftype(ut))
 /* assert: !(b < 0) */
 #define mbi__sabovehalftype(stmax,a,b)	(a < 0 ? 1 : \
