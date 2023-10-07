@@ -5,7 +5,7 @@
  */
 
 #ifndef SYSKERN_MBSDCC_H
-#define SYSKERN_MBSDCC_H "$MirOS: int/mbsdcc.h,v 1.5 2023/10/06 21:56:46 tg Exp $"
+#define SYSKERN_MBSDCC_H "$MirOS: int/mbsdcc.h,v 1.6 2023/10/07 01:29:57 tg Exp $"
 
 /*
  * Note: this header uses the SIZE_MAX (or similar) definitions
