@@ -587,8 +587,6 @@ int main(void) {
 	struct want_fam *fam;
 	struct fam_t *fam2;
 	struct ChkTest ct = { { 0 }, 1 };
-	union pre1_fam p1fam;
-	union pre5_fam p5fam;
 
 	--ct.expr2;
 	--ct.expr2;
@@ -610,6 +608,12 @@ int main(void) {
 #define mbccABEND(reasonstr) (fprintf(stderr, "E: mbccABEND: %s\n", (reasonstr)), abort())
 	fam2 = (struct fam_t *)malloc(mbccFAMsz(struct fam_t, value, sizeof(time_t[5])));
 	free(fam2);
+/* CFrustFrust has no support for FAMs, so omit triggering -Warray-bounds */
+#if !defined(__cplusplus) || defined(__cpp_flexible_array_members) || defined(_MSC_VER)
+    {
+	union pre1_fam p1fam;
+	union pre5_fam p5fam;
+
 	p1fam.s.label[0] = '\0';
 	p5fam.s.label[0] = 'm';
 	p5fam.s.label[1] = 'i';
@@ -618,6 +622,8 @@ int main(void) {
 	p5fam.s.label[4] = '\0';
 	dfam("p1", "", (struct want_fam *)&p1fam);
 	dfam("p5", "miau", (struct want_fam *)&p5fam);
+    }
+#endif
 
 	fprintf(stderr, "I: initial tests...\n");
 	mbmscWd(4127);
