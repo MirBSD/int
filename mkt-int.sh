@@ -1,5 +1,5 @@
 #!/bin/sh
-rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.38 2023/10/07 01:34:53 tg Exp $'
+rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.39 2023/10/17 21:58:46 tg Exp $'
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -1168,7 +1168,14 @@ EOF
 t1 'mbnil == NULL' 1
 
 cat >>mkt-int.t-in.$srcext <<\EOF
-#endif /* !__cplusplus */
+#else /* __cplusplus */
+EOF
+
+t1 '((void *)NULL) == mbnil' 1
+t1 'NULL == (void *)mbnil' 1
+
+cat >>mkt-int.t-in.$srcext <<\EOF
+#endif /* __cplusplus */
 EOF
 
 # the latter is possibly no intconstexpr in MSVC and on SCO and Xenix
