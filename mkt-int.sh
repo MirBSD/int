@@ -1,5 +1,5 @@
 #!/bin/sh
-rcsid='$MirOS: int/mkt-int.sh,v 1.38 2023/10/07 01:34:53 tg Exp $'
+rcsid='$MirOS: int/mkt-int.sh,v 1.39 2023/10/17 21:58:46 tg Exp $'
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
