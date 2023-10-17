@@ -1168,7 +1168,14 @@ EOF
 t1 'mbnil == NULL' 1
 
 cat >>mkt-int.t-in.$srcext <<\EOF
-#endif /* !__cplusplus */
+#else /* __cplusplus */
+EOF
+
+t1 '((void *)NULL) == nullptr' 1
+t1 'NULL == (void *)nullptr' 1
+
+cat >>mkt-int.t-in.$srcext <<\EOF
+#endif /* __cplusplus */
 EOF
 
 # the latter is possibly no intconstexpr in MSVC and on SCO and Xenix
