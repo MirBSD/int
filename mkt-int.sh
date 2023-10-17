@@ -1171,8 +1171,8 @@ cat >>mkt-int.t-in.$srcext <<\EOF
 #else /* __cplusplus */
 EOF
 
-t1 '((void *)NULL) == nullptr' 1
-t1 'NULL == (void *)nullptr' 1
+t1 '((void *)NULL) == mbnil' 1
+t1 'NULL == (void *)mbnil' 1
 
 cat >>mkt-int.t-in.$srcext <<\EOF
 #endif /* __cplusplus */
