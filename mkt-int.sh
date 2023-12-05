@@ -1,5 +1,5 @@
 #!/bin/sh
-rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.40 2023/12/05 08:31:50 tg Exp $'
+rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.41 2023/12/05 09:08:04 tg Exp $'
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -1274,8 +1274,10 @@ cat >>mkt-int.t-in.$srcext <<\EOF
 #else
 	mbiPTR_casttgt = "mbiHUGE_U";
 #endif
-	fprintf(stderr, "N: format specifiers: mbiLARGE_S %%%s / mbiHUGE_S %%%s / mbiPTR_U %%%s (with cast to %s)\n",
-	    mbiLARGE_P(d), mbiHUGE_P(d), mbiPTR_P(X), mbiPTR_casttgt);
+	fprintf(stderr, "N: format specifiers: mbiLARGE_S %%%s / mbiHUGE_S %%%s\n"
+	    "N: mbiPTR_U %%%s (with cast to %s) / size_t %%%s (cast to %s)\n",
+	    mbiLARGE_P(d), mbiHUGE_P(d), mbiPTR_P(X), mbiPTR_casttgt,
+	    mbiSIZE_P(u), mbccS2(mbiSIZE_U));
 #ifdef RSIZE_MAX
 	b_rsz = mbiMASK_BITS(RSIZE_MAX);
 #endif
