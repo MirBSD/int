@@ -4,10 +4,14 @@ cat >dummy.c <<\EOF
 int main(void) { return (0); }
 EOF
 cp dummy.c dummy.cc
-set -x
 LC_ALL=C LANGUAGE=C DEBIAN_FRONTEND=noninteractive
 export LC_ALL DEBIAN_FRONTEND
 unset LANGUAGE
+# configury
+HAVE_CAN_QNOIPA=0
+HAVE_CAN_XIPO_0=0
+export HAVE_CAN_QNOIPA HAVE_CAN_XIPO_0
+set -x
 cat >>/etc/apt/apt.conf <<\EOF
 debug::pkgproblemresolver "true";
 APT::Install-Recommends "0";
