@@ -1,0 +1,183 @@
+{
+  "jobs": {
+    "2.1": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4.1.1"
+        },
+        {
+          "uses": "docker://debian/eol:slink-slim",
+          "with": {
+            "args": "sh .extra/debeol.sh slink 2.1"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "2.2": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4.1.1"
+        },
+        {
+          "uses": "docker://debian/eol:potato-slim",
+          "with": {
+            "args": "sh .extra/debeol.sh potato 2.2"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "3.0": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4.1.1"
+        },
+        {
+          "uses": "docker://debian/eol:woody-slim",
+          "with": {
+            "args": "sh .extra/debeol.sh woody 3.0"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "3.1": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4.1.1"
+        },
+        {
+          "uses": "docker://debian/eol:sarge-slim",
+          "with": {
+            "args": "sh .extra/debeol.sh sarge 3.1"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "4": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4.1.1"
+        },
+        {
+          "uses": "docker://debian/eol:etch-slim",
+          "with": {
+            "args": "sh .extra/debeol.sh etch 4"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "5": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4.1.1"
+        },
+        {
+          "uses": "docker://debian/eol:lenny-slim",
+          "with": {
+            "args": "sh .extra/debeol.sh lenny 5"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "6": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4.1.1"
+        },
+        {
+          "uses": "docker://debian/eol:squeeze-slim",
+          "with": {
+            "args": "sh .extra/debeol.sh squeeze 6"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "7": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4.1.1"
+        },
+        {
+          "uses": "docker://debian/eol:wheezy-slim",
+          "with": {
+            "args": "sh .extra/debeol.sh wheezy 7"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "8": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4.1.1"
+        },
+        {
+          "uses": "docker://debian/eol:jessie-slim",
+          "with": {
+            "args": "sh .extra/debeol.sh jessie 8"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "9": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4.1.1"
+        },
+        {
+          "uses": "docker://debian/eol:stretch-slim",
+          "with": {
+            "args": "sh .extra/debeol.sh stretch 9"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    }
+  },
+  "name": "deb-eol",
+  "on": {
+    "push": {
+      "branches": [
+        "GHA"
+      ]
+    },
+    "workflow_dispatch": null
+  }
+}
