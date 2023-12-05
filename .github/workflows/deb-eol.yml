@@ -1,22 +1,5 @@
 {
   "jobs": {
-    "v2_1": {
-      "runs-on": "ubuntu-latest",
-      "steps": [
-        {
-          "uses": "actions/checkout@v4.1.1"
-        },
-        {
-          "uses": "docker://debian/eol:slink",
-          "with": {
-            "args": "sh .extra/debeol.sh slink 2.1"
-          }
-        }
-      ],
-      "strategy": {
-        "fail-fast": true
-      }
-    },
     "v2_2": {
       "runs-on": "ubuntu-latest",
       "steps": [
