@@ -5,10 +5,11 @@ nocxx=false
 case $1 in
 slink)
 	buildessential='gcc g++'
-	;;
-squeeze)
 	nocxx=true
-	echo NOTE skipping C++ due to sheer bugginess on $1
+	;;
+potato|woody|sarge)
+	# https://stackoverflow.com/q/77604423/2171120
+	nocxx=true
 	;;
 jessie)
 	cat >/etc/apt/sources.list <<\EOF
