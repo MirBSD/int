@@ -25,8 +25,9 @@ else
 fi
 : "${CC=cc}${CXX=c++}${CFLAGS=-O2}${CXXFLAGS=-O2}"
 eval "$(env DEB_BUILD_MAINT_OPTIONS=hardening=+all dpkg-buildflags --export=sh || :)"
-echo ::endgroup::
 ($CC $CPPFLAGS $CFLAGS -v dummy.c || :)
+($CXX $CPPFLAGS $CXXFLAGS -v dummy.cc || :)
+echo ::endgroup::
 echo ::group::Build for C on $1
 sh mkt-int.sh \
     $CC $CPPFLAGS $CFLAGS -Wall -W \
@@ -36,7 +37,6 @@ sh mkt-int.sh \
     -DMBSDINT_H_WANT_LRG64 \
     -DMBSDINT_H_WANT_SAFEC
 echo ::endgroup::
-($CXX $CPPFLAGS $CXXFLAGS -v dummy.cc || :)
 echo ::group::Build for C++ on $1
 sh mkt-int.sh -cxx \
     $CXX $CPPFLAGS $CXXFLAGS -Wall -W \
