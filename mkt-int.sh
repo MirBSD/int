@@ -29,10 +29,10 @@ die() {
 	exit 1
 }
 
-v() { (
+v() (
 	set -x
 	exec "$@"
-); }
+)
 
 if test x"$1" = x"-cxx"; then
 	shift
