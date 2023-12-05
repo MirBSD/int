@@ -4,9 +4,14 @@ for x in 1 2 3 4 5 6 7 8 9; do
 	mkdir -p /usr/share/man/man$x
 done
 buildessential=build-essential
+nocxx=false
 case $1 in
 slink)
 	buildessential='gcc g++'
+	;;
+squeeze)
+	nocxx=true
+	echo NOTE skipping C++ due to sheer bugginess on $1
 	;;
 esac
 cat >dummy.c <<\EOF
@@ -31,7 +36,7 @@ apt-get install -y bc $buildessential
 : "${CC=cc}${CXX=c++}${CFLAGS=-O2}${CXXFLAGS=-O2}"
 eval "$(env DEB_BUILD_MAINT_OPTIONS=hardening=+all dpkg-buildflags --export=sh || :)"
 ($CC $CPPFLAGS $CFLAGS -v dummy.c || :)
-($CXX $CPPFLAGS $CXXFLAGS -v dummy.cc || :)
+$nocxx || ($CXX $CPPFLAGS $CXXFLAGS -v dummy.cc || :)
 echo ::endgroup::
 echo ::group::Build for C on $1
 sh mkt-int.sh \
@@ -42,6 +47,7 @@ sh mkt-int.sh \
     -DMBSDINT_H_WANT_LRG64 \
     -DMBSDINT_H_WANT_SAFEC
 echo ::endgroup::
+if $nocxx; then exit 0; fi
 echo ::group::Build for C++ on $1
 sh mkt-int.sh -cxx \
     $CXX $CPPFLAGS $CXXFLAGS -Wall -W \
