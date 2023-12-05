@@ -1,5 +1,5 @@
 #!/bin/sh
-rcsid='$MirOS: int/mkt-int.sh,v 1.39 2023/10/17 21:58:46 tg Exp $'
+rcsid='$MirOS: int/mkt-int.sh,v 1.40 2023/12/05 08:31:50 tg Exp $'
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -29,10 +29,10 @@ die() {
 	exit 1
 }
 
-v() (
+v() { (
 	set -x
 	exec "$@"
-)
+); }
 
 if test x"$1" = x"-cxx"; then
 	shift
@@ -1287,14 +1287,17 @@ cat >>mkt-int.t-in.$srcext <<\EOF
 #endif
 	if (mbiMASK_CHK(mbiSIZE_MAX))
 		b_mbi = mbiMASK_BITS(mbiSIZE_MAX);
-	f_mbi = mbiTYPE_UBITS(size_t) / (unsigned)((CHAR_BIT) - 1);
+	f_mbi = mbiTYPE_UBITS(size_t) / ((unsigned)(CHAR_BIT) / 2);
 	mbmscWpop;
 	fprintf(stderr, "N: bits of:"
-	    " SIZE_MAX=%u RSIZE_MAX=%u PTRDIFF_MAX=%u mbiSIZE_MAX=%u(0x%0*zX)\n",
-	    b_sz, b_rsz, b_ptr, b_mbi, (int)f_mbi, (size_t)mbiSIZE_MAX);
+	    " SIZE_MAX=%u RSIZE_MAX=%u PTRDIFF_MAX=%u"
+	    " mbiSIZE_MAX=%u(0x%0*" mbiSIZE_P(X) ")\n",
+	    b_sz, b_rsz, b_ptr, b_mbi, (int)f_mbi, (mbiSIZE_U)mbiSIZE_MAX);
 	fprintf(stderr, "N: sizes of pointers:"
-	    " void=%zu char=%zu int=%zu long[]=%zu func=%zu\n",
-	    sizeof(void *), sizeof(char *), sizeof(int *), sizeof(larrp), sizeof(void (*)(void)));
+	    " void=%u char=%u int=%u long[]=%u func=%u\n",
+	    (unsigned)sizeof(void *), (unsigned)sizeof(char *),
+	    (unsigned)sizeof(int *), (unsigned)sizeof(larrp),
+	    (unsigned)sizeof(void (*)(void)));
 #if !defined(HAVE_INTCONSTEXPR_RSIZE_MAX) && defined(RSIZE_MAX)
 	fprintf(stderr, "W: RSIZE_MAX found but not an integer constant expression\n");
 	fprintf(stderr, "N: please review the sizes/limits above for suitability!\n");
