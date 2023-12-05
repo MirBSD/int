@@ -10,7 +10,8 @@ unset LANGUAGE
 # configury
 HAVE_CAN_QNOIPA=0
 HAVE_CAN_XIPO_0=0
-export HAVE_CAN_QNOIPA HAVE_CAN_XIPO_0
+HAVE_CAN_WERROR=0
+export HAVE_CAN_QNOIPA HAVE_CAN_XIPO_0 HAVE_CAN_WERROR
 set -x
 cat >>/etc/apt/apt.conf <<\EOF
 debug::pkgproblemresolver "true";
