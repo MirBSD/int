@@ -3,6 +3,12 @@ echo ::group::Setup $0 on Debian $2
 for x in 1 2 3 4 5 6 7 8 9; do
 	mkdir -p /usr/share/man/man$x
 done
+buildessential=build-essential
+case $1 in
+slink)
+	buildessential='gcc g++'
+	;;
+esac
 cat >dummy.c <<\EOF
 int main(void) { return (0); }
 EOF
@@ -21,11 +27,7 @@ debug::pkgproblemresolver "true";
 APT::Install-Recommends "0";
 EOF
 apt-get update
-if test x"$1" = x"slink"; then
-	apt-get -y install bc gcc g++
-else
-	apt-get install -y bc build-essential
-fi
+apt-get install -y bc $buildessential
 : "${CC=cc}${CXX=c++}${CFLAGS=-O2}${CXXFLAGS=-O2}"
 eval "$(env DEB_BUILD_MAINT_OPTIONS=hardening=+all dpkg-buildflags --export=sh || :)"
 ($CC $CPPFLAGS $CFLAGS -v dummy.c || :)
