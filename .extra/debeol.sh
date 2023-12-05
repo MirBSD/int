@@ -13,6 +13,19 @@ squeeze)
 	nocxx=true
 	echo NOTE skipping C++ due to sheer bugginess on $1
 	;;
+jessie)
+	cat >/etc/apt/sources.list <<\EOF
+deb http://archive.debian.org/debian/ jessie main non-free contrib
+deb http://archive.debian.org/debian-security/ jessie/updates main non-free contrib
+	rm -f /etc/apt/sources.list.d/*
+	;;
+stretch)
+	cat >/etc/apt/sources.list <<\EOF
+deb http://archive.debian.org/debian/ stretch main non-free contrib
+deb http://archive.debian.org/debian-security/ stretch/updates main non-free contrib
+EOF
+	rm -f /etc/apt/sources.list.d/*
+	;;
 esac
 cat >dummy.c <<\EOF
 int main(void) { return (0); }
