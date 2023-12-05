@@ -4,7 +4,7 @@
       "runs-on": "windows-latest",
       "steps": [
         {
-          "uses": "Vampire/setup-wsl@v2.0.1",
+          "uses": "Vampire/setup-wsl@v2.0.2",
           "with": {
             "additional-packages": "bc build-essential",
             "update": true
@@ -15,7 +15,7 @@
           "run": "git config --global core.autocrlf false\ngit config --global core.eol lf"
         },
         {
-          "uses": "actions/checkout@v3.5.3"
+          "uses": "actions/checkout@v4.1.1"
         },
         {
           "name": "prepare i386 C",
