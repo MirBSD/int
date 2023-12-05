@@ -1,8 +1,5 @@
 set -e
 echo ::group::Setup $0 on Debian $2
-for x in 1 2 3 4 5 6 7 8 9; do
-	mkdir -p /usr/share/man/man$x
-done
 buildessential=build-essential
 nocxx=false
 case $1 in

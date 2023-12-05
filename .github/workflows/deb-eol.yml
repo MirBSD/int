@@ -7,7 +7,7 @@
           "uses": "actions/checkout@v4.1.1"
         },
         {
-          "uses": "docker://debian/eol:slink-slim",
+          "uses": "docker://debian/eol:slink",
           "with": {
             "args": "sh .extra/debeol.sh slink 2.1"
           }
@@ -24,7 +24,7 @@
           "uses": "actions/checkout@v4.1.1"
         },
         {
-          "uses": "docker://debian/eol:potato-slim",
+          "uses": "docker://debian/eol:potato",
           "with": {
             "args": "sh .extra/debeol.sh potato 2.2"
           }
@@ -41,7 +41,7 @@
           "uses": "actions/checkout@v4.1.1"
         },
         {
-          "uses": "docker://debian/eol:woody-slim",
+          "uses": "docker://debian/eol:woody",
           "with": {
             "args": "sh .extra/debeol.sh woody 3.0"
           }
@@ -58,7 +58,7 @@
           "uses": "actions/checkout@v4.1.1"
         },
         {
-          "uses": "docker://debian/eol:sarge-slim",
+          "uses": "docker://debian/eol:sarge",
           "with": {
             "args": "sh .extra/debeol.sh sarge 3.1"
           }
@@ -75,7 +75,7 @@
           "uses": "actions/checkout@v4.1.1"
         },
         {
-          "uses": "docker://debian/eol:etch-slim",
+          "uses": "docker://debian/eol:etch",
           "with": {
             "args": "sh .extra/debeol.sh etch 4"
           }
@@ -92,7 +92,7 @@
           "uses": "actions/checkout@v4.1.1"
         },
         {
-          "uses": "docker://debian/eol:lenny-slim",
+          "uses": "docker://debian/eol:lenny",
           "with": {
             "args": "sh .extra/debeol.sh lenny 5"
           }
@@ -109,7 +109,7 @@
           "uses": "actions/checkout@v4.1.1"
         },
         {
-          "uses": "docker://debian/eol:squeeze-slim",
+          "uses": "docker://debian/eol:squeeze",
           "with": {
             "args": "sh .extra/debeol.sh squeeze 6"
           }
@@ -126,7 +126,7 @@
           "uses": "actions/checkout@v4.1.1"
         },
         {
-          "uses": "docker://debian/eol:wheezy-slim",
+          "uses": "docker://debian/eol:wheezy",
           "with": {
             "args": "sh .extra/debeol.sh wheezy 7"
           }
@@ -143,7 +143,7 @@
           "uses": "actions/checkout@v4.1.1"
         },
         {
-          "uses": "docker://debian/eol:jessie-slim",
+          "uses": "docker://debian/eol:jessie",
           "with": {
             "args": "sh .extra/debeol.sh jessie 8"
           }
@@ -160,7 +160,7 @@
           "uses": "actions/checkout@v4.1.1"
         },
         {
-          "uses": "docker://debian/eol:stretch-slim",
+          "uses": "docker://debian/eol:stretch",
           "with": {
             "args": "sh .extra/debeol.sh stretch 9"
           }
