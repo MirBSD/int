@@ -10,7 +10,7 @@
           "run": "(git gc || :)"
         },
         {
-          "uses": "vmactions/openbsd-vm@v0.1.1",
+          "uses": "vmactions/openbsd-vm@v1.0.4",
           "with": {
             "copyback": false,
             "mem": 2048,

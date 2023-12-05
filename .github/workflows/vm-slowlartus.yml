@@ -10,7 +10,7 @@
           "run": "(git gc || :)"
         },
         {
-          "uses": "vmactions/solaris-vm@v0.0.9",
+          "uses": "vmactions/solaris-vm@v1.0.0",
           "with": {
             "copyback": false,
             "mem": 2048,

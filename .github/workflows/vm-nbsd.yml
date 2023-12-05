@@ -10,7 +10,7 @@
           "run": "(git gc || :)"
         },
         {
-          "uses": "vmactions/netbsd-vm@v0.1.0",
+          "uses": "vmactions/netbsd-vm@v1.0.3",
           "with": {
             "copyback": false,
             "mem": 2048,
