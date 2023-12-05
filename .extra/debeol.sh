@@ -14,6 +14,7 @@ jessie)
 	cat >/etc/apt/sources.list <<\EOF
 deb http://archive.debian.org/debian/ jessie main non-free contrib
 deb http://archive.debian.org/debian-security/ jessie/updates main non-free contrib
+EOF
 	rm -f /etc/apt/sources.list.d/*
 	;;
 stretch)
