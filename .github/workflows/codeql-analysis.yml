@@ -20,7 +20,7 @@
           "uses": "actions/checkout@v4.1.1"
         },
         {
-          "run": "(git gc || :)"
+          "run": "(git gc --quiet || :)"
         },
         {
           "name": "Initialise CodeQL",

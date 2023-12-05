@@ -1,13 +1,13 @@
 {
   "jobs": {
     "vm-dflybsd": {
-      "runs-on": "macos-12",
+      "runs-on": "ubuntu-latest",
       "steps": [
         {
           "uses": "actions/checkout@v4.1.1"
         },
         {
-          "run": "(git gc || :)"
+          "run": "(git gc --quiet || :)"
         },
         {
           "uses": "vmactions/dragonflybsd-vm@v1.0.2",
