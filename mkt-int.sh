@@ -1,5 +1,5 @@
 #!/bin/sh
-rcsid='$MirOS: int/mkt-int.sh,v 1.41 2023/12/05 09:08:04 tg Exp $'
+rcsid='$MirOS: int/mkt-int.sh,v 1.42 2023/12/05 09:17:00 tg Exp $'
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -1268,7 +1268,7 @@ cat >>mkt-int.t-in.$srcext <<\EOF
 #endif
 #if MBSDINT_H_MBIPTR_IS_SIZET || \
     (!defined(__CHERI__) && !defined(UINTPTR_MAX))
-	mbiPTR_casttgt = "size_t";
+	mbiPTR_casttgt = mbccS2(mbiSIZE_U);
 #elif MBSDINT_H_MBIPTR_IN_LARGE
 	mbiPTR_casttgt = "mbiLARGE_U";
 #else
