@@ -1,5 +1,5 @@
 #!/bin/sh
-rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.42 2023/12/05 09:17:00 tg Exp $'
+rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.43 2023/12/11 11:10:52 tg Exp $'
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -258,6 +258,10 @@ int tstarr[((int)mbccCEX(RSIZE_MAX) & 1) + 1] = {0};
 #define mbiHUGE_U		uintmax_t
 #elif defined(LLONG_MIN)
 #define mbiHUGE_U		unsigned long long
+#elif defined(_UI64_MAX)
+#define mbiHUGE_U		unsigned __int64
+#elif defined(QUAD_MIN)
+#define mbiHUGE_U		u_quad_t
 #else
 #define mbiHUGE_U		unsigned long
 #endif
@@ -1223,6 +1227,10 @@ cat >>mkt-int.t-in.$srcext <<\EOF
 	ti(unsigned int, 0, UINT_MAX);
 	ti(long, LONG_MIN, LONG_MAX);
 	ti(unsigned long, 0, ULONG_MAX);
+#ifdef UQUAD_MAX
+	ti(quad_t, QUAD_MIN, QUAD_MAX);
+	ti(u_quad_t, 0, UQUAD_MAX);
+#endif
 #ifdef LLONG_MIN
 	ti(long long, LLONG_MIN, LLONG_MAX);
 	ti(unsigned long long, 0, ULLONG_MAX);
