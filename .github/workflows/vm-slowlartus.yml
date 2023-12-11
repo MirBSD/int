@@ -15,6 +15,7 @@
             "copyback": false,
             "mem": 2048,
             "prepare": "pkgutil -y -i gcc5core gcc5g++",
+            "release": "11.4-gcc",
             "run": "CC=gcc; CXX=g++; : \"${CC=cc}${CXX=c++}${CFLAGS=-O2}${CXXFLAGS=-O2}\"; export LDFLAGS; sh mkt-int.sh $CC $CPPFLAGS $CFLAGS -Wall -Wextra -Wformat -DMBSDINT_H_WANT_PTR_IN_SIZET -DMBSDINT_H_WANT_SIZET_IN_LONG -DMBSDINT_H_WANT_INT32 -DMBSDINT_H_WANT_LRG64 -DMBSDINT_H_WANT_SAFEC && exec sh mkt-int.sh -cxx $CXX $CPPFLAGS $CXXFLAGS -Wall -Wextra -Wformat -DMBSDINT_H_WANT_PTR_IN_SIZET -DMBSDINT_H_WANT_SIZET_IN_LONG -DMBSDINT_H_WANT_INT32 -DMBSDINT_H_WANT_LRG64 -DMBSDINT_H_WANT_SAFEC",
             "usesh": true
           }
