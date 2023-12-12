@@ -1,5 +1,5 @@
 #!/bin/sh
-rcsid='$MirOS: int/mkt-int.sh,v 1.44 2023/12/12 15:52:40 tg Exp $'
+rcsid='$MirOS: int/mkt-int.sh,v 1.45 2023/12/12 16:53:29 tg Exp $'
 #-
 # © 2023 mirabilos Ⓕ MirBSD
 
@@ -260,6 +260,8 @@ int tstarr[((int)mbccCEX(RSIZE_MAX) & 1) + 1] = {0};
 #define mbiHUGE_U		unsigned long long
 #elif defined(_UI64_MAX)
 #define mbiHUGE_U		unsigned __int64
+#elif defined(QUAD_MIN)
+#define mbiHUGE_U		u_quad_t
 #else
 #define mbiHUGE_U		unsigned long
 #endif
@@ -325,7 +327,7 @@ int main(void) { return (printf("Hi!\\n")); }
 EOF
 v "$@" $LDFLAGS ${Fe}mkt-int.t-t.exe mkt-int.t-in.$srcext || die compile-time checks fail
 
-echo >&2 'I: creating tests...'
+echo >&2 'I: creating tests... (can take very long)'
 cat - xxt-int.c >mkt-int.t-xx.$srcext <<EOF
 #ifndef __STDC_WANT_LIB_EXT1__
 #define __STDC_WANT_LIB_EXT1__ 1
