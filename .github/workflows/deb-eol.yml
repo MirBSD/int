@@ -1,6 +1,6 @@
 {
   "jobs": {
-    "v2_2-": {
+    "v2_2-potato": {
       "runs-on": "ubuntu-latest",
       "steps": [
         {
