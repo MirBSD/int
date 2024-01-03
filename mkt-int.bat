@@ -1,7 +1,7 @@
 @echo off
-REM $MirOS: src/kern/include/mkt-int.bat,v 1.9 2023/09/13 01:00:03 tg Exp $
+REM $MirOS: src/kern/include/mkt-int.bat,v 1.10 2024/01/03 23:26:52 tg Exp $
 REM
-REM (c) 2023 mirabilos (F) CC0
+REM (c) 2023 mirabilos (F) CC0 or MirBSD
 REM
 set __VSCMD_ARG_NO_LOGO=1
 set VSCMD_SKIP_SENDTELEMETRY=1
