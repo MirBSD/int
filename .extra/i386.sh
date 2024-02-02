@@ -17,6 +17,11 @@ usecxx=
 set -ex
 while test $# -gt 0; do
 	case $1 in
+	(gccss)
+		xpkg=gcc-snapshot
+		;;
+	(-std=DEFAULT)
+		;;
 	(-std=*)
 		cfx=$1
 		;;
@@ -69,6 +74,45 @@ apt-get --purge -y dist-upgrade
 apt-get install -y bc build-essential $xpkg
 : "${CC=cc}${CXX=c++}${CFLAGS=-O2}"
 eval "$(env DEB_BUILD_MAINT_OPTIONS="$dbmo" dpkg-buildflags --export=sh || :)"
+if test x"$xpkg" = x"$gcc-snapshot"; then
+	mkdir -p /usr/local/bin
+	cat >/usr/local/bin/gcc-snapshot <<\EOF
+#!/bin/sh
+LD_LIBRARY_PATH=/usr/lib/gcc-snapshot/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+PATH=/usr/lib/gcc-snapshot/bin${PATH:+:$PATH}
+rpath=""
+OLD_IFS="$IFS"
+IFS=:
+for i in $LD_RUN_PATH
+do
+  rpath="$rpath -Wl,-rpath -Wl,$i"
+done
+IFS="$OLD_IFS"
+exec gcc -Wl,-rpath -Wl,/usr/lib/gcc-snapshot/lib \
+         -Wl,-rpath -Wl,/usr/lib/gcc-snapshot/lib32 \
+         -Wl,-rpath -Wl,/usr/lib/gcc-snapshot/libx32 $rpath "$@"
+EOF
+	chmod +x /usr/local/bin/gcc-snapshot
+	cat >/usr/local/bin/g++-snapshot <<\EOF
+#!/bin/sh
+LD_LIBRARY_PATH=/usr/lib/gcc-snapshot/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
+PATH=/usr/lib/gcc-snapshot/bin${PATH:+:$PATH}
+rpath=""
+OLD_IFS="$IFS"
+IFS=:
+for i in $LD_RUN_PATH
+do
+  rpath="$rpath -Wl,-rpath -Wl,$i"
+done
+IFS="$OLD_IFS"
+exec g++ -Wl,-rpath -Wl,/usr/lib/gcc-snapshot/lib \
+         -Wl,-rpath -Wl,/usr/lib/gcc-snapshot/lib32 \
+         -Wl,-rpath -Wl,/usr/lib/gcc-snapshot/libx32 $rpath "$@"
+EOF
+	chmod +x /usr/local/bin/g++-snapshot
+	CC=/usr/local/bin/gcc-snapshot
+	CXX=/usr/local/bin/g++-snapshot
+fi
 if test -n "$libc"; then
 	sCFLAGS=
 	for x in $CFLAGS; do

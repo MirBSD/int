@@ -51,6 +51,31 @@
         "fail-fast": true
       }
     },
+    "i386-gccsnapshot": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4.1.1"
+        },
+        {
+          "uses": "docker://i386/debian:sid-slim",
+          "with": {
+            "args": "sh .extra/i386.sh gccss -std=${{ matrix.std }}"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true,
+        "matrix": {
+          "std": [
+            "DEFAULT",
+            "gnu23",
+            "gnu++23",
+            "gnu++26"
+          ]
+        }
+      }
+    },
     "i386-klibc": {
       "runs-on": "ubuntu-latest",
       "steps": [
