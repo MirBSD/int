@@ -74,7 +74,7 @@ apt-get --purge -y dist-upgrade
 apt-get install -y bc build-essential $xpkg
 : "${CC=cc}${CXX=c++}${CFLAGS=-O2}"
 eval "$(env DEB_BUILD_MAINT_OPTIONS="$dbmo" dpkg-buildflags --export=sh || :)"
-if test x"$xpkg" = x"$gcc-snapshot"; then
+if test x"$xpkg" = x"gcc-snapshot"; then
 	mkdir -p /usr/local/bin
 	cat >/usr/local/bin/gcc-snapshot <<\EOF
 #!/bin/sh
