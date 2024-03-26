@@ -57,6 +57,7 @@ N: extra definitions can be:
 N:  -DMBSDINT_H_SMALL_SYSTEM=1/2/3
 N:  -DMBSDINT_H_MBIPTR_IS_SIZET=0 (if sizet_mbiPTRU fails)
 N:  -DMBSDINT_H_MBIPTR_IN_LARGE=0 (+ mbiPTRU_inlarge, do report!)
+N:  -DMBSDINT_H_WANT_LONG_IN_SIZET=0 (for 16-bit size_t from int)
 N:  -DMBSDINT_H_WANT_PTR_IN_SIZET (extra check, see below)
 N:  -DMBSDINT_H_WANT_SIZET_IN_LONG (extra check, !Win64)
 N:  -DMBSDINT_H_WANT_INT32 (extra check, POSIX guaranteed)
@@ -396,6 +397,11 @@ static const char oMBSDINT_H_MBIPTR_IN_LARGE[] = "passed '" s(MBSDINT_H_MBIPTR_I
 #else
 static const char oMBSDINT_H_MBIPTR_IN_LARGE[] = "not passed";
 #endif
+#ifdef MBSDINT_H_WANT_LONG_IN_SIZET
+static const char oMBSDINT_H_WANT_LONG_IN_SIZET[] = "passed '" s(MBSDINT_H_WANT_LONG_IN_SIZET) "'";
+#else
+static const char oMBSDINT_H_WANT_LONG_IN_SIZET[] = "not passed";
+#endif
 #ifdef MBSDINT_H_WANT_PTR_IN_SIZET
 static const char oMBSDINT_H_WANT_PTR_IN_SIZET[] = "passed '" s(MBSDINT_H_WANT_PTR_IN_SIZET) "'";
 #else
@@ -509,6 +515,8 @@ static const int xMBSDINT_H_MBIPTR_IS_SIZET =
 static const int xMBSDINT_H_MBIPTR_IN_LARGE =
 	sizeof(mbiPTR_U) <= sizeof(mbiLARGE_U) &&
 	mbiTYPE_UBITS(mbiPTR_U) <= mbiMASK_BITS(mbiLARGE_U_MAX);
+static const int xMBSDINT_H_WANT_LONG_IN_SIZET =
+	sizeof(size_t) >= sizeof(long);
 static const int xMBSDINT_H_WANT_PTR_IN_SIZET =
 	sizeof(void *) == sizeof(size_t) &&
 	sizeof(char *) == sizeof(size_t) &&
@@ -534,6 +542,11 @@ static const char dMBSDINT_H_MBIPTR_IS_SIZET[] = "undef";
 static const char dMBSDINT_H_MBIPTR_IN_LARGE[] = s(MBSDINT_H_MBIPTR_IN_LARGE);
 #else
 static const char dMBSDINT_H_MBIPTR_IN_LARGE[] = "undef";
+#endif
+#ifdef MBSDINT_H_WANT_LONG_IN_SIZET
+static const char dMBSDINT_H_WANT_LONG_IN_SIZET[] = s(MBSDINT_H_WANT_LONG_IN_SIZET);
+#else
+static const char dMBSDINT_H_WANT_LONG_IN_SIZET[] = "undef";
 #endif
 #ifdef MBSDINT_H_WANT_PTR_IN_SIZET
 static const char dMBSDINT_H_WANT_PTR_IN_SIZET[] = s(MBSDINT_H_WANT_PTR_IN_SIZET);
@@ -1371,6 +1384,7 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 		   #n, x##n, d##n, D, o##n)
 	a(MBSDINT_H_MBIPTR_IS_SIZET, 1);
 	a(MBSDINT_H_MBIPTR_IN_LARGE, 1);
+	a(MBSDINT_H_WANT_LONG_IN_SIZET, 1);
 	a(MBSDINT_H_WANT_PTR_IN_SIZET, 0);
 	a(MBSDINT_H_WANT_SIZET_IN_LONG, 0);
 	a(MBSDINT_H_WANT_INT32, 0);

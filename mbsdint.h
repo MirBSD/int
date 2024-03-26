@@ -18,6 +18,7 @@
  *
  * -DMBSDINT_H_MBIPTR_IS_SIZET=0 stop assuming mbiPTR is size_t-ranged
  * -DMBSDINT_H_MBIPTR_IN_LARGE=0 mbiPTR fits mbiHUGE but no longer mbiLARGE
+ * -DMBSDINT_H_WANT_LONG_IN_SIZET=0 don’t ensure long fits in size_t (16-bit)
  *
  * -DMBSDINT_H_WANT_PTR_IN_SIZET (breaks some) ensure pointers fit in size_t
  * -DMBSDINT_H_WANT_SIZET_IN_LONG (breaks LLP64) ensure size_t fits in long
@@ -84,6 +85,9 @@
 #endif
 #ifndef MBSDINT_H_MBIPTR_IN_LARGE
 #define MBSDINT_H_MBIPTR_IN_LARGE 1
+#endif
+#ifndef MBSDINT_H_WANT_LONG_IN_SIZET
+#define MBSDINT_H_WANT_LONG_IN_SIZET 1
 #endif
 
 /* should be in <sys/cdefs.h> via <limits.h> */
@@ -705,7 +709,9 @@ mbCTA_BEG(mbsdint_h);
 #endif
  /* do size_t and ulong fit each other? */
  mbCTA(sizet_minint, sizeof(size_t) >= sizeof(int)); /* for 16-bit systems */
+#if MBSDINT_H_WANT_LONG_IN_SIZET
  mbCTA(sizet_minlong, sizeof(size_t) >= sizeof(long));
+#endif
 #ifdef MBSDINT_H_WANT_SIZET_IN_LONG
  /* with MBSDINT_H_WANT_PTR_IN_SIZET breaks LLP64 (e.g. Windows/amd64) */
  mbCTA(sizet_inulong, sizeof(size_t) <= sizeof(long));
