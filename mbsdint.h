@@ -14,7 +14,7 @@
  * -DHAVE_OFF_T=0 if you do not supply the POSIX off_t typedef
  *
  * -DMBSDINT_H_SMALL_SYSTEM=1 (or 2) to shorten some macros, for old systems
- * or -DMBSDINT_H_SMALL_SYSTEM=3 in very tiny address space (< 32 bits)
+ * or -DMBSDINT_H_SMALL_SYSTEM=3 in very tiny systems, e.g. 16-bit
  *
  * -DMBSDINT_H_MBIPTR_IS_SIZET=0 stop assuming mbiPTR is size_t-ranged
  * -DMBSDINT_H_MBIPTR_IN_LARGE=0 mbiPTR fits mbiHUGE but no longer mbiLARGE
@@ -52,7 +52,7 @@
 #undef MBSDINT_H_SMALL_SYSTEM	/* in case someone defined it as 0 */
 #define mbiMASK_bitmax		279
 #elif (MBSDINT_H_SMALL_SYSTEM) >= 2
-#define mbiMASK_bitmax		62
+#define mbiMASK_bitmax		75
 #else
 #define mbiMASK_bitmax		93
 #endif
@@ -143,6 +143,8 @@
 #define mbi_maskchks(v,m,o,n)	(v <= m ? o : ((v & m) == m) && n)
 #define mbi_maskchk31s(v,n)	mbi_maskchks(v, 0x7FFFFFFFUL, \
 				    mbi_maskchk16(v), n)
+#define mbi_maskchk15s(v,n)	mbi_maskchks(v, 0x7FFFUL, \
+				    mbi_maskchk8(v), n)
 #if !defined(MBSDINT_H_SMALL_SYSTEM)
 #define mbi_maskchk31_1(v)	mbi_maskchk31s(v, mbi_maskchk31_2(v >> 31))
 #define mbi_maskchk31_2(v)	mbi_maskchk31s(v, mbi_maskchk31_3(v >> 31))
@@ -153,7 +155,11 @@
 #define mbi_maskchk31_7(v)	mbi_maskchk31s(v, mbi_maskchk31_8(v >> 31))
 #define mbi_maskchk31_8(v)	mbi_maskchk31s(v, mbi_maskchk31_9(v >> 31))
 #elif (MBSDINT_H_SMALL_SYSTEM) >= 2
-#define mbi_maskchk31_1(v)	mbi_maskchk31s(v, mbi_maskchk31_9(v >> 31))
+#define mbi_maskchk31_1(v)	mbi_maskchk15s(v, mbi_maskchk15_2(v >> 15))
+#define mbi_maskchk15_2(v)	mbi_maskchk15s(v, mbi_maskchk15_3(v >> 15))
+#define mbi_maskchk15_3(v)	mbi_maskchk15s(v, mbi_maskchk15_4(v >> 15))
+#define mbi_maskchk15_4(v)	mbi_maskchk15s(v, mbi_maskchk15_9(v >> 15))
+#define mbi_maskchk15_9(v)	(v <= 0x7FFFUL && mbi_maskchk8(v))
 #else /* (MBSDINT_H_SMALL_SYSTEM) == 1 */
 #define mbi_maskchk31_1(v)	mbi_maskchk31s(v, mbi_maskchk31_8(v >> 31))
 #define mbi_maskchk31_8(v)	mbi_maskchk31s(v, mbi_maskchk31_9(v >> 31))
@@ -698,6 +704,7 @@ mbCTA_BEG(mbsdint_h);
  mbCTA(vbits_iptr, mbiMASK_BITS(UINTPTR_MAX) == mbiMASK_BITS(PTRDIFF_MAX) + 1U);
 #endif
  /* do size_t and ulong fit each other? */
+ mbCTA(sizet_minint, sizeof(size_t) >= sizeof(int)); /* for 16-bit systems */
  mbCTA(sizet_minlong, sizeof(size_t) >= sizeof(long));
 #ifdef MBSDINT_H_WANT_SIZET_IN_LONG
  /* with MBSDINT_H_WANT_PTR_IN_SIZET breaks LLP64 (e.g. Windows/amd64) */
