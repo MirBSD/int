@@ -80,7 +80,7 @@ template<> struct mbccChkExpr_sa<true>{};
 #define mbccChkExpr(test)	(sizeof((mbccChkExpr_sa<!!(0+(test))>())) * 0)
 #else
 #define mbccChkExpr(test)	mbmscWs(4116) \
-				(sizeof(struct { int (mbccChkExpr):((0+(test)) ? 1 : -1); }) * 0)
+				(sizeof(struct { unsigned int (mbccChkExpr):((0+(test)) ? 1 : -1); }) * 0)
 #endif
 
 /* ensure value x is a constant expression */
@@ -91,7 +91,7 @@ template<> struct mbccCEX_sa<false,true>{};
 #define mbccCEX(x)		(sizeof((mbccCEX_sa<!!(0+(x)), !(0+(x))>())) * 0 + (x))
 #else
 #define mbccCEX(x)		mbmscWs(4116) \
-				(sizeof(struct { int (mbccCEX):(((0+(x)) && 1) + 1); }) * 0 + (x))
+				(sizeof(struct { unsigned int (mbccCEX):(((0+(x)) && 1) + 1); }) * 0 + (x))
 #endif
 
 /* flexible array member */
@@ -173,15 +173,15 @@ template<> struct mbccCEX_sa<false,true>{};
 #define mbccCTA(fldn,cond)	__extension__ _Static_assert(cond, mbccS(fldn))
 #endif
 #ifndef mbccCTA
-/* single assertion for macros (needs fldn prefixed, cond parenthesised) */
-#define mbccCTA(fldn,cond)	unsigned char fldn:(cond ? 1 : -1)
+/* single assertion for macros (with fldn prefixed, cond parenthesised) */
+#define mbccCTA(fldn,cond)	unsigned int fldn:(cond ? 1 : -1)
 /* begin/end assertion block */
 #define mbCTA_BEG(name)		struct ctassert_ ## name {		\
-					char ctabeg /* plus user semicolon */
-#define mbCTA_END(name)			char ctaend;			\
+					int ctabeg /* plus user semicolon */
+#define mbCTA_END(name)			int ctaend;			\
 				};					\
 				struct ctassert2 ## name {		\
-					char ok[sizeof(struct ctassert_ ## name) > 2 ? 1 : -1]; \
+					char ok[sizeof(struct ctassert_ ## name) > 2*sizeof(int) ? 1 : -1]; \
 				} /* semicolon provided by user */
 #else
 /* nothing, but syntax-check equally to manual compile-time assert macro */
