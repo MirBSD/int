@@ -1,7 +1,7 @@
 #!/bin/sh
 rcsid='$MirOS: int/mkt-int.sh,v 1.45 2023/12/12 16:53:29 tg Exp $'
 #-
-# © 2023 mirabilos Ⓕ MirBSD
+# © mirabilos Ⓕ MirBSD
 
 # Warning: stress test, creates multiple multi-MiB .c files, .o about half each
 
@@ -115,6 +115,9 @@ int main(void) {
 }
 EOF
 v "$@" $LDFLAGS ${Fe}mkt-int.t-t.exe mkt-int.t-in.$srcext || die cannot build
+echo >&2 'I: checking if we can compile and link separately'
+v "$@" -c mkt-int.t-in.$srcext || die cannot compile
+v "$@" $LDFLAGS ${Fe}mkt-int.t-t.exe mkt-int.t-*.$objext || die cannot link
 
 test -n "$TARGET_OS" || TARGET_OS=$(uname -s 2>/dev/null || uname)
 
