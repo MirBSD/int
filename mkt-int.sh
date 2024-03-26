@@ -330,6 +330,24 @@ int main(void) { return (printf("Hi!\\n")); }
 EOF
 v "$@" $LDFLAGS ${Fe}mkt-int.t-t.exe mkt-int.t-in.$srcext || die compile-time checks fail
 
+use_float='#include <float.h>'
+echo >&2 'I: checking if we have <float.h>'
+cat >mkt-int.t-in.$srcext <<EOF
+#ifndef __STDC_WANT_LIB_EXT1__
+#define __STDC_WANT_LIB_EXT1__ 1
+#endif
+$use_systypes
+$use_inttypes
+$use_stdint
+$use_basetsd
+$use_float
+#include <limits.h>
+#include <stddef.h>
+#include <stdio.h>
+int main(void) { return (printf("Hi!\\n")); }
+EOF
+v "$@" $LDFLAGS ${Fe}mkt-int.t-t.exe mkt-int.t-in.$srcext || die use_float=
+
 echo >&2 'I: creating tests... (can take very long)'
 cat - xxt-int.c >mkt-int.t-xx.$srcext <<EOF
 #ifndef __STDC_WANT_LIB_EXT1__
@@ -416,6 +434,7 @@ $use_basetsd
 #define MBSDINT_H_SKIP_CTAS 1
 #include "mbsdcc.h"
 #include "mbsdint.h"
+$use_float
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -1276,6 +1295,11 @@ cat >>mkt-int.t-in.$srcext <<\EOF
 	ti(off_t, 0, 0);
 #else
 	fprintf(stderr, "N: no %s\n", "off_t");
+#endif
+#if 0 /*def FLT_RADIX*/
+	ti(float, FLT_MIN, FLT_MAX);
+	ti(double, DBL_MIN, DBL_MAX);
+	ti(long double, LDBL_MIN, LDBL_MAX);
 #endif
 #if MBSDINT_H_MBIPTR_IS_SIZET || \
     (!defined(__CHERI__) && !defined(UINTPTR_MAX))
