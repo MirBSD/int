@@ -639,7 +639,7 @@ tin_u(const char *t, size_t sz,
 }
 
 static void
-tif_u(const char *t, size_t sz, int MaxOK, int TbOK,
+tif_u(const char *t, size_t sz, int TbOK, int MaxOK,
     mbiHUGE_U Tb, const char *Max, mbiHUGE_U uMax)
 {
 	fprintf(stderr, "N: %18s: unsigned, %u chars, ", t, (unsigned)sz);
@@ -1317,13 +1317,13 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 		ti_f(#t, sizeof(t), mbccS(min), mbccS(max)); \
 	else if (mbiTYPE_ISU(t)) \
 		tif_u(#t, sizeof(t), \
-		    tifc(max), tifc((t)-(t)1), \
-		    (mbiHUGE_U)((t)-(t)1), \
-		    mbccS(max), (mbiHUGE_U)(max)); \
+		    tifc((t)-(t)1), tifc(max), \
+		    tifC((t)-(t)1), mbccS(max), tifC(max)); \
 	else \
 		tif_s(#t, sizeof(t), mbccS(min), mbccS(max), \
-		    tifc(max), (mbiHUGE_U)(max))
-#define tifc(v) ((v) < 1 ? 0 : (v) < mbiHUGE_U_MAX ? 1 : (v) == mbiHUGE_U_MAX ? 1 : 2)
+		    tifc(max), tifC(max))
+#define tifc(v) ((v) >= 1 && (v) <= mbiHUGE_U_MAX ? 1 : (v) < 1 ? 0 : 2)
+#define tifC(v) ((v) >= 1 && (v) <= mbiHUGE_U_MAX ? (mbiHUGE_U)(v) : 0U)
 
 	ti(char, CHAR_MIN, CHAR_MAX);
 	ti(signed char, SCHAR_MIN, SCHAR_MAX);
@@ -1381,7 +1381,7 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 #else
 	fprintf(stderr, "N: no %s\n", "off_t");
 #endif
-#if 0 /*def FLT_RADIX*/
+#ifdef FLT_RADIX
 	tif(float, FLT_MIN, FLT_MAX);
 	tif(double, DBL_MIN, DBL_MAX);
 	tif(long double, LDBL_MIN, LDBL_MAX);
