@@ -162,6 +162,15 @@ template<> struct mbccCEX_sa<false,true> { typedef int Type; };
 
 /* compile-time assertions */
 #undef mbccCTA
+#if defined(__WATCOMC__) && !defined(__WATCOM_CPLUSPLUS__)
+				/* “Comparison result always 0” */
+#define mbccCTA_wb		_Pragma("warning 124 5")
+				/*XXX no pop so set to visible info */
+#define mbccCTA_we		_Pragma("warning 124 4")
+#else
+#define mbccCTA_wb		/* nothing */
+#define mbccCTA_we		/* nothing */
+#endif
 #if defined(__cplusplus)
 #ifdef __cpp_static_assert
 #define mbccCTA(fldn,cond)	static_assert(cond, mbccS(fldn))
@@ -178,17 +187,17 @@ template<> struct mbccCEX_sa<false,true> { typedef int Type; };
 /* single assertion for macros (with fldn prefixed, cond parenthesised) */
 #define mbccCTA(fldn,cond)	unsigned int fldn:(cond ? 1 : -1)
 /* begin/end assertion block */
-#define mbCTA_BEG(name)		struct ctassert_ ## name {		\
+#define mbCTA_BEG(name)		struct ctassert_ ## name { mbccCTA_wb	\
 					int ctabeg /* plus user semicolon */
 #define mbCTA_END(name)			int ctaend;			\
 				};					\
 				struct ctassert2 ## name {		\
 					char ok[sizeof(struct ctassert_ ## name) > 2*sizeof(int) ? 1 : -1]; \
-				} /* semicolon provided by user */
+				mbccCTA_we } /* semicolon provided by user */
 #else
 /* nothing, but syntax-check equally to manual compile-time assert macro */
-#define mbCTA_BEG(name)		struct ctassert_ ## name { char ctabeg; }
-#define mbCTA_END(name)		struct ctassert2 ## name { char ctaend; }
+#define mbCTA_BEG(name)		mbccCTA_wb struct ctassert_ ## name { char ctabeg; }
+#define mbCTA_END(name)		mbccCTA_we struct ctassert2 ## name { char ctaend; }
 #endif
 /* single assertion */
 #define mbCTA(name,cond)	mbccCTA(cta_ ## name, (cond))
