@@ -1377,7 +1377,7 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 	ti(mbiPTR_U, 0, mbiPTR_U_MAX);
 	tif(time_t, 0, 0);
 #if HAVE_OFF_T
-	tif(off_t, 0, 0);
+	ti(off_t, 0, 0);
 #else
 	fprintf(stderr, "N: no %s\n", "off_t");
 #endif
