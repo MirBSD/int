@@ -126,7 +126,7 @@
 
 /* kinds of types */
 	/* compile-time and runtime */
-#define mbiTYPE_ISF(type)	(!!((int)(2 * (type)0.5)))
+#define mbiTYPE_ISF(type)	(!!(0+(int)(2 * (type)0.5)))
 #define mbiTYPE_ISU(type)	((type)-1 > (type)0)
 /* limits of types */
 #define mbiTYPE_UMAX(type)	((type)~(type)0U)
