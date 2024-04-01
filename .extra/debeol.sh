@@ -5,11 +5,6 @@ nocxx=false
 case $1 in
 slink)
 	buildessential='gcc g++'
-	nocxx=true
-	;;
-potato|woody|sarge)
-	# https://stackoverflow.com/q/77604423/2171120
-	nocxx=true
 	;;
 jessie)
 	cat >/etc/apt/sources.list <<\EOF

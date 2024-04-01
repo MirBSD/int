@@ -76,8 +76,8 @@
 /* in-expression compile-time check evaluating to 0 */
 #ifdef __cplusplus
 template<bool> struct mbccChkExpr_sa;
-template<> struct mbccChkExpr_sa<true>{};
-#define mbccChkExpr(test)	(sizeof((mbccChkExpr_sa<!!(0+(test))>())) * 0)
+template<> struct mbccChkExpr_sa<true> { typedef int Type; };
+#define mbccChkExpr(test)	(static_cast<mbccChkExpr_sa<!!(0+(test))>::Type>(0))
 #else
 #define mbccChkExpr(test)	mbmscWs(4116) \
 				(sizeof(struct { unsigned int (mbccChkExpr):((0+(test)) ? 1 : -1); }) * 0)
@@ -86,9 +86,9 @@ template<> struct mbccChkExpr_sa<true>{};
 /* ensure value x is a constant expression */
 #ifdef __cplusplus
 template<bool,bool> struct mbccCEX_sa;
-template<> struct mbccCEX_sa<true,false>{};
-template<> struct mbccCEX_sa<false,true>{};
-#define mbccCEX(x)		(sizeof((mbccCEX_sa<!!(0+(x)), !(0+(x))>())) * 0 + (x))
+template<> struct mbccCEX_sa<true,false> { typedef int Type; };
+template<> struct mbccCEX_sa<false,true> { typedef int Type; };
+#define mbccCEX(x)		(static_cast<mbccCEX_sa<!!(0+(x)), !(0+(x))>::Type>(0) + (x))
 #else
 #define mbccCEX(x)		mbmscWs(4116) \
 				(sizeof(struct { unsigned int (mbccCEX):(((0+(x)) && 1) + 1); }) * 0 + (x))
