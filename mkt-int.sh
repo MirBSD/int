@@ -623,6 +623,60 @@ void dfam(const char *what, const char *exp, struct want_fam *fam) {
 
 volatile int zero = 0;
 
+static void
+ti_f(const char *t, size_t sz, const char *Min, const char *Max)
+{
+	fprintf(stderr, "N: %18s: floatish, %u chars, min(%s) max(%s)\n",
+	    t, (unsigned)sz, Min, Max);
+}
+
+static void
+tin_u(const char *t, size_t sz,
+    unsigned Bits, const char *Max, unsigned Mb)
+{
+	fprintf(stderr, "N: %18s: unsigned, %u chars, %u bits, max(%s) w=%u\n",
+	    t, (unsigned)sz, Bits, Max, Mb);
+}
+
+static void
+tif_u(const char *t, size_t sz, int MaxOK, int TbOK,
+    mbiHUGE_U Tb, const char *Max, mbiHUGE_U uMax)
+{
+	fprintf(stderr, "N: %18s: unsigned, %u chars, ", t, (unsigned)sz);
+	if (TbOK == 1)
+		fprintf(stderr, "%u", mbiMASK_BITS(Tb));
+	else
+		fprintf(stderr, "more than %u", mbiTYPE_UBITS(mbiHUGE_U));
+	fprintf(stderr, " bits, max(%s) w", Max);
+	if (MaxOK == 0)
+		fprintf(stderr, "=0\n");
+	else if (MaxOK == 1)
+		fprintf(stderr, "=%u\n", mbiMASK_BITS(uMax));
+	else
+		fprintf(stderr, " > %u\n", mbiTYPE_UBITS(mbiHUGE_U));
+}
+
+static void
+tin_s(const char *t, size_t sz, const char *Min, const char *Max, unsigned Bits)
+{
+	fprintf(stderr, "N: %18s:   signed, %u chars, min(%s), max(%s) w=%u\n",
+	    t, (unsigned)sz, Min, Max, Bits);
+}
+
+static void
+tif_s(const char *t, size_t sz, const char *Min, const char *Max,
+    int MaxOK, mbiHUGE_U uMax)
+{
+	fprintf(stderr, "N: %18s:   signed, %u chars, min(%s), max(%s) w",
+	    t, (unsigned)sz, Min, Max);
+	if (MaxOK == 0)
+		fprintf(stderr, "=0\n");
+	else if (MaxOK == 1)
+		fprintf(stderr, "=%u\n", mbiMASK_BITS(uMax) + 1U);
+	else
+		fprintf(stderr, " > %u\n", mbiTYPE_UBITS(mbiHUGE_U));
+}
+
 int main(void) {
 	unsigned int b_rsz = 0, b_sz = 0, b_ptr = 0, b_mbi = 0, f_mbi;
 	const char *whichrepr;
@@ -1247,15 +1301,29 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 	fprintf(stderr, "N: CHAR_BIT: %d\t\tcomplement: %s using %s\n",
 	    (int)CHAR_BIT, mbiSAFECOMPLEMENT ? "safe" : "UNSAFE", whichrepr);
 
+/* use for types guaranteed to not be float only */
 #define ti(t,min,max) if (mbiTYPE_ISF(t)) \
-	fprintf(stderr, "N: %18s: floatish, %u chars, min(%s) max(%s)\n", \
-	    #t, (unsigned)sizeof(t), mbccS(min), mbccS(max)); \
-    else if (mbiTYPE_ISU(t)) \
-	fprintf(stderr, "N: %18s: unsigned, %u chars, %u bits, max(%s) w=%u\n", \
-	    #t, (unsigned)sizeof(t), mbiMASK_BITS((t)((t)zero+mbiTYPE_UMAX(t))), mbccS(max), max==0?0:mbiMASK_BITS(max)); \
-    else \
-	fprintf(stderr, "N: %18s:   signed, %u chars, min(%s), max(%s) w=%u\n", \
-	    #t, (unsigned)sizeof(t), mbccS(min), mbccS(max), max==0?0:(mbiMASK_BITS(max) + 1))
+		ti_f(#t, sizeof(t), mbccS(min), mbccS(max)); \
+	else if (mbiTYPE_ISU(t)) \
+		tin_u(#t, sizeof(t), \
+		    mbiMASK_BITS((t)((t)zero + mbiTYPE_UMAX(t))), \
+		    mbccS(max), (max) == 0 ? 0 : mbiMASK_BITS(max)); \
+	else \
+		tin_s(#t, sizeof(t), mbccS(min), mbccS(max), \
+		    (max) < 1 ? 0 : (mbiMASK_BITS(max) + 1U))
+
+/* use if the type could be float */
+#define tif(t,min,max) if (mbiTYPE_ISF(t)) \
+		ti_f(#t, sizeof(t), mbccS(min), mbccS(max)); \
+	else if (mbiTYPE_ISU(t)) \
+		tif_u(#t, sizeof(t), \
+		    tifc(max), tifc((t)-(t)1), \
+		    (mbiHUGE_U)((t)-(t)1), \
+		    mbccS(max), (mbiHUGE_U)(max)); \
+	else \
+		tif_s(#t, sizeof(t), mbccS(min), mbccS(max), \
+		    tifc(max), (mbiHUGE_U)(max))
+#define tifc(v) ((v) < 1 ? 0 : (v) < mbiHUGE_U_MAX ? 1 : (v) == mbiHUGE_U_MAX ? 1 : 2)
 
 	ti(char, CHAR_MIN, CHAR_MAX);
 	ti(signed char, SCHAR_MIN, SCHAR_MAX);
@@ -1307,16 +1375,16 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 	fprintf(stderr, "N: no %s\n", "uintptr_t");
 #endif
 	ti(mbiPTR_U, 0, mbiPTR_U_MAX);
-	ti(time_t, 0, 0);
+	tif(time_t, 0, 0);
 #if HAVE_OFF_T
-	ti(off_t, 0, 0);
+	tif(off_t, 0, 0);
 #else
 	fprintf(stderr, "N: no %s\n", "off_t");
 #endif
 #if 0 /*def FLT_RADIX*/
-	ti(float, FLT_MIN, FLT_MAX);
-	ti(double, DBL_MIN, DBL_MAX);
-	ti(long double, LDBL_MIN, LDBL_MAX);
+	tif(float, FLT_MIN, FLT_MAX);
+	tif(double, DBL_MIN, DBL_MAX);
+	tif(long double, LDBL_MIN, LDBL_MAX);
 #endif
 #if MBSDINT_H_MBIPTR_IS_SIZET || \
     (!defined(__CHERI__) && !defined(UINTPTR_MAX))
