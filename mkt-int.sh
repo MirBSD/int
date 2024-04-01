@@ -72,7 +72,7 @@ rm -f mkt-int-t* || die cannot delete old files
 test -n "$DEBUG" || trap 'rm -f mkt-int-t*' EXIT
 
 srcext=c
-case $* in
+case " $* " in
 *\ do-cl.bat\ *)
 	Fe=/Fe
 	objext=obj
@@ -130,9 +130,11 @@ MirBSD)
 	flagstotest="$flagstotest -fno-lto -qnoipa -xipo=0"
 	;;
 esac
-case $* in
+case " $* " in
 *\ do-cl.bat\ *)
 	flagstotest='/WX' ;;
+*\ owcc\ *)
+	flagstotest= ;;
 esac
 for flagtotest in $flagstotest; do
 	varname=$(echo "X$flagtotest" | sed \
