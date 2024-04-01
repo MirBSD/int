@@ -110,7 +110,7 @@ typedef signed short hst;
 mbCTA_BEG(check);
  /* it can easily be ported to allow CHAR_BIT ≠ 8, if needed */
  mbCTA(testsuite_assumes_char_has_8_bits, (CHAR_BIT) == 8);
-mbCTA_END(check);
+mbCTA_END();
 int main(void) {
 	return (printf("Hi!\\n"));
 }
@@ -273,7 +273,7 @@ int tstarr[((int)mbccCEX(RSIZE_MAX) & 1) + 1] = {0};
 #endif
 mbCTA_BEG(check);
  mbCTA(fits_sizet, (mbiHUGE_U)(RSIZE_MAX) == (mbiHUGE_U)(size_t)(RSIZE_MAX));
-mbCTA_END(check);
+mbCTA_END();
 int main(void) { return (printf("Hi! %d\\n", tstarr[0])); }
 EOF
 v "$@" $LDFLAGS $use_icexp_rsmax ${Fe}mkt-int-t-t.exe mkt-int-t-in.$srcext || use_icexp_rsmax=
@@ -610,7 +610,7 @@ mbCTA_BEG(fieldsizeof);
  mbCTA(o2, offsetof(struct want_fam, label) >=
     (offsetof(struct want_fam, moo) + sizeof(char)));
  mbCTA(e1, mbccFSZ(struct ChkTest, expr1) == 1);
-mbCTA_END(fieldsizeof);
+mbCTA_END();
 
 static const char faml[] = "FAM label";
 
