@@ -98,8 +98,10 @@ template<> struct mbccCEX_sa<false,true> { typedef int Type; };
 #if defined(__cplusplus)
 #ifdef __cpp_flexible_array_members
 #define mbccFAMslot(type,memb)	type memb[]
-#else
+#elif defined(__GNUC__) || defined(__clang__) || defined(_MSC_VER)
 #define mbccFAMslot(type,memb)	type memb[0] mbmscWs(4200 4820)
+#else
+#define mbccFAMslot(type,memb)	type memb[1] mbmscWs(4820)
 #endif
 #elif (defined(__STDC_VERSION__) && ((__STDC_VERSION__) >= 199901L))
 #define mbccFAMslot(type,memb)	type memb[]
