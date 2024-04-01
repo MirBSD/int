@@ -627,7 +627,7 @@ static void
 ti_f(const char *t, size_t sz, const char *Min, const char *Max)
 {
 	fprintf(stderr, "N: %18s: floatish, %u chars, min(%s) max(%s)\n",
-	    t, (unsigned)sz, Min, Max);
+	    t, 0U+(unsigned)sz, Min, Max);
 }
 
 static void
@@ -635,14 +635,14 @@ tin_u(const char *t, size_t sz,
     unsigned Bits, const char *Max, unsigned Mb)
 {
 	fprintf(stderr, "N: %18s: unsigned, %u chars, %u bits, max(%s) w=%u\n",
-	    t, (unsigned)sz, Bits, Max, Mb);
+	    t, 0U+(unsigned)sz, Bits, Max, Mb);
 }
 
 static void
 tif_u(const char *t, size_t sz, int TbOK, int MaxOK,
     mbiHUGE_U Tb, const char *Max, mbiHUGE_U uMax)
 {
-	fprintf(stderr, "N: %18s: unsigned, %u chars, ", t, (unsigned)sz);
+	fprintf(stderr, "N: %18s: unsigned, %u chars, ", t, 0U+(unsigned)sz);
 	if (TbOK == 1)
 		fprintf(stderr, "%u", mbiMASK_BITS(Tb));
 	else
@@ -660,7 +660,7 @@ static void
 tin_s(const char *t, size_t sz, const char *Min, const char *Max, unsigned Bits)
 {
 	fprintf(stderr, "N: %18s:   signed, %u chars, min(%s), max(%s) w=%u\n",
-	    t, (unsigned)sz, Min, Max, Bits);
+	    t, 0U+(unsigned)sz, Min, Max, Bits);
 }
 
 static void
@@ -668,7 +668,7 @@ tif_s(const char *t, size_t sz, const char *Min, const char *Max,
     int MaxOK, mbiHUGE_U uMax)
 {
 	fprintf(stderr, "N: %18s:   signed, %u chars, min(%s), max(%s) w",
-	    t, (unsigned)sz, Min, Max);
+	    t, 0U+(unsigned)sz, Min, Max);
 	if (MaxOK == 0)
 		fprintf(stderr, "=0\n");
 	else if (MaxOK == 1)
