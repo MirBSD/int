@@ -1258,7 +1258,7 @@ ubc2 x_mbiMKrem bin1u bin2u boutu
 
 cat >>mkt-int-t-in.$srcext <<\EOF
 	fprintf(stderr, "I: final tests...\n");
-	mbmscWd(4127);
+	mbmscWd(4127 5219);
 #ifndef __cplusplus
 /* web+ap://toot.mirbsd.org/@mirabilos/statuses/01HC3SH1WGHVR48BT1G975MFT5 */
 EOF
