@@ -77,7 +77,7 @@
           "run": "(git gc --quiet || :)"
         },
         {
-          "uses": "jirutka/setup-alpine@v1.1.4",
+          "uses": "jirutka/setup-alpine@v1.2.0",
           "with": {
             "arch": "${{ matrix.alpinearch }}",
             "branch": "edge",
