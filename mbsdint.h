@@ -126,7 +126,7 @@
 
 /* kinds of types */
 	/* compile-time and runtime */
-#define mbiTYPE_ISF(type)	(!!((int)(2 * (type)0.5)))
+#define mbiTYPE_ISF(type)	(!!(0+(int)(2 * (type)0.5)))
 #define mbiTYPE_ISU(type)	((type)-1 > (type)0)
 /* limits of types */
 #define mbiTYPE_UMAX(type)	((type)~(type)0U)
@@ -137,7 +137,7 @@
 /* mbiMASK_BITS everywhere except #if uses (castless) mbiMASK__BITS */
 #define mbiMASK__BITS(maxv)	(mbiMASK__lh(maxv) + mbiMASK__rh(maxv))
 #define mbiMASK__type(maxv)	(mbiMASK__lh(maxv) + (int)mbiMASK__rh(maxv))
-#define mbiMASK_BITS(maxv)	((unsigned int)mbiMASK__type(maxv))
+#define mbiMASK_BITS(maxv)	(0U + (unsigned int)mbiMASK__type(maxv))
 
 /* ensure v is a positive (2ⁿ-1) number (n>0), up to 279 (or less) bits */
 #define mbiMASK_CHK(v)		mbmscWd(4296) \
