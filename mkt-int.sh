@@ -1322,8 +1322,9 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 	else \
 		tif_s(#t, sizeof(t), mbccS(min), mbccS(max), \
 		    tifc(max), tifC(max))
-#define tifc(v) ((v) >= 1 && (v) <= mbiHUGE_U_MAX ? 1 : (v) < 1 ? 0 : 2)
-#define tifC(v) ((v) >= 1 && (v) <= mbiHUGE_U_MAX ? (mbiHUGE_U)(v) : 0U)
+/* workarounds multiple idiotic compilers… */
+#define tifc(v) ((v) < 1 ? 0 : (v) < mbiHUGE_U_MAX ? 1 : (v) == mbiHUGE_U_MAX ? 1 : 2)
+#define tifC(v) ((v) < 1 ? 0U : (v) < mbiHUGE_U_MAX ? (mbiHUGE_U)(v) : (v) == mbiHUGE_U_MAX ? mbiHUGE_U_MAX : 0U)
 
 	ti(char, CHAR_MIN, CHAR_MAX);
 	ti(signed char, SCHAR_MIN, SCHAR_MAX);
