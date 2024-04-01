@@ -619,6 +619,8 @@ void dfam(const char *what, const char *exp, struct want_fam *fam) {
 	fprintf(stderr, "N: '%s'\n", fam->label);
 }
 
+volatile int zero = 0;
+
 int main(void) {
 	unsigned int b_rsz = 0, b_sz = 0, b_ptr = 0, b_mbi = 0, f_mbi;
 	const char *whichrepr;
@@ -1243,21 +1245,12 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 	fprintf(stderr, "N: CHAR_BIT: %d\t\tcomplement: %s using %s\n",
 	    (int)CHAR_BIT, mbiSAFECOMPLEMENT ? "safe" : "UNSAFE", whichrepr);
 
-#ifdef __WATCOMC__
-/* disable division by 0 warning for ti() not-taken cases */
-#ifdef __WATCOM_CPLUSPLUS__
-#pragma warning 129 9
-#else
-#pragma warning 139 5
-#endif
-#endif
-
 #define ti(t,min,max) if (mbiTYPE_ISF(t)) \
 	fprintf(stderr, "N: %18s: floatish, %u chars, min(%s) max(%s)\n", \
 	    #t, (unsigned)sizeof(t), mbccS(min), mbccS(max)); \
     else if (mbiTYPE_ISU(t)) \
 	fprintf(stderr, "N: %18s: unsigned, %u chars, %u bits, max(%s) w=%u\n", \
-	    #t, (unsigned)sizeof(t), mbiTYPE_ISU(t)?mbiTYPE_UBITS(t):0, mbccS(max), max==0?0:mbiMASK_BITS(max)); \
+	    #t, (unsigned)sizeof(t), mbiMASK_BITS((t)((t)zero+mbiTYPE_UMAX(t))), mbccS(max), max==0?0:mbiMASK_BITS(max)); \
     else \
 	fprintf(stderr, "N: %18s:   signed, %u chars, min(%s), max(%s) w=%u\n", \
 	    #t, (unsigned)sizeof(t), mbccS(min), mbccS(max), max==0?0:(mbiMASK_BITS(max) + 1))
