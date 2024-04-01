@@ -119,15 +119,14 @@
 #endif
 
 /* special compile-time assertions */
-#define mbiCTA_TYPE_NOTF(ty)	mbccCTA(ctati2 ## ty, ((ty)0.5 == 0))
-#define mbiCTA_TYPE_notF(nm,ty)	mbccCTA(ctati_ ## nm, ((ty)0.5 == 0))
+#define mbiCTA_TYPE_NOTF(ty)	mbccCTA(ctati2 ## ty, !mbiTYPE_ISF(ty))
+#define mbiCTA_TYPE_notF(nm,ty)	mbccCTA(ctati_ ## nm, !mbiTYPE_ISF(ty))
 #define mbiCTA_TYPE_MBIT(nm,ty)	mbccCTA(ctatm_ ## nm, \
 	(sizeof(ty) <= (mbiMASK_bitmax / (CHAR_BIT))))
 
 /* kinds of types */
-	/* runtime only, but see mbiCTA_TYPE_NOTF */
-#define mbiTYPE_ISF(type)	((double)0.5 == (double)(type)0.5)
 	/* compile-time and runtime */
+#define mbiTYPE_ISF(type)	(!!((int)(2 * (type)0.5)))
 #define mbiTYPE_ISU(type)	((type)-1 > (type)0)
 /* limits of types */
 #define mbiTYPE_UMAX(type)	((type)~(type)0U)
