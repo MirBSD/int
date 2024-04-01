@@ -189,12 +189,12 @@ template<> struct mbccCEX_sa<false,true> { typedef int Type; };
 /* begin/end assertion block */
 #define mbCTA_BEG(name)		struct ctassert_ ## name { mbccCTA_wb	\
 					int ctabeg /* plus user semicolon */
-#define mbCTA_END()			int ctaend;			\
+#define mbCTA_END(name)			int ctaend;			\
 				mbccCTA_we } /* semicolon provided by user */
 #else
 /* nothing, but syntax-check equally to manual compile-time assert macro */
 #define mbCTA_BEG(name)		mbccCTA_wb struct ctassert_ ## name { char ctabeg; }
-#define mbCTA_END()		mbccCTA_we
+#define mbCTA_END(name)		mbccCTA_we
 #endif
 /* single assertion */
 #define mbCTA(name,cond)	mbccCTA(cta_ ## name, (cond))

@@ -800,7 +800,7 @@ mbCTA_BEG(mbsdint_h);
 #ifdef mbiLARGE_UBITS
  mbCTA(large_width, mbiLARGE_UBITS == mbiMASK_BITS(mbiLARGE_U_MAX));
 #endif
-mbCTA_END();
+mbCTA_END(mbsdint_h);
 #endif /* !MBSDINT_H_SKIP_CTAS */
 
 /* cpp-safe */
