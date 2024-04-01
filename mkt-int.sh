@@ -116,9 +116,12 @@ int main(void) {
 }
 EOF
 v "$@" $LDFLAGS ${Fe}mkt-int-t-t.exe mkt-int-t-in.$srcext || die cannot build
+$cross || test "$(set +e; ./mkt-int-t-t.exe; echo $?)" = "Hi!${nl}4" || die fails to run
+rm -f mkt-int-t-t.exe
 echo >&2 'I: checking if we can compile and link separately'
 v "$@" -c mkt-int-t-in.$srcext || die cannot compile
 v "$@" $LDFLAGS ${Fe}mkt-int-t-t.exe mkt-int-t-*.$objext || die cannot link
+$cross || test "$(set +e; ./mkt-int-t-t.exe; echo $?)" = "Hi!${nl}4" || die fails to run
 
 test -n "$TARGET_OS" || TARGET_OS=$(uname -s 2>/dev/null || uname)
 
