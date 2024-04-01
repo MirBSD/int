@@ -625,7 +625,7 @@ void dfam(const char *what, const char *exp, struct want_fam *fam) {
 }
 
 volatile int zero = 0;
-volatile unsigned int uzero = 0;
+volatile mbiHUGE_U uzero = 0;
 
 static void
 ti_f(const char *t, size_t sz, const char *Min, const char *Max)
