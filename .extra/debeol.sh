@@ -49,6 +49,12 @@ export CC CXX
 eval "$(env DEB_BUILD_MAINT_OPTIONS=hardening=+all dpkg-buildflags --export=sh || :)"
 CFLAGS="$CFLAGS -Wall -W"
 CXXFLAGS="$CXXFLAGS -Wall -W"
+case $1 in
+slink)
+	# work around issue in egcs system header
+	CFLAGS="$CFLAGS -Wno-missing-braces"
+	;;
+esac
 export LDFLAGS
 ($CC $CPPFLAGS $CFLAGS $LDFLAGS -v dummy.c || :)
 $nocxx || ($CXX $CPPFLAGS $CXXFLAGS $LDFLAGS -v dummy.cc || :)
