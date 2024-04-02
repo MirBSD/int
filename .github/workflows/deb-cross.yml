@@ -85,23 +85,6 @@
         "fail-fast": true
       }
     },
-    "sh4": {
-      "runs-on": "ubuntu-latest",
-      "steps": [
-        {
-          "uses": "actions/checkout@v4.1.1"
-        },
-        {
-          "uses": "docker://i386/debian:sid-slim",
-          "with": {
-            "args": "sh .extra/cross.sh sh4 sh4-linux-gnu qemu-sh4"
-          }
-        }
-      ],
-      "strategy": {
-        "fail-fast": true
-      }
-    },
     "sparc64": {
       "runs-on": "ubuntu-latest",
       "steps": [
