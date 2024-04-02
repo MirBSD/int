@@ -207,6 +207,11 @@
   },
   "name": "gcc-deb-i386",
   "on": {
+    "push": {
+      "branches": [
+        "GHA"
+      ]
+    },
     "workflow_dispatch": null
   }
 }
