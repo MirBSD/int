@@ -1,7 +1,7 @@
 #!/bin/sh
-rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.45 2023/12/12 16:53:29 tg Exp $'
+rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.46 2024/04/02 03:16:50 tg Exp $'
 #-
-# © 2023 mirabilos Ⓕ MirBSD
+# © mirabilos Ⓕ MirBSD
 
 # Warning: stress test, creates multiple multi-MiB .c files, .o about half each
 
@@ -57,6 +57,7 @@ N: extra definitions can be:
 N:  -DMBSDINT_H_SMALL_SYSTEM=1/2/3
 N:  -DMBSDINT_H_MBIPTR_IS_SIZET=0 (if sizet_mbiPTRU fails)
 N:  -DMBSDINT_H_MBIPTR_IN_LARGE=0 (+ mbiPTRU_inlarge, do report!)
+N:  -DMBSDINT_H_WANT_LONG_IN_SIZET=0 (for 16-bit size_t from int)
 N:  -DMBSDINT_H_WANT_PTR_IN_SIZET (extra check, see below)
 N:  -DMBSDINT_H_WANT_SIZET_IN_LONG (extra check, !Win64)
 N:  -DMBSDINT_H_WANT_INT32 (extra check, POSIX guaranteed)
@@ -66,16 +67,33 @@ EOF
 	exit 3
 fi
 
+test "$(bc <<\EOF
+define f(x) {
+return (-(256 - x))
+}
+for (v = 4; v <= 5; ++v) {
+	v
+	f(v)
+}
+EOF
+)" = "4${nl}-252${nl}5${nl}-251" || die 'bc(1) inoperable'
+
 cd "$(dirname "$0")" || die cannot change to script directory
-rm -f mkt-int.t* || die cannot delete old files
-test -n "$DEBUG" || trap 'rm -f mkt-int.t*' EXIT
+rm -f mkt-int-t* || die cannot delete old files
+test -n "$DEBUG" || trap 'rm -f mkt-int-t*' EXIT
 
 srcext=c
-case $* in
+case " $* " in
 *\ do-cl.bat\ *)
 	Fe=/Fe
 	objext=obj
 	$usecxx && srcext=cxx || :
+	;;
+*\ wcl\ *|*\ wcl386\ *)
+	Fe=-fe=
+	objext=obj
+	set -- "$@" "-fo=.$objext"
+	$usecxx && srcext=cc || :
 	;;
 *)
 	Fe='-o '
@@ -86,15 +104,15 @@ esac
 
 echo >&2 'I: testing whether we can detect configure failures...'
 canfail=false
-cat >mkt-int.t-in.$srcext <<EOF
+cat >mkt-int-t-in.$srcext <<EOF
 extern int thiswillneverbedefinedIhope(void);
 int main(void) { return (thiswillneverbedefinedIhope()); }
 EOF
-v "$@" $LDFLAGS ${Fe}mkt-int.t-t.exe mkt-int.t-in.$srcext || canfail=true
+v "$@" $LDFLAGS ${Fe}mkt-int-t-t.exe mkt-int-t-in.$srcext || canfail=true
 $canfail || die cannot fail
 
 echo >&2 'I: checking if we can build at all'
-cat >mkt-int.t-in.$srcext <<EOF
+cat >mkt-int-t-in.$srcext <<EOF
 #ifndef __STDC_WANT_LIB_EXT1__
 #define __STDC_WANT_LIB_EXT1__ 1
 #endif
@@ -114,7 +132,13 @@ int main(void) {
 	return (printf("Hi!\\n"));
 }
 EOF
-v "$@" $LDFLAGS ${Fe}mkt-int.t-t.exe mkt-int.t-in.$srcext || die cannot build
+v "$@" $LDFLAGS ${Fe}mkt-int-t-t.exe mkt-int-t-in.$srcext || die cannot build
+$cross || test "$(set +e; ./mkt-int-t-t.exe; echo $?)" = "Hi!${nl}4" || die fails to run
+rm -f mkt-int-t-t.exe
+echo >&2 'I: checking if we can compile and link separately'
+v "$@" -c mkt-int-t-in.$srcext || die cannot compile
+v "$@" $LDFLAGS ${Fe}mkt-int-t-t.exe mkt-int-t-*.$objext || die cannot link
+$cross || test "$(set +e; ./mkt-int-t-t.exe; echo $?)" = "Hi!${nl}4" || die fails to run
 
 test -n "$TARGET_OS" || TARGET_OS=$(uname -s 2>/dev/null || uname)
 
@@ -126,9 +150,11 @@ MirBSD)
 	flagstotest="$flagstotest -fno-lto -qnoipa -xipo=0"
 	;;
 esac
-case $* in
+case " $* " in
 *\ do-cl.bat\ *)
 	flagstotest='/WX' ;;
+*\ owcc\ *|*\ wcl\ *|*\ wcl386\ *)
+	flagstotest= ;;
 esac
 for flagtotest in $flagstotest; do
 	varname=$(echo "X$flagtotest" | sed \
@@ -148,7 +174,7 @@ for flagtotest in $flagstotest; do
 		;;
 	esac
 	echo >&2 "I: checking if we can add $flagtotest"
-	if v "$@" $LDFLAGS $flagtotest ${Fe}mkt-int.t-t.exe mkt-int.t-in.$srcext; then
+	if v "$@" $LDFLAGS $flagtotest ${Fe}mkt-int-t-t.exe mkt-int-t-in.$srcext; then
 		set -- "$@" $flagtotest
 	fi
 done
@@ -161,7 +187,7 @@ use_icexp_rsmax=-DHAVE_INTCONSTEXPR_RSIZE_MAX
 have_offt=1
 
 echo >&2 'I: checking if we have <sys/types.h>'
-cat >mkt-int.t-in.$srcext <<EOF
+cat >mkt-int-t-in.$srcext <<EOF
 #ifndef __STDC_WANT_LIB_EXT1__
 #define __STDC_WANT_LIB_EXT1__ 1
 #endif
@@ -175,10 +201,10 @@ typedef unsigned short hut;
 typedef signed short hst;
 int main(void) { return (printf("Hi!\\n")); }
 EOF
-v "$@" $LDFLAGS ${Fe}mkt-int.t-t.exe mkt-int.t-in.$srcext || use_systypes=
+v "$@" $LDFLAGS ${Fe}mkt-int-t-t.exe mkt-int-t-in.$srcext || use_systypes=
 
 echo >&2 'I: checking if we have <inttypes.h>'
-cat >mkt-int.t-in.$srcext <<EOF
+cat >mkt-int-t-in.$srcext <<EOF
 #ifndef __STDC_WANT_LIB_EXT1__
 #define __STDC_WANT_LIB_EXT1__ 1
 #endif
@@ -193,10 +219,10 @@ typedef unsigned short hut;
 typedef signed short hst;
 int main(void) { return (printf("Hi!\\n")); }
 EOF
-v "$@" $LDFLAGS ${Fe}mkt-int.t-t.exe mkt-int.t-in.$srcext || use_inttypes=
+v "$@" $LDFLAGS ${Fe}mkt-int-t-t.exe mkt-int-t-in.$srcext || use_inttypes=
 
 echo >&2 'I: checking if we have <stdint.h>'
-cat >mkt-int.t-in.$srcext <<EOF
+cat >mkt-int-t-in.$srcext <<EOF
 #ifndef __STDC_WANT_LIB_EXT1__
 #define __STDC_WANT_LIB_EXT1__ 1
 #endif
@@ -212,10 +238,10 @@ typedef unsigned short hut;
 typedef signed short hst;
 int main(void) { return (printf("Hi!\\n")); }
 EOF
-v "$@" $LDFLAGS ${Fe}mkt-int.t-t.exe mkt-int.t-in.$srcext || use_stdint=
+v "$@" $LDFLAGS ${Fe}mkt-int-t-t.exe mkt-int-t-in.$srcext || use_stdint=
 
 echo >&2 'I: checking if we have <basetsd.h>'
-cat >mkt-int.t-in.$srcext <<EOF
+cat >mkt-int-t-in.$srcext <<EOF
 #ifndef __STDC_WANT_LIB_EXT1__
 #define __STDC_WANT_LIB_EXT1__ 1
 #endif
@@ -232,10 +258,10 @@ typedef unsigned short hut;
 typedef signed short hst;
 int main(void) { return (printf("Hi!\\n")); }
 EOF
-v "$@" $LDFLAGS ${Fe}mkt-int.t-t.exe mkt-int.t-in.$srcext || use_basetsd=
+v "$@" $LDFLAGS ${Fe}mkt-int-t-t.exe mkt-int-t-in.$srcext || use_basetsd=
 
 echo >&2 'I: checking whether RSIZE_MAX is an integer constant expression'
-cat >mkt-int.t-in.$srcext <<EOF
+cat >mkt-int-t-in.$srcext <<EOF
 #ifndef __STDC_WANT_LIB_EXT1__
 #define __STDC_WANT_LIB_EXT1__ 1
 #endif
@@ -270,11 +296,11 @@ mbCTA_BEG(check);
 mbCTA_END(check);
 int main(void) { return (printf("Hi! %d\\n", tstarr[0])); }
 EOF
-v "$@" $LDFLAGS $use_icexp_rsmax ${Fe}mkt-int.t-t.exe mkt-int.t-in.$srcext || use_icexp_rsmax=
+v "$@" $LDFLAGS $use_icexp_rsmax ${Fe}mkt-int-t-t.exe mkt-int-t-in.$srcext || use_icexp_rsmax=
 set -- "$@" $use_icexp_rsmax
 
 echo >&2 'I: checking for off_t'
-cat >mkt-int.t-in.$srcext <<EOF
+cat >mkt-int-t-in.$srcext <<EOF
 #ifndef __STDC_WANT_LIB_EXT1__
 #define __STDC_WANT_LIB_EXT1__ 1
 #endif
@@ -291,7 +317,7 @@ typedef unsigned short hut;
 typedef signed short hst;
 int main(void) { return ((int)sizeof(off_t)); }
 EOF
-v "$@" $LDFLAGS ${Fe}mkt-int.t-t.exe mkt-int.t-in.$srcext || have_offt=0
+v "$@" $LDFLAGS ${Fe}mkt-int-t-t.exe mkt-int-t-in.$srcext || have_offt=0
 set -- "$@" -DHAVE_OFF_T=$have_offt
 
 xset() {
@@ -311,7 +337,7 @@ xset "$use_icexp_rsmax"
 echo >&2 "N: you $v an integer constant expression RSIZE_MAX"
 
 echo >&2 'I: checking if compile-time checks pass'
-cat >mkt-int.t-in.$srcext <<EOF
+cat >mkt-int-t-in.$srcext <<EOF
 #ifndef __STDC_WANT_LIB_EXT1__
 #define __STDC_WANT_LIB_EXT1__ 1
 #endif
@@ -325,10 +351,28 @@ $use_basetsd
 #include <stdio.h>
 int main(void) { return (printf("Hi!\\n")); }
 EOF
-v "$@" $LDFLAGS ${Fe}mkt-int.t-t.exe mkt-int.t-in.$srcext || die compile-time checks fail
+v "$@" $LDFLAGS ${Fe}mkt-int-t-t.exe mkt-int-t-in.$srcext || die compile-time checks fail
+
+use_float='#include <float.h>'
+echo >&2 'I: checking if we have <float.h>'
+cat >mkt-int-t-in.$srcext <<EOF
+#ifndef __STDC_WANT_LIB_EXT1__
+#define __STDC_WANT_LIB_EXT1__ 1
+#endif
+$use_systypes
+$use_inttypes
+$use_stdint
+$use_basetsd
+$use_float
+#include <limits.h>
+#include <stddef.h>
+#include <stdio.h>
+int main(void) { return (printf("Hi!\\n")); }
+EOF
+v "$@" $LDFLAGS ${Fe}mkt-int-t-t.exe mkt-int-t-in.$srcext || die use_float=
 
 echo >&2 'I: creating tests... (can take very long)'
-cat - xxt-int.c >mkt-int.t-xx.$srcext <<EOF
+cat - xxt-int.c >mkt-int-t-xx.$srcext <<EOF
 #ifndef __STDC_WANT_LIB_EXT1__
 #define __STDC_WANT_LIB_EXT1__ 1
 #endif
@@ -344,7 +388,7 @@ $use_basetsd
 EOF
 
 for x in 0 1 2; do
-	cat >mkt-int.t-f$x.$srcext <<EOF
+	cat >mkt-int-t-f$x.$srcext <<EOF
 #ifndef __STDC_WANT_LIB_EXT1__
 #define __STDC_WANT_LIB_EXT1__ 1
 #endif
@@ -358,11 +402,11 @@ $use_basetsd
 #include <stdio.h>
 
 #include "xxt-int.h"
-#include "mkt-int.t-ff.h"
+#include "mkt-int-t-ff.h"
 EOF
 done
 
-cat >mkt-int.t-in.$srcext <<EOF
+cat >mkt-int-t-in.$srcext <<EOF
 #define S(x) #x
 #define s(x) S(x)
 #ifdef MBSDINT_H_MBIPTR_IS_SIZET
@@ -374,6 +418,11 @@ static const char oMBSDINT_H_MBIPTR_IS_SIZET[] = "not passed";
 static const char oMBSDINT_H_MBIPTR_IN_LARGE[] = "passed '" s(MBSDINT_H_MBIPTR_IN_LARGE) "'";
 #else
 static const char oMBSDINT_H_MBIPTR_IN_LARGE[] = "not passed";
+#endif
+#ifdef MBSDINT_H_WANT_LONG_IN_SIZET
+static const char oMBSDINT_H_WANT_LONG_IN_SIZET[] = "passed '" s(MBSDINT_H_WANT_LONG_IN_SIZET) "'";
+#else
+static const char oMBSDINT_H_WANT_LONG_IN_SIZET[] = "not passed";
 #endif
 #ifdef MBSDINT_H_WANT_PTR_IN_SIZET
 static const char oMBSDINT_H_WANT_PTR_IN_SIZET[] = "passed '" s(MBSDINT_H_WANT_PTR_IN_SIZET) "'";
@@ -413,13 +462,14 @@ $use_basetsd
 #define MBSDINT_H_SKIP_CTAS 1
 #include "mbsdcc.h"
 #include "mbsdint.h"
+$use_float
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #define XXT_DO_STDIO_IMPLS
 #include "xxt-int.h"
-#include "mkt-int.t-ff.h"
+#include "mkt-int-t-ff.h"
 
 static const char use_systypes[] = "$use_systypes";
 static const char use_inttypes[] = "$use_inttypes";
@@ -430,7 +480,7 @@ static const char test_rcsid[] = "$rcsid";
 extern const char xxtc_rcsid[];
 
 EOF
-cat >>mkt-int.t-in.$srcext <<\EOF
+cat >>mkt-int-t-in.$srcext <<\EOF
 int rv = 0;
 but bin1u, bin2u, boutu;
 bst bin1s, bin2s, bouts;
@@ -487,6 +537,8 @@ static const int xMBSDINT_H_MBIPTR_IS_SIZET =
 static const int xMBSDINT_H_MBIPTR_IN_LARGE =
 	sizeof(mbiPTR_U) <= sizeof(mbiLARGE_U) &&
 	mbiTYPE_UBITS(mbiPTR_U) <= mbiMASK_BITS(mbiLARGE_U_MAX);
+static const int xMBSDINT_H_WANT_LONG_IN_SIZET =
+	sizeof(size_t) >= sizeof(long);
 static const int xMBSDINT_H_WANT_PTR_IN_SIZET =
 	sizeof(void *) == sizeof(size_t) &&
 	sizeof(char *) == sizeof(size_t) &&
@@ -512,6 +564,11 @@ static const char dMBSDINT_H_MBIPTR_IS_SIZET[] = "undef";
 static const char dMBSDINT_H_MBIPTR_IN_LARGE[] = s(MBSDINT_H_MBIPTR_IN_LARGE);
 #else
 static const char dMBSDINT_H_MBIPTR_IN_LARGE[] = "undef";
+#endif
+#ifdef MBSDINT_H_WANT_LONG_IN_SIZET
+static const char dMBSDINT_H_WANT_LONG_IN_SIZET[] = s(MBSDINT_H_WANT_LONG_IN_SIZET);
+#else
+static const char dMBSDINT_H_WANT_LONG_IN_SIZET[] = "undef";
 #endif
 #ifdef MBSDINT_H_WANT_PTR_IN_SIZET
 static const char dMBSDINT_H_WANT_PTR_IN_SIZET[] = s(MBSDINT_H_WANT_PTR_IN_SIZET);
@@ -584,6 +641,63 @@ void dfam(const char *what, const char *exp, struct want_fam *fam) {
 	fprintf(stderr, "N: '%s'\n", fam->label);
 }
 
+volatile int zero = 0;
+volatile mbiHUGE_U uzero = 0;
+
+static void
+ti_f(const char *t, size_t sz, const char *Min, const char *Max)
+{
+	fprintf(stderr, "N: %18s: floatish, %u chars, min(%s) max(%s)\n",
+	    t, 0U+(unsigned)sz, Min, Max);
+}
+
+static void
+tin_u(const char *t, size_t sz,
+    unsigned Bits, const char *Max, unsigned Mb)
+{
+	fprintf(stderr, "N: %18s: unsigned, %u chars, %u bits, max(%s) w=%u\n",
+	    t, 0U+(unsigned)sz, Bits, Max, Mb);
+}
+
+static void
+tif_u(const char *t, size_t sz, int TbOK, int MaxOK,
+    mbiHUGE_U Tb, const char *Max, mbiHUGE_U uMax)
+{
+	fprintf(stderr, "N: %18s: unsigned, %u chars, ", t, 0U+(unsigned)sz);
+	if (TbOK == 1)
+		fprintf(stderr, "%u", mbiMASK_BITS(Tb));
+	else
+		fprintf(stderr, "more than %u", mbiTYPE_UBITS(mbiHUGE_U));
+	fprintf(stderr, " bits, max(%s) w", Max);
+	if (MaxOK == 0)
+		fprintf(stderr, "=0\n");
+	else if (MaxOK == 1)
+		fprintf(stderr, "=%u\n", mbiMASK_BITS(uMax));
+	else
+		fprintf(stderr, " > %u\n", mbiTYPE_UBITS(mbiHUGE_U));
+}
+
+static void
+tin_s(const char *t, size_t sz, const char *Min, const char *Max, unsigned Bits)
+{
+	fprintf(stderr, "N: %18s:   signed, %u chars, min(%s), max(%s) w=%u\n",
+	    t, 0U+(unsigned)sz, Min, Max, Bits);
+}
+
+static void
+tif_s(const char *t, size_t sz, const char *Min, const char *Max,
+    int MaxOK, mbiHUGE_U uMax)
+{
+	fprintf(stderr, "N: %18s:   signed, %u chars, min(%s), max(%s) w",
+	    t, 0U+(unsigned)sz, Min, Max);
+	if (MaxOK == 0)
+		fprintf(stderr, "=0\n");
+	else if (MaxOK == 1)
+		fprintf(stderr, "=%u\n", mbiMASK_BITS(uMax) + 1U);
+	else
+		fprintf(stderr, " > %u\n", mbiTYPE_UBITS(mbiHUGE_U));
+}
+
 int main(void) {
 	unsigned int b_rsz = 0, b_sz = 0, b_ptr = 0, b_mbi = 0, f_mbi;
 	const char *whichrepr;
@@ -633,10 +747,10 @@ int main(void) {
 	mbmscWd(4127);
 EOF
 
-echo "/* NeXTstep bug workaround */" >mkt-int.t-ff.h
+echo "/* NeXTstep bug workaround */" >mkt-int-t-ff.h
 numf=0
 
-t1() { cat >>mkt-int.t-in.$srcext <<EOF
+t1() { cat >>mkt-int-t-in.$srcext <<EOF
 	if (($1) != ($2)) {
 		fprintf(stderr, "E: (%s) failed, got %lu want %lu (%s)\\n",
 		    "$1", (unsigned long)($1), (unsigned long)($2), "$2");
@@ -646,13 +760,13 @@ EOF
 }
 
 mbc1() {
-	:>mkt-int.t-bc
+	:>mkt-int-t-bc
 	mbc1a "$@"
 }
 
 mbc1a() {
 	want=$(( ($1) * 2))
-	bc >mkt-int.t-bc2 <<EOF
+	bc >mkt-int-t-bc2 <<EOF
 define f(x) {
 ${4#$nl}
 }
@@ -661,20 +775,20 @@ for (v = $2; v <= $3; ++v) {
 	f(v)
 }
 EOF
-	got=$(wc -l <mkt-int.t-bc2)
+	got=$(wc -l <mkt-int-t-bc2)
 	test $got -eq $want || \
 	    die got $got lines, not "$want", from bc "'$4'"
-	cat mkt-int.t-bc2 >>mkt-int.t-bc
+	cat mkt-int-t-bc2 >>mkt-int-t-bc
 }
 
 mbc2() {
-	:>mkt-int.t-bc
+	:>mkt-int-t-bc
 	mbc2a "$@"
 }
 
 mbc2a() {
 	want=$(( ($1) * 3))
-	bc >mkt-int.t-bc2 <<EOF
+	bc >mkt-int-t-bc2 <<EOF
 define f(x,y) {
 ${6#$nl}
 }
@@ -686,14 +800,14 @@ for (v = $2; v <= $3; ++v) {
 	}
 }
 EOF
-	got=$(wc -l <mkt-int.t-bc2)
+	got=$(wc -l <mkt-int-t-bc2)
 	test $got -eq $want || \
 	    die got $got lines, not "$want", from bc "'$6'"
-	cat mkt-int.t-bc2 >>mkt-int.t-bc
+	cat mkt-int-t-bc2 >>mkt-int-t-bc
 }
 
 mba() {
-	printf '%s\n' "$@" >>mkt-int.t-bc
+	printf '%s\n' "$@" >>mkt-int-t-bc
 }
 
 gett() {
@@ -712,8 +826,8 @@ ubc1() {
 	numf=$(($numf + 1))
 	ti=$(gett $2)
 	to=$(gett $3)
-	echo "	$fn();" >>mkt-int.t-in.$srcext
-	echo "extern void $fn(void);" >>mkt-int.t-ff.h
+	echo "	$fn();" >>mkt-int-t-in.$srcext
+	echo "extern void $fn(void);" >>mkt-int-t-ff.h
     {
 	echo >&4 "extern const $ti ${fn}_i[];"
 	echo >&4 "const $ti ${fn}_i[] = {"
@@ -725,7 +839,7 @@ ubc1() {
 		echo >&4 "$os$in"
 		echo "$os$out"
 		os=,$ht
-	done <mkt-int.t-bc
+	done <mkt-int-t-bc
 	echo >&4 "};"
 	echo "};"
 	echo "void $fn(void) {"
@@ -734,7 +848,7 @@ ubc1() {
 	echo "	while (cnt--)"
 	echo "		tm1($2, $3, $1, ${fn}_i[cnt], ${fn}_o[cnt]);"
 	echo '}'
-    } >>mkt-int.t-f0.$srcext 4>>mkt-int.t-f1.$srcext
+    } >>mkt-int-t-f0.$srcext 4>>mkt-int-t-f1.$srcext
 }
 
 ubc2() {
@@ -743,8 +857,8 @@ ubc2() {
 	ta=$(gett $2)
 	tb=$(gett $3)
 	ty=$(gett $4)
-	echo "	$fn();" >>mkt-int.t-in.$srcext
-	echo "extern void $fn(void);" >>mkt-int.t-ff.h
+	echo "	$fn();" >>mkt-int-t-in.$srcext
+	echo "extern void $fn(void);" >>mkt-int-t-ff.h
     {
 	echo >&4 "extern const $ta ${fn}_a[];"
 	echo >&4 "const $ta ${fn}_a[] = {"
@@ -761,7 +875,7 @@ ubc2() {
 		echo >&5 "$os$in2"
 		echo "$os$out"
 		os=,$ht
-	done <mkt-int.t-bc
+	done <mkt-int-t-bc
 	echo >&4 "};"
 	echo >&5 "};"
 	echo "};"
@@ -771,7 +885,7 @@ ubc2() {
 	echo "	while (cnt--)"
 	echo "		tm2($2, $3, $4, $1, ${fn}_a[cnt], ${fn}_b[cnt], ${fn}_y[cnt]);"
 	echo '}'
-    } >>mkt-int.t-f0.$srcext 4>>mkt-int.t-f1.$srcext 5>>mkt-int.t-f2.$srcext
+    } >>mkt-int-t-f0.$srcext 4>>mkt-int-t-f1.$srcext 5>>mkt-int-t-f2.$srcext
 }
 
 t1 'mbiCOS(bst, -1, <, 2)' 1
@@ -783,7 +897,7 @@ t1 'mbiUP(hut, hhm)' '0x1FFU'
 t1 'mbiMM(hut, hfm, (hut)0xFFFFUL)' hfm
 t1 'mbiMM(hut, hhm, (hut)0xFFFFUL)' hhm
 
-cat >>mkt-int.t-in.$srcext <<\EOF
+cat >>mkt-int-t-in.$srcext <<\EOF
 	mbmscWpop;
 	fprintf(stderr, "I: manual two’s complement in unsigned...\n");
 EOF
@@ -896,7 +1010,7 @@ while (y < 0) y += 1024
 return (y % 1024)'
 ubc2 h_mbiMA_VZU2U hin1u hin2u houtu
 
-cat >>mkt-int.t-in.$srcext <<\EOF
+cat >>mkt-int-t-in.$srcext <<\EOF
 
 #if ((SCHAR_MIN)+1 == -(SCHAR_MAX))
 	fprintf(stderr, "I: assuming two's complement, testing...\n");
@@ -1061,7 +1175,7 @@ mbc2 4096 0 63 0 63 '
 	return (1)'
 ubc2 x_mbiMKcmp bin1u bin2u iouts
 
-cat >>mkt-int.t-in.$srcext <<\EOF
+cat >>mkt-int-t-in.$srcext <<\EOF
 	for (hin1u = 0; hin1u < 256; ++hin1u)
 		for (hin2u = 0; hin2u < 8; ++hin2u) {
 			boutu = b_mbiKrol(hin1u, hin2u);
@@ -1162,23 +1276,26 @@ mbc2 4032 0 63 1 63 '
 	return (r)'
 ubc2 x_mbiMKrem bin1u bin2u boutu
 
-cat >>mkt-int.t-in.$srcext <<\EOF
+cat >>mkt-int-t-in.$srcext <<\EOF
+	/* shall not warn */
+	SHIKATANAI feof(stdin);
+
 	fprintf(stderr, "I: final tests...\n");
-	mbmscWd(4127);
+	mbmscWd(4127 5219);
 #ifndef __cplusplus
 /* web+ap://toot.mirbsd.org/@mirabilos/statuses/01HC3SH1WGHVR48BT1G975MFT5 */
 EOF
 
 t1 'mbnil == NULL' 1
 
-cat >>mkt-int.t-in.$srcext <<\EOF
+cat >>mkt-int-t-in.$srcext <<\EOF
 #else /* __cplusplus */
 EOF
 
 t1 '((void *)NULL) == mbnil' 1
 t1 'NULL == (void *)mbnil' 1
 
-cat >>mkt-int.t-in.$srcext <<\EOF
+cat >>mkt-int-t-in.$srcext <<\EOF
 #endif /* __cplusplus */
 EOF
 
@@ -1188,7 +1305,7 @@ t1 'offsetof(struct fam_t, value)' 'offsetof(struct fam_t, value[0])'
 
 t1 'ct.expr2' 511
 
-cat >>mkt-int.t-in.$srcext <<\EOF
+cat >>mkt-int-t-in.$srcext <<\EOF
 	switch ((unsigned int)bitrepr(-1)) {
 	case 0xFFU:
 		whichrepr = "two’s complement";
@@ -1208,15 +1325,30 @@ cat >>mkt-int.t-in.$srcext <<\EOF
 	fprintf(stderr, "N: CHAR_BIT: %d\t\tcomplement: %s using %s\n",
 	    (int)CHAR_BIT, mbiSAFECOMPLEMENT ? "safe" : "UNSAFE", whichrepr);
 
+/* use for types guaranteed to not be float only */
 #define ti(t,min,max) if (mbiTYPE_ISF(t)) \
-	fprintf(stderr, "N: %18s: floatish, %u chars, min(%s) max(%s)\n", \
-	    #t, (unsigned)sizeof(t), mbccS(min), mbccS(max)); \
-    else if (mbiTYPE_ISU(t)) \
-	fprintf(stderr, "N: %18s: unsigned, %u chars, %u bits, max(%s) w=%u\n", \
-	    #t, (unsigned)sizeof(t), mbiTYPE_ISU(t)?mbiTYPE_UBITS(t):0, mbccS(max), max==0?0:mbiMASK_BITS(max)); \
-    else \
-	fprintf(stderr, "N: %18s:   signed, %u chars, min(%s), max(%s) w=%u\n", \
-	    #t, (unsigned)sizeof(t), mbccS(min), mbccS(max), max==0?0:(mbiMASK_BITS(max) + 1))
+		ti_f(#t, sizeof(t), mbccS(min), mbccS(max)); \
+	else if (mbiTYPE_ISU(t)) \
+		tin_u(#t, sizeof(t), \
+		    mbiMASK_BITS((t)((t)zero + mbiTYPE_UMAX(t))), \
+		    mbccS(max), (max) == 0 ? 0 : mbiMASK_BITS(max)); \
+	else \
+		tin_s(#t, sizeof(t), mbccS(min), mbccS(max), \
+		    (max) < 1 ? 0 : (mbiMASK_BITS(max) + 1U))
+
+/* use if the type could be float */
+#define tif(t,min,max) if (mbiTYPE_ISF(t)) \
+		ti_f(#t, sizeof(t), mbccS(min), mbccS(max)); \
+	else if (mbiTYPE_ISU(t)) \
+		tif_u(#t, sizeof(t), \
+		    tifc((t)-(t)1), tifc(max), \
+		    tifC((t)-(t)1), mbccS(max), tifC(max)); \
+	else \
+		tif_s(#t, sizeof(t), mbccS(min), mbccS(max), \
+		    tifc(max), tifC(max))
+/* workarounds multiple idiotic compilers… */
+#define tifc(v) ((v) < 1 ? 0 : uzero+(v) < mbiHUGE_U_MAX ? 1 : uzero+(v) == mbiHUGE_U_MAX ? 1 : 2)
+#define tifC(v) ((v) < 1 ? 0U : uzero+(v) < mbiHUGE_U_MAX ? (mbiHUGE_U)(uzero+(v)) : uzero+(v) == mbiHUGE_U_MAX ? mbiHUGE_U_MAX : 0U)
 
 	ti(char, CHAR_MIN, CHAR_MAX);
 	ti(signed char, SCHAR_MIN, SCHAR_MAX);
@@ -1268,11 +1400,16 @@ cat >>mkt-int.t-in.$srcext <<\EOF
 	fprintf(stderr, "N: no %s\n", "uintptr_t");
 #endif
 	ti(mbiPTR_U, 0, mbiPTR_U_MAX);
-	ti(time_t, 0, 0);
+	tif(time_t, 0, 0);
 #if HAVE_OFF_T
 	ti(off_t, 0, 0);
 #else
 	fprintf(stderr, "N: no %s\n", "off_t");
+#endif
+#ifdef FLT_RADIX
+	tif(float, FLT_MIN, FLT_MAX);
+	tif(double, DBL_MIN, DBL_MAX);
+	tif(long double, LDBL_MIN, LDBL_MAX);
 #endif
 #if MBSDINT_H_MBIPTR_IS_SIZET || \
     (!defined(__CHERI__) && !defined(UINTPTR_MAX))
@@ -1335,6 +1472,7 @@ cat >>mkt-int.t-in.$srcext <<\EOF
 		   #n, x##n, d##n, D, o##n)
 	a(MBSDINT_H_MBIPTR_IS_SIZET, 1);
 	a(MBSDINT_H_MBIPTR_IN_LARGE, 1);
+	a(MBSDINT_H_WANT_LONG_IN_SIZET, 1);
 	a(MBSDINT_H_WANT_PTR_IN_SIZET, 0);
 	a(MBSDINT_H_WANT_SIZET_IN_LONG, 0);
 	a(MBSDINT_H_WANT_INT32, 0);
@@ -1351,25 +1489,25 @@ cat >>mkt-int.t-in.$srcext <<\EOF
 EOF
 echo >&2 'I: building tests...'
 set -x
-rm -f mkt-int.t-*.$objext
-"$@" -c mkt-int.t-xx.$srcext || die -w compiling tests-xx failed
-"$@" -c mkt-int.t-in.$srcext || die -w compiling tests-mk failed
-"$@" -c mkt-int.t-f0.$srcext || die -w compiling tests-f0 failed
-"$@" -c mkt-int.t-f1.$srcext || die -w compiling tests-f1 failed
-"$@" -c mkt-int.t-f2.$srcext || die -w compiling tests-f2 failed
-"$@" $LDFLAGS ${Fe}mkt-int.t-t.exe mkt-int.t-*.$objext || die -w linking tests failed
-(ls -l mkt-int.t-t.exe || :)
-(size mkt-int.t-t.exe || :)
+rm -f mkt-int-t-*.$objext
+"$@" -c mkt-int-t-xx.$srcext || die -w compiling tests-xx failed
+"$@" -c mkt-int-t-in.$srcext || die -w compiling tests-mk failed
+"$@" -c mkt-int-t-f0.$srcext || die -w compiling tests-f0 failed
+"$@" -c mkt-int-t-f1.$srcext || die -w compiling tests-f1 failed
+"$@" -c mkt-int-t-f2.$srcext || die -w compiling tests-f2 failed
+"$@" $LDFLAGS ${Fe}mkt-int-t-t.exe mkt-int-t-*.$objext || die -w linking tests failed
+(ls -l mkt-int-t-t.exe || :)
+(size mkt-int-t-t.exe || :)
 set +ex
 if $cross; then
-	echo >&2 'I: compilation finished, copy mkt-int.t-t.exe to the target and run it'
-	echo >&2 "N: '$(pwd | sed "s,','\\\\'',g")/mkt-int.t-t.exe'"
+	echo >&2 'I: compilation finished, copy mkt-int-t-t.exe to the target and run it'
+	echo >&2 "N: '$(pwd | sed "s,','\\\\'',g")/mkt-int-t-t.exe'"
 	echo >&2 'I: then press Return to continue'
 	read dummy
 	exit 0
 fi
 echo >&2 'I: running tests'
-./mkt-int.t-t.exe
+./mkt-int-t-t.exe
 rv=$?
 if test "$rv" = 0; then
 	echo >&2 'I: tests passed'
