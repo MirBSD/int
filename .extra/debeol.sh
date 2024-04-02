@@ -37,7 +37,7 @@ apt-get update
 case $1 in
 slink)
 	# work around a segfault
-	apt-get -d install bc gcc g++
+	apt-get -d -y install bc gcc g++
 	dpkg -i /var/cache/apt/archives/*.deb
 	;;
 *)
