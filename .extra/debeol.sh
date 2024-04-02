@@ -1,11 +1,7 @@
 set -e
 echo ::group::Setup $0 on Debian $2
-buildessential=build-essential
 nocxx=false
 case $1 in
-slink)
-	buildessential='gcc g++'
-	;;
 jessie)
 	cat >/etc/apt/sources.list <<\EOF
 deb http://archive.debian.org/debian/ jessie main non-free contrib
@@ -38,7 +34,16 @@ debug::pkgproblemresolver "true";
 APT::Install-Recommends "0";
 EOF
 apt-get update
-apt-get install -y bc $buildessential
+case $1 in
+slink)
+	# work around a segfault
+	apt-get -d install bc gcc g++
+	dpkg -i /var/cache/apt/archives/*.deb
+	;;
+*)
+	apt-get install -y bc build-essential
+	;;
+esac
 : "${CC=cc}${CXX=c++}${CFLAGS=-O2}${CXXFLAGS=-O2}"
 eval "$(env DEB_BUILD_MAINT_OPTIONS=hardening=+all dpkg-buildflags --export=sh || :)"
 ($CC $CPPFLAGS $CFLAGS -v dummy.c || :)
