@@ -39,7 +39,7 @@ export LDFLAGS
 $nocxx || ($CXX $CPPFLAGS $CXXFLAGS -v dummy.cc || :)
 echo ::endgroup::
 echo ::group::Build for C on sid/$xarch
-exec sh mkt-int.sh -x \
+<dummy.c DEBUG=' ' sh mkt-int.sh -x \
     $CC $CPPFLAGS $CFLAGS -Wall -Wextra -Wvla \
     -DMBSDINT_H_WANT_PTR_IN_SIZET \
     -DMBSDINT_H_WANT_SIZET_IN_LONG \
@@ -52,7 +52,7 @@ if $nocxx; then
 	echo ::group::No C++ here
 else
 	echo ::group::Build for C++ on sid/$xarch
-	sh mkt-int.sh -cxx -x \
+	<dummy.cc DEBUG=' ' sh mkt-int.sh -cxx -x \
 	    $CXX $CPPFLAGS $CXXFLAGS -Wall -Wextra -Wvla \
 	    -DMBSDINT_H_WANT_PTR_IN_SIZET \
 	    -DMBSDINT_H_WANT_SIZET_IN_LONG \
