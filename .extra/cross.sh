@@ -34,6 +34,8 @@ eval "$(env \
     DEB_BUILD_MAINT_OPTIONS="qa=+all,-canary optimize=+all,-lto hardening=+all reproducible=+all" \
     DEB_HOST_ARCH=$xarch \
     dpkg-buildflags --export=sh || :)"
+# avoid qemu-m68k: Could not open '/lib/ld.so.1': No such file or directory
+LDFLAGS="$LDFLAGS -static"
 export LDFLAGS
 ($CC $CPPFLAGS $CFLAGS -v dummy.c || :)
 $nocxx || ($CXX $CPPFLAGS $CXXFLAGS -v dummy.cc || :)
