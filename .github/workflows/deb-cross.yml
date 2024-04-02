@@ -68,23 +68,6 @@
         "fail-fast": true
       }
     },
-    "mips64el": {
-      "runs-on": "ubuntu-latest",
-      "steps": [
-        {
-          "uses": "actions/checkout@v4.1.1"
-        },
-        {
-          "uses": "docker://i386/debian:sid-slim",
-          "with": {
-            "args": "sh .extra/cross.sh mips64el mips64el-linux-gnuabi64 qemu-mips64el"
-          }
-        }
-      ],
-      "strategy": {
-        "fail-fast": true
-      }
-    },
     "powerpc": {
       "runs-on": "ubuntu-latest",
       "steps": [
