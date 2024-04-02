@@ -1,0 +1,161 @@
+{
+  "jobs": {
+    "alpha": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4.1.1"
+        },
+        {
+          "uses": "docker://i386/debian:sid-slim",
+          "with": {
+            "args": "sh .extra/cross.sh alpha alpha-linux-gnu qemu-alpha"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "armel": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4.1.1"
+        },
+        {
+          "uses": "docker://i386/debian:sid-slim",
+          "with": {
+            "args": "sh .extra/cross.sh armel arm-linux-gnueabi qemu-armel"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "hppa": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4.1.1"
+        },
+        {
+          "uses": "docker://i386/debian:sid-slim",
+          "with": {
+            "args": "sh .extra/cross.sh hppa hppa-linux-gnu qemu-hppa"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "m68k": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4.1.1"
+        },
+        {
+          "uses": "docker://i386/debian:sid-slim",
+          "with": {
+            "args": "sh .extra/cross.sh m68k m68k-linux-gnu qemu-m68k"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "mips64el": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4.1.1"
+        },
+        {
+          "uses": "docker://i386/debian:sid-slim",
+          "with": {
+            "args": "sh .extra/cross.sh mips64el mips64el-linux-gnuabi64 qemu-mips64el"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "powerpc": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4.1.1"
+        },
+        {
+          "uses": "docker://i386/debian:sid-slim",
+          "with": {
+            "args": "sh .extra/cross.sh powerpc powerpc-linux-gnu qemu-powerpc"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "ppc64": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4.1.1"
+        },
+        {
+          "uses": "docker://i386/debian:sid-slim",
+          "with": {
+            "args": "sh .extra/cross.sh ppc64 powerpc64-linux-gnu qemu-ppc64"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "sh4": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4.1.1"
+        },
+        {
+          "uses": "docker://i386/debian:sid-slim",
+          "with": {
+            "args": "sh .extra/cross.sh sh4 sh4-linux-gnu qemu-sh4"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "sparc64": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4.1.1"
+        },
+        {
+          "uses": "docker://i386/debian:sid-slim",
+          "with": {
+            "args": "sh .extra/cross.sh sparc64 sparc64-linux-gnu qemu-sparc64"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    }
+  },
+  "name": "deb-cross",
+  "on": {
+    "workflow_dispatch": null
+  }
+}
