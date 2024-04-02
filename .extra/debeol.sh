@@ -1,3 +1,4 @@
+exec 2>&1
 set -ex
 LC_ALL=C LANGUAGE=C DEBIAN_FRONTEND=noninteractive
 export LC_ALL DEBIAN_FRONTEND
