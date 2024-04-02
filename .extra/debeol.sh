@@ -1,3 +1,4 @@
+# © mirabilos Ⓕ MirBSD or CC0
 exec 2>&1
 set -ex
 LC_ALL=C LANGUAGE=C DEBIAN_FRONTEND=noninteractive
