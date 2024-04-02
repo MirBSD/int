@@ -1,4 +1,7 @@
-set -e
+set -ex
+LC_ALL=C LANGUAGE=C DEBIAN_FRONTEND=noninteractive
+export LC_ALL DEBIAN_FRONTEND
+unset LANGUAGE
 echo ::group::Setup $0 on Debian $2
 nocxx=false
 case $1 in
@@ -21,14 +24,10 @@ cat >dummy.c <<\EOF
 int main(void) { return (0); }
 EOF
 cp dummy.c dummy.cc
-LC_ALL=C LANGUAGE=C DEBIAN_FRONTEND=noninteractive
-export LC_ALL DEBIAN_FRONTEND
-unset LANGUAGE
 # configury
 HAVE_CAN_QNOIPA=0
 HAVE_CAN_XIPO_0=0
 export HAVE_CAN_QNOIPA HAVE_CAN_XIPO_0
-set -x
 cat >>/etc/apt/apt.conf <<\EOF
 debug::pkgproblemresolver "true";
 APT::Install-Recommends "0";
@@ -45,6 +44,7 @@ slink)
 	;;
 esac
 : "${CC=cc}${CXX=c++}${CFLAGS=-O2}${CXXFLAGS=-O2}"
+export CC CXX
 eval "$(env DEB_BUILD_MAINT_OPTIONS=hardening=+all dpkg-buildflags --export=sh || :)"
 ($CC $CPPFLAGS $CFLAGS -v dummy.c || :)
 $nocxx || ($CXX $CPPFLAGS $CXXFLAGS -v dummy.cc || :)

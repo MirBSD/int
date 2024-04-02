@@ -1,6 +1,12 @@
-LC_ALL=C.UTF-8 DEBIAN_FRONTEND=noninteractive
+set -ex
+LC_ALL=C.UTF-8 LANGUAGE=C DEBIAN_FRONTEND=noninteractive
 export LC_ALL DEBIAN_FRONTEND
 unset LANGUAGE
+echo ::group::Setup $0 on Debian sid
+cat >dummy.c <<\EOF
+int main(void) { return (0); }
+EOF
+cp dummy.c dummy.cc
 # more once #539617 is fixed
 dbmo_f=future=+all,-lfs,-time64
 dbmo_q=qa=+all,-canary
@@ -14,7 +20,6 @@ cfx_asan='-fsanitize=address -fno-omit-frame-pointer -fno-common -fsanitize=poin
 libc=
 xpkg=
 usecxx=
-set -ex
 while test $# -gt 0; do
 	case $1 in
 	(gccss)
@@ -72,8 +77,6 @@ EOF
 apt-get update
 apt-get --purge -y dist-upgrade
 apt-get install -y bc build-essential $xpkg
-: "${CC=cc}${CXX=c++}${CFLAGS=-O2}"
-eval "$(env DEB_BUILD_MAINT_OPTIONS="$dbmo" dpkg-buildflags --export=sh || :)"
 if test x"$xpkg" = x"gcc-snapshot"; then
 	mkdir -p /usr/local/bin
 	cat >/usr/local/bin/gcc-snapshot <<\EOF
@@ -113,6 +116,9 @@ EOF
 	CC=/usr/local/bin/gcc-snapshot
 	CXX=/usr/local/bin/g++-snapshot
 fi
+: "${CC=cc}${CXX=c++}${CFLAGS=-O2}"
+export CC CXX
+eval "$(env DEB_BUILD_MAINT_OPTIONS="$dbmo" dpkg-buildflags --export=sh || :)"
 if test -n "$libc"; then
 	sCFLAGS=
 	for x in $CFLAGS; do
@@ -159,6 +165,13 @@ case $CC in
 (*clang*) ;;
 (*) CFLAGS="$CFLAGS -Wvla" ;;
 esac
+if test -z "$usecxx"; then
+	($CC $CPPFLAGS $CFLAGS -v dummy.c || :)
+else
+	($CC $CPPFLAGS $CFLAGS -v dummy.cc || :)
+fi
+echo ::endgroup::
+echo ::group::Build and run testsuite
 exec sh mkt-int.sh $usecxx \
     $CC $CPPFLAGS $cfs $cft $CFLAGS -Wall -Wextra $cfx \
     -DMBSDINT_H_WANT_PTR_IN_SIZET \
@@ -166,3 +179,4 @@ exec sh mkt-int.sh $usecxx \
     -DMBSDINT_H_WANT_INT32 \
     -DMBSDINT_H_WANT_LRG64 \
     -DMBSDINT_H_WANT_SAFEC
+echo ::endgroup::

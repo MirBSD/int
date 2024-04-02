@@ -1,4 +1,7 @@
-set -e
+set -ex
+LC_ALL=C.UTF-8 LANGUAGE=C DEBIAN_FRONTEND=noninteractive
+export LC_ALL DEBIAN_FRONTEND
+unset LANGUAGE
 xarch=$1 xtriplet=$2 xqemu=$3
 echo ::group::Setup $0 on Debian sid/$xarch
 nocxx=false
@@ -6,14 +9,10 @@ cat >dummy.c <<\EOF
 int main(void) { return (0); }
 EOF
 cp dummy.c dummy.cc
-LC_ALL=C.UTF-8 DEBIAN_FRONTEND=noninteractive
-export LC_ALL DEBIAN_FRONTEND
-unset LANGUAGE
 # configury
 HAVE_CAN_QNOIPA=0
 HAVE_CAN_XIPO_0=0
 export HAVE_CAN_QNOIPA HAVE_CAN_XIPO_0
-set -x
 cat >/etc/apt/apt.conf.d/92bla <<\EOF
 debug::pkgproblemresolver "true";
 Dpkg::Progress-Fancy "false";
