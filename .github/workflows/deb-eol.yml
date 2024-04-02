@@ -7,10 +7,7 @@
           "uses": "actions/checkout@v4.1.1"
         },
         {
-          "uses": "docker://debian/eol:slink",
-          "with": {
-            "args": "sh .extra/debeol.sh slink 2.1"
-          }
+          "run": "docker pull debian/eol:slink\ndocker run --privileged --workdir /github/workspace --rm -e HOME -v /home/runner/work/_temp/_github_home:/github/home -v /home/runner/work/_temp/_github_workflow:/github/workflow -v \"$PWD\":/github/workspace debian/eol:slink sh .extra/debeol.sh slink 2.1"
         }
       ],
       "strategy": {
