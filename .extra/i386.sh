@@ -117,7 +117,7 @@ EOF
 	CC=/usr/local/bin/gcc-snapshot
 	CXX=/usr/local/bin/g++-snapshot
 fi
-: "${CC=cc}${CXX=c++}${CFLAGS=-O2}"
+: "${CC=cc}${CXX=c++}${CFLAGS=-O2}${CXXFLAGS=-O2}"
 export CC CXX
 eval "$(env DEB_BUILD_MAINT_OPTIONS="$dbmo" dpkg-buildflags --export=sh || :)"
 if test -n "$libc"; then
@@ -166,15 +166,16 @@ case $CC in
 (*clang*) ;;
 (*) CFLAGS="$CFLAGS -Wvla" ;;
 esac
+CFLAGS="$CFLAGS -Wall -Wextra $cfx"
 if test -z "$usecxx"; then
-	($CC $CPPFLAGS $CFLAGS -v dummy.c || :)
+	($CC $CPPFLAGS $CFLAGS $LDFLAGS -v dummy.c || :)
 else
-	($CC $CPPFLAGS $CFLAGS -v dummy.cc || :)
+	($CC $CPPFLAGS $CFLAGS $LDFLAGS -v dummy.cc || :)
 fi
 echo ::endgroup::
 echo ::group::Build and run testsuite
 exec sh mkt-int.sh $usecxx \
-    $CC $CPPFLAGS $cfs $cft $CFLAGS -Wall -Wextra $cfx \
+    $CC $CPPFLAGS $cfs $cft $CFLAGS \
     -DMBSDINT_H_WANT_PTR_IN_SIZET \
     -DMBSDINT_H_WANT_SIZET_IN_LONG \
     -DMBSDINT_H_WANT_INT32 \

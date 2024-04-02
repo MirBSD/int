@@ -47,12 +47,15 @@ esac
 : "${CC=cc}${CXX=c++}${CFLAGS=-O2}${CXXFLAGS=-O2}"
 export CC CXX
 eval "$(env DEB_BUILD_MAINT_OPTIONS=hardening=+all dpkg-buildflags --export=sh || :)"
-($CC $CPPFLAGS $CFLAGS -v dummy.c || :)
-$nocxx || ($CXX $CPPFLAGS $CXXFLAGS -v dummy.cc || :)
+CFLAGS="$CFLAGS -Wall -W"
+CXXFLAGS="$CXXFLAGS -Wall -W"
+export LDFLAGS
+($CC $CPPFLAGS $CFLAGS $LDFLAGS -v dummy.c || :)
+$nocxx || ($CXX $CPPFLAGS $CXXFLAGS $LDFLAGS -v dummy.cc || :)
 echo ::endgroup::
 echo ::group::Build for C on $1
 sh mkt-int.sh \
-    $CC $CPPFLAGS $CFLAGS -Wall -W \
+    $CC $CPPFLAGS $CFLAGS \
     -DMBSDINT_H_WANT_PTR_IN_SIZET \
     -DMBSDINT_H_WANT_SIZET_IN_LONG \
     -DMBSDINT_H_WANT_INT32 \
@@ -61,7 +64,7 @@ echo ::endgroup::
 if $nocxx; then exit 0; fi
 echo ::group::Build for C++ on $1
 sh mkt-int.sh -cxx \
-    $CXX $CPPFLAGS $CXXFLAGS -Wall -W \
+    $CXX $CPPFLAGS $CXXFLAGS \
     -DMBSDINT_H_WANT_PTR_IN_SIZET \
     -DMBSDINT_H_WANT_SIZET_IN_LONG \
     -DMBSDINT_H_WANT_INT32 \

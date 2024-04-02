@@ -34,15 +34,17 @@ eval "$(env \
     DEB_BUILD_MAINT_OPTIONS="qa=+all,-canary optimize=+all,-lto hardening=+all reproducible=+all" \
     DEB_HOST_ARCH=$xarch \
     dpkg-buildflags --export=sh || :)"
+CFLAGS="$CFLAGS -Wall -Wextra -Wvla"
+CXXFLAGS="$CXXFLAGS -Wall -Wextra -Wvla"
 # avoid qemu-m68k: Could not open '/lib/ld.so.1': No such file or directory
 LDFLAGS="$LDFLAGS -static"
 export LDFLAGS
-($CC $CPPFLAGS $CFLAGS -v dummy.c || :)
-$nocxx || ($CXX $CPPFLAGS $CXXFLAGS -v dummy.cc || :)
+($CC $CPPFLAGS $CFLAGS $LDFLAGS -v dummy.c || :)
+$nocxx || ($CXX $CPPFLAGS $CXXFLAGS $LDFLAGS -v dummy.cc || :)
 echo ::endgroup::
 echo ::group::Build for C on sid/$xarch
 <dummy.c DEBUG=' ' sh mkt-int.sh -x \
-    $CC $CPPFLAGS $CFLAGS -Wall -Wextra -Wvla \
+    $CC $CPPFLAGS $CFLAGS \
     -DMBSDINT_H_WANT_PTR_IN_SIZET \
     -DMBSDINT_H_WANT_SIZET_IN_LONG \
     -DMBSDINT_H_WANT_INT32 \
@@ -55,7 +57,7 @@ if $nocxx; then
 else
 	echo ::group::Build for C++ on sid/$xarch
 	<dummy.cc DEBUG=' ' sh mkt-int.sh -cxx -x \
-	    $CXX $CPPFLAGS $CXXFLAGS -Wall -Wextra -Wvla \
+	    $CXX $CPPFLAGS $CXXFLAGS \
 	    -DMBSDINT_H_WANT_PTR_IN_SIZET \
 	    -DMBSDINT_H_WANT_SIZET_IN_LONG \
 	    -DMBSDINT_H_WANT_INT32 \
