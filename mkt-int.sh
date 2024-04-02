@@ -1,5 +1,5 @@
 #!/bin/sh
-rcsid='$MirOS: int/mkt-int.sh,v 1.45 2023/12/12 16:53:29 tg Exp $'
+rcsid='$MirOS: int/mkt-int.sh,v 1.46 2024/04/02 03:16:50 tg Exp $'
 #-
 # © mirabilos Ⓕ MirBSD
 
@@ -67,6 +67,17 @@ EOF
 	exit 3
 fi
 
+test "$(bc <<\EOF
+define f(x) {
+return (-(256 - x))
+}
+for (v = 4; v <= 5; ++v) {
+	v
+	f(v)
+}
+EOF
+)" = "4${nl}-252${nl}5${nl}-251" || die 'bc(1) inoperable'
+
 cd "$(dirname "$0")" || die cannot change to script directory
 rm -f mkt-int-t* || die cannot delete old files
 test -n "$DEBUG" || trap 'rm -f mkt-int-t*' EXIT
@@ -77,6 +88,12 @@ case " $* " in
 	Fe=/Fe
 	objext=obj
 	$usecxx && srcext=cxx || :
+	;;
+*\ wcl\ *|*\ wcl386\ *)
+	Fe=-fe=
+	objext=obj
+	set -- "$@" "-fo=.$objext"
+	$usecxx && srcext=cc || :
 	;;
 *)
 	Fe='-o '
@@ -136,7 +153,7 @@ esac
 case " $* " in
 *\ do-cl.bat\ *)
 	flagstotest='/WX' ;;
-*\ owcc\ *)
+*\ owcc\ *|*\ wcl\ *|*\ wcl386\ *)
 	flagstotest= ;;
 esac
 for flagtotest in $flagstotest; do
@@ -1260,6 +1277,9 @@ mbc2 4032 0 63 1 63 '
 ubc2 x_mbiMKrem bin1u bin2u boutu
 
 cat >>mkt-int-t-in.$srcext <<\EOF
+	/* shall not warn */
+	SHIKATANAI feof(stdin);
+
 	fprintf(stderr, "I: final tests...\n");
 	mbmscWd(4127 5219);
 #ifndef __cplusplus

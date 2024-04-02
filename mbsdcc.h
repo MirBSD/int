@@ -5,7 +5,7 @@
  */
 
 #ifndef SYSKERN_MBSDCC_H
-#define SYSKERN_MBSDCC_H "$MirOS: int/mbsdcc.h,v 1.8 2023/12/11 11:57:40 tg Exp $"
+#define SYSKERN_MBSDCC_H "$MirOS: int/mbsdcc.h,v 1.9 2024/04/02 03:16:49 tg Exp $"
 
 /*
  * Note: this header uses the SIZE_MAX (or similar) definitions
@@ -216,6 +216,14 @@ template<> struct mbccCEX_sa<false,true> { typedef int Type; };
 #define mbnil			(size_t)0UL	/* wtf, why? */
 #else
 #define mbnil			(void *)0UL
+#endif
+
+/* præfix to avoid -Wunused-result when it really cannot be helped */
+#ifdef _FORTIFY_SOURCE
+/* workaround via https://stackoverflow.com/a/64407070/2171120 */
+#define SHIKATANAI		(void)!
+#else
+#define SHIKATANAI		(void)
 #endif
 
 #endif /* !SYSKERN_MBSDCC_H */
