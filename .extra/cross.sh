@@ -6,7 +6,7 @@ set -ex
 LC_ALL=C.UTF-8 LANGUAGE=C DEBIAN_FRONTEND=noninteractive
 export LC_ALL DEBIAN_FRONTEND
 unset LANGUAGE
-xarch=$1 xtriplet=$2 xqemu=$3
+xarch=$1 xtriplet=$2 xqemu=$3-static
 echo ::group::Setup $0 on Debian sid/$xarch
 nocxx=false
 cat >dummy.c <<\EOF
@@ -70,7 +70,7 @@ else
 fi
 echo ::endgroup::
 echo ::group::Installing qemu-user
-apt-get install -y qemu-user
+apt-get install -y qemu-user-static
 echo ::endgroup::
 echo ::group::Running under qemu-user
 $xqemu ./.result-c
