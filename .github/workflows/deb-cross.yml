@@ -7,7 +7,7 @@
           "uses": "actions/checkout@v4.1.1"
         },
         {
-          "uses": "docker://i386/debian:sid-slim",
+          "uses": "docker://debian:sid-slim",
           "with": {
             "args": "sh .extra/cross.sh alpha alpha-linux-gnu qemu-alpha"
           }
@@ -24,7 +24,7 @@
           "uses": "actions/checkout@v4.1.1"
         },
         {
-          "uses": "docker://i386/debian:sid-slim",
+          "uses": "docker://debian:sid-slim",
           "with": {
             "args": "sh .extra/cross.sh armel arm-linux-gnueabi qemu-armel"
           }
@@ -41,7 +41,7 @@
           "uses": "actions/checkout@v4.1.1"
         },
         {
-          "uses": "docker://i386/debian:sid-slim",
+          "uses": "docker://debian:sid-slim",
           "with": {
             "args": "sh .extra/cross.sh hppa hppa-linux-gnu qemu-hppa"
           }
@@ -58,7 +58,7 @@
           "uses": "actions/checkout@v4.1.1"
         },
         {
-          "uses": "docker://i386/debian:sid-slim",
+          "uses": "docker://debian:sid-slim",
           "with": {
             "args": "sh .extra/cross.sh m68k m68k-linux-gnu qemu-m68k"
           }
@@ -75,7 +75,7 @@
           "uses": "actions/checkout@v4.1.1"
         },
         {
-          "uses": "docker://i386/debian:sid-slim",
+          "uses": "docker://debian:sid-slim",
           "with": {
             "args": "sh .extra/cross.sh mips64el mips64el-linux-gnuabi64 qemu-mips64el"
           }
@@ -92,7 +92,7 @@
           "uses": "actions/checkout@v4.1.1"
         },
         {
-          "uses": "docker://i386/debian:sid-slim",
+          "uses": "docker://debian:sid-slim",
           "with": {
             "args": "sh .extra/cross.sh powerpc powerpc-linux-gnu qemu-powerpc"
           }
@@ -109,7 +109,7 @@
           "uses": "actions/checkout@v4.1.1"
         },
         {
-          "uses": "docker://i386/debian:sid-slim",
+          "uses": "docker://debian:sid-slim",
           "with": {
             "args": "sh .extra/cross.sh ppc64 powerpc64-linux-gnu qemu-ppc64"
           }
@@ -126,7 +126,7 @@
           "uses": "actions/checkout@v4.1.1"
         },
         {
-          "uses": "docker://i386/debian:sid-slim",
+          "uses": "docker://debian:sid-slim",
           "with": {
             "args": "sh .extra/cross.sh sparc64 sparc64-linux-gnu qemu-sparc64"
           }
