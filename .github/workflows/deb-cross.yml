@@ -1,5 +1,22 @@
 {
   "jobs": {
+    "alpha": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4.1.1"
+        },
+        {
+          "uses": "docker://i386/debian:sid-slim",
+          "with": {
+            "args": "sh .extra/cross.sh alpha alpha-linux-gnu qemu-alpha"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
     "armel": {
       "runs-on": "ubuntu-latest",
       "steps": [
