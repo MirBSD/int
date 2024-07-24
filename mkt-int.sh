@@ -489,40 +489,47 @@ hst hin1s, hin2s, houts;
 int iouts;
 const char *fstr;
 
-static void c2_(const char *where) {
-	fprintf(stderr, "E: %s(%02X, %u) failed, got %02X want %02X\n",
+static void cfu_(const char *where) {
+	fprintf(stderr, "E: %s(0x%02X, 0x%02X) overflow: got %d want %d\n",
+	    where, (unsigned)hin1u, (unsigned)hin2u,
+	    (int)hin1s, (int)houts);
+	rv = 1;
+}
+static void c2u_(const char *where) {
+	fprintf(stderr, "E: %s(0x%02X, 0x%02X) failed: got %02X want %02X\n",
 	    where, (unsigned)hin1u, (unsigned)hin2u,
 	    (unsigned)boutu, (unsigned)iouts);
 	rv = 1;
 }
-static void cs_(const char *where) {
-	fprintf(stderr, "E: %s(%d, %d) failed, got %d want %d\n",
-	    where, (signed)hin1s, (signed)hin2s,
-	    (signed)bouts, (signed)iouts);
+static void cfs_(const char *where) {
+	fprintf(stderr, "E: %s(%d, %d) overflow: got %d want %d\n",
+	    where, (int)hin1s, (int)hin2s,
+	    (int)hin1u, (int)houtu);
 	rv = 1;
 }
-static void cf_(const char *where) {
-	fprintf(stderr, "E: %s(%02X, %u) overflow: want %d got %d\n",
-	    where, (unsigned)hin1u, (unsigned)hin2u, houts, hin1s);
+static void c2s_(const char *where) {
+	fprintf(stderr, "E: %s(%d, %d) failed: got %d want %d\n",
+	    where, (int)hin1s, (int)hin2s,
+	    (int)bouts, (int)iouts);
 	rv = 1;
 }
-#define c2(where) do {				\
+#define c2u(where) do {				\
 	if (boutu != (unsigned)iouts)		\
-		c2_(where);			\
+		c2u_(where);			\
 } while (/* CONSTCOND */ 0)
 #define C2u(where) do {				\
 	if (hin1s != houts)			\
-		cf_(where);			\
-	else if (!hin1s &&			\
+		cfu_(where);			\
+	if (!hin1s &&				\
 	    (boutu != (unsigned)iouts))		\
-		c2_(where);			\
+		c2u_(where);			\
 } while (/* CONSTCOND */ 0)
 #define C2s(where) do {				\
 	if (hin1u != houtu)			\
-		cf_(where);			\
-	else if (!hin1u &&			\
+		cfs_(where);			\
+	if (!hin1u &&				\
 	    (bouts != iouts))			\
-		cs_(where);			\
+		c2s_(where);			\
 } while (/* CONSTCOND */ 0)
 
 typedef long larr[3];
@@ -1194,37 +1201,37 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 		for (hin2u = 0; hin2u < 8; ++hin2u) {
 			boutu = b_mbiKrol(hin1u, hin2u);
 			iouts = th_rol(8, hin1u, hin2u);
-			c2("b_mbiKrol");
+			c2u("b_mbiKrol");
 			boutu = b_mbiKror(hin1u, hin2u);
 			iouts = th_ror(8, hin1u, hin2u);
-			c2("b_mbiKror");
+			c2u("b_mbiKror");
 			boutu = b_mbiKshl(hin1u, hin2u);
 			iouts = th_shl(8, hin1u, hin2u);
-			c2("b_mbiKshl");
+			c2u("b_mbiKshl");
 			boutu = b_mbiKshr(hin1u, hin2u);
 			iouts = th_shr(8, hin1u, hin2u);
-			c2("b_mbiKshr");
+			c2u("b_mbiKshr");
 			boutu = b_mbiKsar(hin1u, hin2u);
 			iouts = th_sar(8, hin1u, hin2u);
-			c2("b_mbiKsar");
+			c2u("b_mbiKsar");
 		}
 	for (hin1u = 0; hin1u < 64; ++hin1u)
 		for (hin2u = 0; hin2u <= 8; ++hin2u) {
 			boutu = x_mbiMKrol(hin1u, hin2u);
 			iouts = th_rol(6, hin1u, hin2u);
-			c2("x_mbiMKrol");
+			c2u("x_mbiMKrol");
 			boutu = x_mbiMKror(hin1u, hin2u);
 			iouts = th_ror(6, hin1u, hin2u);
-			c2("x_mbiMKror");
+			c2u("x_mbiMKror");
 			boutu = x_mbiMKshl(hin1u, hin2u);
 			iouts = th_shl(6, hin1u, hin2u);
-			c2("x_mbiMKshl");
+			c2u("x_mbiMKshl");
 			boutu = x_mbiMKshr(hin1u, hin2u);
 			iouts = th_shr(6, hin1u, hin2u);
-			c2("x_mbiMKshr");
+			c2u("x_mbiMKshr");
 			boutu = x_mbiMKsar(hin1u, hin2u);
 			iouts = th_sar(6, hin1u, hin2u);
-			c2("x_mbiMKsar");
+			c2u("x_mbiMKsar");
 		}
 
 	mbmscWpop;
