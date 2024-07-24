@@ -1481,7 +1481,7 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 		break;
 	}
 
-	fprintf(stderr, "I: architecture infos (0 may mean unknown):\n");
+	fprintf(stderr, "I: architecture infos (0 for min/max/w may mean unknown):\n");
 	fprintf(stderr, "N: %s; nil representation:", endianness);
 	for (n = 0; n < sizeof(void *); ++n)
 		fprintf(stderr, " %02X", (unsigned)nilreprtest.b[n]);
