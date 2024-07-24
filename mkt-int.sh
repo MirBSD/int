@@ -1067,8 +1067,12 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 	mbmscWd(4242 4244);
 
 #define mbiCfail hin1s = 1
-	for (hin1u = 0; hin1u < UCHAR_MAX; ++hin1u)
-		for (hin2u = 0; hin2u < UCHAR_MAX; ++hin2u) {
+	for (hin1u = 0; hin1u <= UCHAR_MAX; ++hin1u)
+		for (hin2u = 0; hin2u <= UCHAR_MAX; ++hin2u) {
+			/*
+			 * mbiCAUinc, mbiCAUdec tested via add/sub
+			 */
+
 			hin1s = 0;
 			boutu = hin1u;
 			mbiCAUadd(boutu, hin2u);
