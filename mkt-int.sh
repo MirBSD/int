@@ -1012,8 +1012,8 @@ ubc2 h_mbiMA_VZU2U hin1u hin2u houtu
 
 cat >>mkt-int-t-in.$srcext <<\EOF
 
-#if ((SCHAR_MIN)+1 == -(SCHAR_MAX))
-	fprintf(stderr, "I: assuming two's complement, testing...\n");
+#if defined(mbiSAFECOMPLEMENT) && (mbiSAFECOMPLEMENT)
+	fprintf(stderr, "I: full two's complement, testing...\n");
 	fstr = "2b_mbiA_S2VZ";
 	tm1(bin1s, iouts, b_mbiA_S2VZ, -128, 1);
 	fstr = "2b_mbiA_U2S";
@@ -1024,8 +1024,22 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 	tm1(bin1s, boutu, b_mbiA_S2M, -128, 128);
 	fstr = "2b_mbiA_VZM2S";
 	tm2(bin1u, bin2u, bouts, b_mbiA_VZM2S, 1, 128, -128);
+#define mbiCfail hin1s = 1
+	hin1s = 0;
+	mbiCAsafeU2S(bs, but, 128);
+	if (hin1s) {
+		fprintf(stderr, "E: %s triggered\n", "mbiCAsafeU2S(128)");
+		rv = 1;
+	}
+	hin1s = 0;
+	mbiCAsafeVZM2S(bs, but, 1, 128);
+	if (hin1s) {
+		fprintf(stderr, "E: %s triggered\n", "mbiCAsafeVZM2S(1, 128)");
+		rv = 1;
+	}
+#undef mbiCfail
 #else
-	fprintf(stderr, "I: one's complement or sign-and-magnitude system!\n");
+	fprintf(stderr, "I: limited two's complement, one's complement or sign-and-magnitude system!\n");
 #define mbiCfail hin1s = 0
 	hin1s = 1;
 	mbiCAsafeU2S(bs, but, 128);
