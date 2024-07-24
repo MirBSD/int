@@ -1098,8 +1098,8 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 
 	fprintf(stderr, "I: overflow/underflow-checking signed...\n");
 #define mbiCfail hin1u = 1
-	for (hin1s = SCHAR_MIN; hin1s < SCHAR_MAX; ++hin1s)
-		for (hin2s = SCHAR_MIN; hin2s < SCHAR_MAX; ++hin2s) {
+	for (hin1s = SCHAR_MIN; hin1s <= SCHAR_MAX; ++hin1s)
+		for (hin2s = SCHAR_MIN; hin2s <= SCHAR_MAX; ++hin2s) {
 		    if (hin2s == 1) {
 			hin1u = 0;
 			mbiCASlet(bst, bin1s, hst, hin1s);
