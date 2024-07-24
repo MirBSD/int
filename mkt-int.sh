@@ -734,6 +734,7 @@ int main(void) {
 	} nilreprtest;
 	size_t n;
 
+	fprintf(stderr, "I: initial tests...\n");
 	--ct.expr2;
 	--ct.expr2;
 
@@ -771,7 +772,6 @@ int main(void) {
     }
 #endif
 
-	fprintf(stderr, "I: initial tests...\n");
 	mbmscWd(4127);
 EOF
 
