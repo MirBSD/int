@@ -1067,7 +1067,16 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 	mbmscWd(4242 4244);
 
 #define mbiCfail hin1s = 1
-	for (hin1u = 0; hin1u <= UCHAR_MAX; ++hin1u)
+	for (hin1u = 0; hin1u <= UCHAR_MAX; ++hin1u) {
+		/* see below about this */
+		hin1s = 0;
+		bin1u = hin1u;
+		mbiCAAlet(bin2u, bst, bin1u);
+		if (hin1s) {
+			fprintf(stderr, "E: mbiCAAlet(%d) failed\n", (int)bin1u);
+			rv = 1;
+		}
+
 		for (hin2u = 0; hin2u <= UCHAR_MAX; ++hin2u) {
 			/*
 			 * mbiCAUinc, mbiCAUdec tested via add/sub
@@ -1094,6 +1103,7 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 			houts = (iouts < 0) || (iouts > UCHAR_MAX);
 			C2u("mbiCAUmul");
 		}
+	}
 #undef mbiCfail
 
 	fprintf(stderr, "I: overflow/underflow-checking signed...\n");
@@ -1105,6 +1115,24 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 			mbiCASlet(bst, bin1s, hst, hin1s);
 			if (hin1u) {
 				fprintf(stderr, "E: mbiCASlet(%d) failed\n", hin1s);
+				rv = 1;
+			}
+
+			/*
+			 * mbiCAAlet is special: it is supposed to be used
+			 * when both sides are of the same signedness, and
+			 * ideally of the same type width already but when
+			 * the type may be an unknown; e.g. parsing number
+			 * into tv_sec which is supposedly time_t, so with
+			 * time_t if unsigned, else mbiHUGE_S in the loop,
+			 * then the hopefully-not-narrowing assign; so, it
+			 * cannot be fail-tested as those should warn from
+			 * the compiler already so we syntax-check here.
+			 */
+			hin1u = 0;
+			mbiCAAlet(bin2s, bst, bin1s);
+			if (hin1u) {
+				fprintf(stderr, "E: mbiCAAlet(%d) failed\n", (int)bin1s);
 				rv = 1;
 			}
 
