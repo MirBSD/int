@@ -705,6 +705,19 @@ tif_s(const char *t, size_t sz, const char *Min, const char *Max,
 		fprintf(stderr, " > %u\n", mbiTYPE_UBITS(mbiHUGE_U));
 }
 
+unsigned int testsrun = 0;
+
+void
+expected(const char *where, unsigned int expected_runs)
+{
+	if (expected_runs && testsrun != expected_runs) {
+		fprintf(stderr, "E: %s: expected %u runs, got %u\n",
+		    where, expected_runs, testsrun);
+		rv = 1;
+	}
+	testsrun = 0;
+}
+
 int main(void) {
 	unsigned int b_rsz = 0, b_sz = 0, b_ptr = 0, b_mbi = 0, f_mbi;
 	const char *whichrepr;
@@ -767,11 +780,13 @@ EOF
 }
 
 mbc1() {
+	xwant=0
 	:>mkt-int-t-bc
 	mbc1a "$@"
 }
 
 mbc1a() {
+	((# xwant += ($1) ))
 	want=$(( ($1) * 2))
 	bc >mkt-int-t-bc2 <<EOF
 define f(x) {
@@ -789,11 +804,13 @@ EOF
 }
 
 mbc2() {
+	xwant=0
 	:>mkt-int-t-bc
 	mbc2a "$@"
 }
 
 mbc2a() {
+	((# xwant += ($1) ))
 	want=$(( ($1) * 3))
 	bc >mkt-int-t-bc2 <<EOF
 define f(x,y) {
@@ -814,6 +831,8 @@ EOF
 }
 
 mba() {
+	((# xwant += ($1) ))
+	shift
 	printf '%s\n' "$@" >>mkt-int-t-bc
 }
 
@@ -852,8 +871,12 @@ ubc1() {
 	echo "void $fn(void) {"
 	echo "	size_t cnt = sizeof(${fn}_o) / sizeof(${fn}_o[0]);"
 	echo "	fstr = \"$1\";"
-	echo "	while (cnt--)"
+	echo "	testsrun = 0;"
+	echo "	while (cnt--) {"
 	echo "		tm1($2, $3, $1, ${fn}_i[cnt], ${fn}_o[cnt]);"
+	echo "		++testsrun;"
+	echo "	}"
+	echo "	expected(\"$fn\", $xwant);"
 	echo '}'
     } >>mkt-int-t-f0.$srcext 4>>mkt-int-t-f1.$srcext
 }
@@ -889,8 +912,12 @@ ubc2() {
 	echo "void $fn(void) {"
 	echo "	size_t cnt = sizeof(${fn}_y) / sizeof(${fn}_y[0]);"
 	echo "	fstr = \"$1\";"
-	echo "	while (cnt--)"
+	echo "	testsrun = 0;"
+	echo "	while (cnt--) {"
 	echo "		tm2($2, $3, $4, $1, ${fn}_a[cnt], ${fn}_b[cnt], ${fn}_y[cnt]);"
+	echo "		++testsrun;"
+	echo "	}"
+	echo "	expected(\"$fn\", $xwant);"
 	echo '}'
     } >>mkt-int-t-f0.$srcext 4>>mkt-int-t-f1.$srcext 5>>mkt-int-t-f2.$srcext
 }
@@ -923,7 +950,7 @@ ubc1 b_mbiA_U2VZ bin1u iouts
 mbc1 1024 0 1023 '
 	if (x > 511) return (1)
 	return (0)'
-mba	1024 0 \
+mba 6	1024 0 \
 	1534 0 \
 	1535 0 \
 	1536 1 \
@@ -937,7 +964,7 @@ ubc1 b_mbiA_U2S bin1u bouts
 
 mbc1 512 0 511 'return (x)'
 mbc1a 512 512 1023 'return (-(1024 - x))'
-mba	1024 0 \
+mba 5	1024 0 \
 	1535 511 \
 	1536 -512 \
 	2047 -1 \
@@ -968,7 +995,7 @@ ubc1 b_mbiA_U2M bin1u boutu
 
 mbc1 512 0 511 'return (x)'
 mbc1a 512 512 1023 'return (1024 - x)'
-mba	1024 0 \
+mba 9	1024 0 \
 	1534 510 \
 	1535 511 \
 	1536 512 \
@@ -1065,6 +1092,7 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 
 	fprintf(stderr, "I: overflow/underflow-checking unsigned...\n");
 	mbmscWd(4242 4244);
+	testsrun = 0;
 
 #define mbiCfail hin1s = 1
 	for (hin1u = 0; hin1u <= UCHAR_MAX; ++hin1u) {
@@ -1076,6 +1104,7 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 			fprintf(stderr, "E: mbiCAAlet(%d) failed\n", (int)bin1u);
 			rv = 1;
 		}
+		++testsrun;
 
 		for (hin2u = 0; hin2u <= UCHAR_MAX; ++hin2u) {
 			/*
@@ -1088,6 +1117,7 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 			iouts = hin1u + hin2u;
 			houts = (iouts < 0) || (iouts > UCHAR_MAX);
 			C2u("mbiCAUadd");
+			++testsrun;
 
 			hin1s = 0;
 			boutu = hin1u;
@@ -1095,6 +1125,7 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 			iouts = hin1u - hin2u;
 			houts = (iouts < 0) || (iouts > UCHAR_MAX);
 			C2u("mbiCAUsub");
+			++testsrun;
 
 			hin1s = 0;
 			boutu = hin1u;
@@ -1102,8 +1133,10 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 			iouts = hin1u * hin2u;
 			houts = (iouts < 0) || (iouts > UCHAR_MAX);
 			C2u("mbiCAUmul");
+			++testsrun;
 		}
 	}
+	expected("CAU", (1U + UCHAR_MAX) + (1U + UCHAR_MAX) * (1U + UCHAR_MAX) * 3);
 #undef mbiCfail
 
 	fprintf(stderr, "I: overflow/underflow-checking signed...\n");
@@ -1115,6 +1148,7 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 			fprintf(stderr, "E: mbiCASlet(%d) failed\n", hin1s);
 			rv = 1;
 		}
+		++testsrun;
 
 		/*
 		 * mbiCAAlet is special: it is supposed to be used
@@ -1133,6 +1167,7 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 			fprintf(stderr, "E: mbiCAAlet(%d) failed\n", (int)bin1s);
 			rv = 1;
 		}
+		++testsrun;
 
 		hin1u = 0;
 		bouts = hin1s;
@@ -1140,6 +1175,7 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 		iouts = hin1s + 1;
 		houtu = (iouts < SCHAR_MIN) || (iouts > SCHAR_MAX);
 		C2s("mbiCASinc");
+		++testsrun;
 
 		hin1u = 0;
 		bouts = hin1s;
@@ -1147,6 +1183,7 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 		iouts = hin1s - 1;
 		houtu = (iouts < SCHAR_MIN) || (iouts > SCHAR_MAX);
 		C2s("mbiCASdec");
+		++testsrun;
 
 		for (hin2s = SCHAR_MIN; hin2s <= SCHAR_MAX; ++hin2s) {
 			if (hin2s < 0)
@@ -1158,6 +1195,7 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 			iouts = hin1s + hin2s;
 			houtu = (iouts < SCHAR_MIN) || (iouts > SCHAR_MAX);
 			C2s("mbiCAPadd");
+			++testsrun;
 
 			hin1u = 0;
 			bouts = hin1s;
@@ -1165,6 +1203,7 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 			iouts = hin1s - hin2s;
 			houtu = (iouts < SCHAR_MIN) || (iouts > SCHAR_MAX);
 			C2s("mbiCAPsub");
+			++testsrun;
 
 			hin1u = 0;
 			bouts = hin1s;
@@ -1172,6 +1211,7 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 			iouts = hin1s * hin2s;
 			houtu = (iouts < SCHAR_MIN) || (iouts > SCHAR_MAX);
 			C2s("mbiCAPmul");
+			++testsrun;
 
  hin2s_not_positive:
 			hin1u = 0;
@@ -1180,6 +1220,7 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 			iouts = hin1s + hin2s;
 			houtu = (iouts < SCHAR_MIN) || (iouts > SCHAR_MAX);
 			C2s("mbiCASadd");
+			++testsrun;
 
 			hin1u = 0;
 			bouts = hin1s;
@@ -1187,6 +1228,7 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 			iouts = hin1s - hin2s;
 			houtu = (iouts < SCHAR_MIN) || (iouts > SCHAR_MAX);
 			C2s("mbiCASsub");
+			++testsrun;
 
 			hin1u = 0;
 			bouts = hin1s;
@@ -1194,6 +1236,7 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 			iouts = hin1s * hin2s;
 			houtu = (iouts < SCHAR_MIN) || (iouts > SCHAR_MAX);
 			C2s("mbiCASmul");
+			++testsrun;
 #if 1 /* mbiCASlet validate overflow */
 			/*
 			 * note: these may also raise an implementation-defined
@@ -1208,8 +1251,14 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 				rv = 1;
 			}
 #endif /* mbiCASlet validate overflow */
+			++testsrun;
 		}
 	}
+	/* The calculations below fail on a box where sizes of char==int and
+	 * !mbiSAFECOMPLEMENT, but that should be rare enough to not bother. */
+	expected("CAS", ((unsigned)-(int)SCHAR_MIN + 1U + (unsigned)SCHAR_MAX) * (4U +
+	    3U * (1U + (unsigned)SCHAR_MAX) +
+	    4U * ((unsigned)-(int)SCHAR_MIN + 1U + (unsigned)SCHAR_MAX)));
 
 	fprintf(stderr, "I: manual two’s komplement calculations...\n");
 EOF
@@ -1231,6 +1280,7 @@ mbc2 4096 0 63 0 63 '
 ubc2 x_mbiMKcmp bin1u bin2u iouts
 
 cat >>mkt-int-t-in.$srcext <<\EOF
+	testsrun = 0;
 	for (hin1u = 0; hin1u < 256; ++hin1u)
 		for (hin2u = 0; hin2u < 8; ++hin2u) {
 			boutu = b_mbiKrol(hin1u, hin2u);
@@ -1248,7 +1298,9 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 			boutu = b_mbiKsar(hin1u, hin2u);
 			iouts = th_sar(8, hin1u, hin2u);
 			c2u("b_mbiKsar");
+			++testsrun;
 		}
+	expected("Krot", 256U * 8U);
 	for (hin1u = 0; hin1u < 64; ++hin1u)
 		for (hin2u = 0; hin2u <= 8; ++hin2u) {
 			boutu = x_mbiMKrol(hin1u, hin2u);
@@ -1266,7 +1318,9 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 			boutu = x_mbiMKsar(hin1u, hin2u);
 			iouts = th_sar(6, hin1u, hin2u);
 			c2u("x_mbiMKsar");
+			++testsrun;
 		}
+	expected("MKrot", 64U * 9U);
 
 	mbmscWpop;
 EOF
