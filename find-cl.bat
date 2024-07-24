@@ -1,5 +1,5 @@
 @echo off
-REM $MirOS: int/find-cl.bat,v 1.2 2024/01/03 23:26:51 tg Exp $
+REM $MirOS: src/kern/include/find-cl.bat,v 1.2 2024/01/03 23:26:51 tg Exp $
 REM
 REM (c) 2023 mirabilos (F) CC0 or MirBSD
 REM

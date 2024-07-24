@@ -5,7 +5,7 @@
  */
 
 #ifndef SYSKERN_MBSDINT_H
-#define SYSKERN_MBSDINT_H "$MirOS: int/mbsdint.h,v 1.60 2024/04/02 03:16:50 tg Exp $"
+#define SYSKERN_MBSDINT_H "$MirOS: src/kern/include/mbsdint.h,v 1.60 2024/04/02 03:16:50 tg Exp $"
 
 /*
  * cpp defines to set:
