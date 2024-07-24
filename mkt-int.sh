@@ -6,6 +6,7 @@ rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.47 2024/04/02 09:04:32 tg Exp $'
 # Warning: stress test, creates multiple multi-MiB .c files, .o about half each
 
 set -e
+echo >&2 "I: Hi from $rcsid"
 
 BC_ENV_ARGS=-qs LC_ALL=C LANGUAGE=C
 unset LANGUAGE
