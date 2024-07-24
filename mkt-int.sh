@@ -718,13 +718,20 @@ expected(const char *where, unsigned int expected_runs)
 	testsrun = 0;
 }
 
+static const char little_endian[] = "little endian";
+
 int main(void) {
 	unsigned int b_rsz = 0, b_sz = 0, b_ptr = 0, b_mbi = 0, f_mbi;
-	const char *whichrepr;
+	const char *whichrepr, *endianness = "unknown endianness";
 	const char *mbiPTR_casttgt;
 	struct want_fam *fam;
 	struct fam_t *fam2;
 	struct ChkTest ct = { { 0 }, 1 };
+	union {
+		void *ptr;
+		unsigned char b[sizeof(void *)];
+	} nilreprtest;
+	size_t n;
 
 	--ct.expr2;
 	--ct.expr2;
@@ -1415,6 +1422,49 @@ t1 'offsetof(struct fam_t, value)' 'offsetof(struct fam_t, value[0])'
 t1 'ct.expr2' 511
 
 cat >>mkt-int-t-in.$srcext <<\EOF
+
+#undef endiantype
+#if mbiMASK__BITS(UINT_MAX) == 32
+#define endiantype int
+#elif mbiMASK__BITS(ULONG_MAX) == 32
+#define endiantype long
+#endif
+#if mbiMASK__BITS(UCHAR_MAX) != 8
+#undef endiantype
+#endif
+#ifdef endiantype
+	{
+		union {
+			unsigned endiantype t;
+			unsigned char b[sizeof(unsigned endiantype) == 4 ? 4 : -1];
+		} endiantest;
+
+		endiantest.t = 0x1A2B3C4DUL;
+		switch (endiantest.b[0]) {
+		case 0x1AU:
+			if (endiantest.b[1] == 0x2BU &&
+			    endiantest.b[2] == 0x3CU &&
+			    endiantest.b[3] == 0x4DU)
+				endianness = "big endian";
+			break;
+		case 0x2BU:
+			if (endiantest.b[1] == 0x1AU &&
+			    endiantest.b[2] == 0x4DU &&
+			    endiantest.b[3] == 0x3CU)
+				endianness = "PDP endian";
+			break;
+		case 0x4DU:
+			if (endiantest.b[1] == 0x3CU &&
+			    endiantest.b[2] == 0x2BU &&
+			    endiantest.b[3] == 0x1AU)
+				endianness = little_endian;
+			break;
+		}
+	}
+#endif
+#undef endiantype
+	nilreprtest.ptr = mbnil;
+
 	switch ((unsigned int)bitrepr(-1)) {
 	case 0xFFU:
 		whichrepr = "two’s complement";
@@ -1431,6 +1481,17 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 	}
 
 	fprintf(stderr, "I: architecture infos (0 may mean unknown):\n");
+	fprintf(stderr, "N: %s; nil representation:", endianness);
+	for (n = 0; n < sizeof(void *); ++n)
+		fprintf(stderr, " %02X", (unsigned)nilreprtest.b[n]);
+	if (endianness == little_endian) {
+		fputs(" (0x", stderr);
+		n = sizeof(void *);
+		while (n--)
+			fprintf(stderr, "%02X", (unsigned)nilreprtest.b[n]);
+		fputc(')', stderr);
+	}
+	fputc('\n', stderr);
 	fprintf(stderr, "N: CHAR_BIT: %d\t\tcomplement: %s using %s\n",
 	    (int)CHAR_BIT, mbiSAFECOMPLEMENT ? "safe" : "UNSAFE", whichrepr);
 
