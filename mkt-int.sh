@@ -1108,49 +1108,50 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 
 	fprintf(stderr, "I: overflow/underflow-checking signed...\n");
 #define mbiCfail hin1u = 1
-	for (hin1s = SCHAR_MIN; hin1s <= SCHAR_MAX; ++hin1s)
+	for (hin1s = SCHAR_MIN; hin1s <= SCHAR_MAX; ++hin1s) {
+		hin1u = 0;
+		mbiCASlet(bst, bin1s, hst, hin1s);
+		if (hin1u) {
+			fprintf(stderr, "E: mbiCASlet(%d) failed\n", hin1s);
+			rv = 1;
+		}
+
+		/*
+		 * mbiCAAlet is special: it is supposed to be used
+		 * when both sides are of the same signedness, and
+		 * ideally of the same type width already but when
+		 * the type may be an unknown; e.g. parsing number
+		 * into tv_sec which is supposedly time_t, so with
+		 * time_t if unsigned, else mbiHUGE_S in the loop,
+		 * then the hopefully-not-narrowing assign; so, it
+		 * cannot be fail-tested as those should warn from
+		 * the compiler already so we syntax-check here.
+		 */
+		hin1u = 0;
+		mbiCAAlet(bin2s, bst, bin1s);
+		if (hin1u) {
+			fprintf(stderr, "E: mbiCAAlet(%d) failed\n", (int)bin1s);
+			rv = 1;
+		}
+
+		hin1u = 0;
+		bouts = hin1s;
+		mbiCASinc(SCHAR, bouts);
+		iouts = hin1s + 1;
+		houtu = (iouts < SCHAR_MIN) || (iouts > SCHAR_MAX);
+		C2s("mbiCASinc");
+
+		hin1u = 0;
+		bouts = hin1s;
+		mbiCASdec(SCHAR, bouts);
+		iouts = hin1s - 1;
+		houtu = (iouts < SCHAR_MIN) || (iouts > SCHAR_MAX);
+		C2s("mbiCASdec");
+
 		for (hin2s = SCHAR_MIN; hin2s <= SCHAR_MAX; ++hin2s) {
-		    if (hin2s == 1) {
-			hin1u = 0;
-			mbiCASlet(bst, bin1s, hst, hin1s);
-			if (hin1u) {
-				fprintf(stderr, "E: mbiCASlet(%d) failed\n", hin1s);
-				rv = 1;
-			}
+			if (hin2s < 0)
+				goto hin2s_not_positive;
 
-			/*
-			 * mbiCAAlet is special: it is supposed to be used
-			 * when both sides are of the same signedness, and
-			 * ideally of the same type width already but when
-			 * the type may be an unknown; e.g. parsing number
-			 * into tv_sec which is supposedly time_t, so with
-			 * time_t if unsigned, else mbiHUGE_S in the loop,
-			 * then the hopefully-not-narrowing assign; so, it
-			 * cannot be fail-tested as those should warn from
-			 * the compiler already so we syntax-check here.
-			 */
-			hin1u = 0;
-			mbiCAAlet(bin2s, bst, bin1s);
-			if (hin1u) {
-				fprintf(stderr, "E: mbiCAAlet(%d) failed\n", (int)bin1s);
-				rv = 1;
-			}
-
-			hin1u = 0;
-			bouts = hin1s;
-			mbiCASinc(SCHAR, bouts);
-			iouts = hin1s + hin2s;
-			houtu = (iouts < SCHAR_MIN) || (iouts > SCHAR_MAX);
-			C2s("mbiCASinc");
-
-			hin1u = 0;
-			bouts = hin1s;
-			mbiCASdec(SCHAR, bouts);
-			iouts = hin1s - hin2s;
-			houtu = (iouts < SCHAR_MIN) || (iouts > SCHAR_MAX);
-			C2s("mbiCASdec");
-		    }
-		    if (hin2s >= 0) {
 			hin1u = 0;
 			bouts = hin1s;
 			mbiCAPadd(SCHAR, bouts, hin2s);
@@ -1171,8 +1172,8 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 			iouts = hin1s * hin2s;
 			houtu = (iouts < SCHAR_MIN) || (iouts > SCHAR_MAX);
 			C2s("mbiCAPmul");
-		    }
 
+ hin2s_not_positive:
 			hin1u = 0;
 			bouts = hin1s;
 			mbiCASadd(SCHAR, bouts, hin2s);
@@ -1208,6 +1209,7 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 			}
 #endif /* mbiCASlet validate overflow */
 		}
+	}
 
 	fprintf(stderr, "I: manual two’s komplement calculations...\n");
 EOF
