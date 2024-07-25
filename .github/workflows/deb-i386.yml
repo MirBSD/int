@@ -70,6 +70,7 @@
           "std": [
             "DEFAULT",
             "gnu23",
+            "gnu2y",
             "gnu++23",
             "gnu++26"
           ]
