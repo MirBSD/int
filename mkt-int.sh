@@ -795,7 +795,7 @@ mbc1() {
 }
 
 mbc1a() {
-	((# xwant += ($1) ))
+	xwant=$(( $xwant + ($1) ))
 	want=$(( ($1) * 2))
 	bc >mkt-int-t-bc2 <<EOF
 define f(x) {
@@ -819,7 +819,7 @@ mbc2() {
 }
 
 mbc2a() {
-	((# xwant += ($1) ))
+	xwant=$(( $xwant + ($1) ))
 	want=$(( ($1) * 3))
 	bc >mkt-int-t-bc2 <<EOF
 define f(x,y) {
@@ -840,7 +840,7 @@ EOF
 }
 
 mba() {
-	((# xwant += ($1) ))
+	xwant=$(( $xwant + ($1) ))
 	shift
 	printf '%s\n' "$@" >>mkt-int-t-bc
 }
