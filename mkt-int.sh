@@ -490,25 +490,33 @@ hst hin1s, hin2s, houts;
 int iouts;
 const char *fstr;
 
-static void cfu_(const char *where) {
+static void
+cfu_(const char *where)
+{
 	fprintf(stderr, "E: %s(0x%02X, 0x%02X) overflow: got %d want %d\n",
 	    where, (unsigned)hin1u, (unsigned)hin2u,
 	    (int)hin1s, (int)houts);
 	rv = 1;
 }
-static void c2u_(const char *where) {
+static void
+c2u_(const char *where)
+{
 	fprintf(stderr, "E: %s(0x%02X, 0x%02X) failed: got %02X want %02X\n",
 	    where, (unsigned)hin1u, (unsigned)hin2u,
 	    (unsigned)boutu, (unsigned)iouts);
 	rv = 1;
 }
-static void cfs_(const char *where) {
+static void
+cfs_(const char *where)
+{
 	fprintf(stderr, "E: %s(%d, %d) overflow: got %d want %d\n",
 	    where, (int)hin1s, (int)hin2s,
 	    (int)hin1u, (int)houtu);
 	rv = 1;
 }
-static void c2s_(const char *where) {
+static void
+c2s_(const char *where)
+{
 	fprintf(stderr, "E: %s(%d, %d) failed: got %d want %d\n",
 	    where, (int)hin1s, (int)hin2s,
 	    (int)bouts, (int)iouts);
@@ -643,7 +651,9 @@ mbCTA_END(fieldsizeof);
 static const char faml[] = "FAM label";
 
 void dfam(const char *what, const char *exp, struct want_fam *fam);
-void dfam(const char *what, const char *exp, struct want_fam *fam) {
+void
+dfam(const char *what, const char *exp, struct want_fam *fam)
+{
 	fprintf(stderr, "I: %s: the following text should read '%s':\n", what, exp);
 	fflush(stderr);
 	fprintf(stderr, "N: '%s'\n", fam->label);
@@ -706,22 +716,11 @@ tif_s(const char *t, size_t sz, const char *Min, const char *Max,
 		fprintf(stderr, " > %u\n", mbiTYPE_UBITS(mbiHUGE_U));
 }
 
-unsigned int testsrun = 0;
-
-void
-expected(const char *where, unsigned int expected_runs)
-{
-	if (expected_runs && testsrun != expected_runs) {
-		fprintf(stderr, "E: %s: expected %u runs, got %u\n",
-		    where, expected_runs, testsrun);
-		rv = 1;
-	}
-	testsrun = 0;
-}
-
 static const char little_endian[] = "little endian";
 
-int main(void) {
+int
+main(void)
+{
 	unsigned int b_rsz = 0, b_sz = 0, b_ptr = 0, b_mbi = 0, f_mbi;
 	const char *whichrepr, *endianness = "unknown endianness";
 	const char *mbiPTR_casttgt;
