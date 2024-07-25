@@ -4,7 +4,7 @@
       "runs-on": "ubuntu-latest",
       "steps": [
         {
-          "uses": "actions/checkout@v4.1.1"
+          "uses": "actions/checkout@v4.1.7"
         },
         {
           "uses": "docker://i386/debian:sid-slim",
@@ -21,7 +21,7 @@
       "runs-on": "ubuntu-latest",
       "steps": [
         {
-          "uses": "actions/checkout@v4.1.1"
+          "uses": "actions/checkout@v4.1.7"
         },
         {
           "uses": "docker://i386/debian:sid-slim",
@@ -38,7 +38,7 @@
       "runs-on": "ubuntu-latest",
       "steps": [
         {
-          "uses": "actions/checkout@v4.1.1"
+          "uses": "actions/checkout@v4.1.7"
         },
         {
           "uses": "docker://i386/debian:sid-slim",
@@ -55,7 +55,7 @@
       "runs-on": "ubuntu-latest",
       "steps": [
         {
-          "uses": "actions/checkout@v4.1.1"
+          "uses": "actions/checkout@v4.1.7"
         },
         {
           "uses": "docker://i386/debian:sid-slim",
@@ -80,7 +80,7 @@
       "runs-on": "ubuntu-latest",
       "steps": [
         {
-          "uses": "actions/checkout@v4.1.1"
+          "uses": "actions/checkout@v4.1.7"
         },
         {
           "uses": "docker://i386/debian:sid-slim",
@@ -97,7 +97,7 @@
       "runs-on": "ubuntu-latest",
       "steps": [
         {
-          "uses": "actions/checkout@v4.1.1"
+          "uses": "actions/checkout@v4.1.7"
         },
         {
           "uses": "docker://i386/debian:sid-slim",
@@ -114,7 +114,7 @@
       "runs-on": "ubuntu-latest",
       "steps": [
         {
-          "uses": "actions/checkout@v4.1.1"
+          "uses": "actions/checkout@v4.1.7"
         },
         {
           "uses": "docker://i386/debian:sid-slim",
@@ -131,7 +131,7 @@
       "runs-on": "ubuntu-latest",
       "steps": [
         {
-          "uses": "actions/checkout@v4.1.1"
+          "uses": "actions/checkout@v4.1.7"
         },
         {
           "uses": "docker://i386/debian:sid-slim",
@@ -148,7 +148,7 @@
       "runs-on": "ubuntu-latest",
       "steps": [
         {
-          "uses": "actions/checkout@v4.1.1"
+          "uses": "actions/checkout@v4.1.7"
         },
         {
           "uses": "docker://i386/debian:sid-slim",
@@ -165,7 +165,7 @@
       "runs-on": "ubuntu-latest",
       "steps": [
         {
-          "uses": "actions/checkout@v4.1.1"
+          "uses": "actions/checkout@v4.1.7"
         },
         {
           "uses": "docker://i386/debian:sid-slim",
