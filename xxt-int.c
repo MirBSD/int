@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 extern const char xxtc_rcsid[];
-const char xxtc_rcsid[] = "$MirOS: src/kern/include/xxt-int.c,v 1.10 2023/09/13 00:59:21 tg Exp $";
+const char xxtc_rcsid[] = "$MirOS: src/kern/include/xxt-int.c,v 1.11 2024/07/25 02:29:43 tg Exp $";
 
 /* © mirabilos Ⓕ MirBSD */
 

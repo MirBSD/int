@@ -1,4 +1,4 @@
-#define XXTH_RCSID "$MirOS: src/kern/include/xxt-int.h,v 1.8 2023/08/25 18:12:55 tg Exp $"
+#define XXTH_RCSID "$MirOS: src/kern/include/xxt-int.h,v 1.9 2024/07/25 02:29:44 tg Exp $"
 
 /* © mirabilos Ⓕ MirBSD */
 
