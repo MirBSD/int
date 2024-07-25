@@ -1,6 +1,6 @@
 {
   "jobs": {
-    "v2_1-slink": {
+    "v02_1-slink": {
       "runs-on": "ubuntu-latest",
       "steps": [
         {
@@ -14,7 +14,7 @@
         "fail-fast": true
       }
     },
-    "v2_2-potato": {
+    "v02_2-potato": {
       "runs-on": "ubuntu-latest",
       "steps": [
         {
@@ -31,7 +31,7 @@
         "fail-fast": true
       }
     },
-    "v3_0-woody": {
+    "v03_0-woody": {
       "runs-on": "ubuntu-latest",
       "steps": [
         {
@@ -48,7 +48,7 @@
         "fail-fast": true
       }
     },
-    "v3_1-sarge": {
+    "v03_1-sarge": {
       "runs-on": "ubuntu-latest",
       "steps": [
         {
@@ -65,7 +65,7 @@
         "fail-fast": true
       }
     },
-    "v4-etch": {
+    "v04-etch": {
       "runs-on": "ubuntu-latest",
       "steps": [
         {
@@ -82,7 +82,7 @@
         "fail-fast": true
       }
     },
-    "v5-lenny": {
+    "v05-lenny": {
       "runs-on": "ubuntu-latest",
       "steps": [
         {
@@ -99,7 +99,7 @@
         "fail-fast": true
       }
     },
-    "v6-squeeze": {
+    "v06-squeeze": {
       "runs-on": "ubuntu-latest",
       "steps": [
         {
@@ -116,7 +116,7 @@
         "fail-fast": true
       }
     },
-    "v7-wheezy": {
+    "v07-wheezy": {
       "runs-on": "ubuntu-latest",
       "steps": [
         {
@@ -133,7 +133,7 @@
         "fail-fast": true
       }
     },
-    "v8-jessie": {
+    "v08-jessie": {
       "runs-on": "ubuntu-latest",
       "steps": [
         {
@@ -150,7 +150,7 @@
         "fail-fast": true
       }
     },
-    "v9-stretch": {
+    "v09-stretch": {
       "runs-on": "ubuntu-latest",
       "steps": [
         {
