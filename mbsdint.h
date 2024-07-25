@@ -1123,7 +1123,7 @@ mbCTA_END(mbsdint_h);
 	(vl) -= (vr);							\
 } while (/* CONSTCOND */ 0)
 #define mbiCASmul(lim,vl,vr)	do {					\
-	if (__predict_true((vr) >= 0) ? __predict_false((vr) != 0 &&	\
+	if (((vr) >= 0) ? __predict_false((vr) != 0 &&			\
 	    mbi__sabovehalftype(lim ## _MAX, (vl), (vr)) && ((vl) < 0 ?	\
 	    (vl) < (lim ## _MIN / (vr)) :				\
 	    (vl) > (lim ## _MAX / (vr)))) :				\
