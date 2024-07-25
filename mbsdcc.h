@@ -13,6 +13,9 @@
  * these before this header or include "mbsdint.h", which fixes
  * up the corresponding definition.
  *
+ * Place the inclusion of this after <sys/cdefs.h> or something
+ * that pulls it, for example <sys/types.h>.
+ *
  * Furthermore, either include <stdlib.h> for abort(3), or pro‐
  * vide an mbccABEND macro (preferred).
  */
@@ -34,6 +37,17 @@
 #undef offsetof
 #define offsetof(struc,memb)	__builtin_offsetof(struc, memb)
 #endif
+
+/* should be defined by <sys/cdefs.h> already */
+#ifndef __predict_true
+#if defined(__GNUC__) && (__GNUC__ >= 3) /* 2.96, but keep it simple here */
+#define __predict_true(exp)	__builtin_expect(!!(exp), 1)
+#define __predict_false(exp)	__builtin_expect(!!(exp), 0)
+#else
+#define __predict_true(exp)	(!!(exp))
+#define __predict_false(exp)	(!!(exp))
+#endif /* !GCC 3.x */
+#endif /* ndef(__predict_true) */
 
 /* mbsdint.h replaces this with mbiSIZE_MAX */
 #undef mbccSIZE_MAX

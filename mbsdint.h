@@ -33,7 +33,7 @@
  *	<basetsd.h>		// on Windows®
  *	<inttypes.h>		// some pre-C99
  *	<stdint.h>		// ISO C99
- *	"mbsdcc.h"		// from this directory
+ *	"mbsdcc.h"		// from this directory, in this order
  * … are included before this header, for full functionality.
  */
 
@@ -89,17 +89,6 @@
 #ifndef MBSDINT_H_WANT_LONG_IN_SIZET
 #define MBSDINT_H_WANT_LONG_IN_SIZET 1
 #endif
-
-/* should be in <sys/cdefs.h> via <limits.h> */
-#ifndef __predict_true
-#if defined(__GNUC__) && (__GNUC__ >= 3) /* 2.96, but keep it simple here */
-#define __predict_true(exp)	__builtin_expect(!!(exp), 1)
-#define __predict_false(exp)	__builtin_expect(!!(exp), 0)
-#else
-#define __predict_true(exp)	(!!(exp))
-#define __predict_false(exp)	(!!(exp))
-#endif /* !GCC 3.x */
-#endif /* ndef(__predict_true) */
 
 /* expose SIZE_MAX if possible and provided, not guessed */
 #ifndef SIZE_MAX
