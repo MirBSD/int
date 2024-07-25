@@ -336,6 +336,8 @@ xset "$use_stdint"
 echo >&2 "N: you $v <stdint.h>"
 xset "$use_icexp_rsmax"
 echo >&2 "N: you $v an integer constant expression RSIZE_MAX"
+v=have; test x"$have_offt" = x"1" || v=lack
+echo >&2 "N: you $v off_t"
 
 echo >&2 'I: checking if compile-time checks pass'
 cat >mkt-int-t-in.$srcext <<EOF
