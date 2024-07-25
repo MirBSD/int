@@ -166,6 +166,57 @@
       "strategy": {
         "fail-fast": true
       }
+    },
+    "v10-buster": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4.1.7"
+        },
+        {
+          "uses": "docker://debian:buster",
+          "with": {
+            "args": "sh .extra/debeol.sh buster 10"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "v11-bullseye": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4.1.7"
+        },
+        {
+          "uses": "docker://debian:bullseye",
+          "with": {
+            "args": "sh .extra/debeol.sh bullseye 11"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "v12-bookworm": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4.1.7"
+        },
+        {
+          "uses": "docker://debian:bookworm",
+          "with": {
+            "args": "sh .extra/debeol.sh bookworm 12"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
     }
   },
   "name": "deb-eol",
