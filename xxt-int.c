@@ -1,7 +1,9 @@
-extern const char xxtc_rcsid[];
-const char xxtc_rcsid[] = "$MirOS: src/kern/include/xxt-int.c,v 1.10 2023/09/13 00:59:21 tg Exp $";
+#include <stdio.h>
 
-/* © 2023 mirabilos Ⓕ MirBSD */
+extern const char xxtc_rcsid[];
+const char xxtc_rcsid[] = "$MirOS: src/kern/include/xxt-int.c,v 1.11 2024/07/25 02:29:43 tg Exp $";
+
+/* © mirabilos Ⓕ MirBSD */
 
 /* test helpers */
 
@@ -273,4 +275,19 @@ xut x_mbiMKrem(xut in1, xut in2) {
 		rv = 1;
 	}
 	return (res);
+}
+
+/* testsuite helpers */
+
+unsigned int testsrun = 0;
+
+void
+expected(const char *where, unsigned int expected_runs)
+{
+	if (expected_runs && testsrun != expected_runs) {
+		fprintf(stderr, "E: %s: expected %u runs, got %u\n",
+		    where, expected_runs, testsrun);
+		rv = 1;
+	}
+	testsrun = 0;
 }

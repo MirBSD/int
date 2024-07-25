@@ -1,6 +1,11 @@
-#define XXTH_RCSID "$MirOS: src/kern/include/xxt-int.h,v 1.8 2023/08/25 18:12:55 tg Exp $"
+#define XXTH_RCSID "$MirOS: src/kern/include/xxt-int.h,v 1.9 2024/07/25 02:29:44 tg Exp $"
 
-/* © 2023 mirabilos Ⓕ MirBSD */
+/* © mirabilos Ⓕ MirBSD */
+
+extern unsigned int testsrun;
+extern int rv;
+
+extern void expected(const char *where, unsigned int expected_runs);
 
 #define bs_MAX SCHAR_MAX
 #define bfm 0xFF
@@ -19,7 +24,6 @@ typedef signed short hst;
 typedef unsigned char xut;
 typedef signed char xst;
 
-extern int rv;
 extern but bin1u, bin2u, boutu;
 extern bst bin1s, bin2s, bouts;
 extern hut hin1u, hin2u, houtu;

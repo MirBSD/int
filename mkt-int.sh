@@ -1,11 +1,12 @@
 #!/bin/sh
-rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.47 2024/04/02 09:04:32 tg Exp $'
+rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.48 2024/07/25 02:29:43 tg Exp $'
 #-
 # © mirabilos Ⓕ MirBSD
 
 # Warning: stress test, creates multiple multi-MiB .c files, .o about half each
 
 set -e
+echo >&2 "I: Hi from $rcsid"
 
 BC_ENV_ARGS=-qs LC_ALL=C LANGUAGE=C
 unset LANGUAGE
@@ -24,7 +25,7 @@ die() {
 	echo >&2 "E: mkt-int.sh: $*"
 	if $w; then
 		echo >&2 'N: press Return to continue'
-		read dummy
+		read -r dummy
 	fi
 	exit 1
 }
@@ -335,6 +336,8 @@ xset "$use_stdint"
 echo >&2 "N: you $v <stdint.h>"
 xset "$use_icexp_rsmax"
 echo >&2 "N: you $v an integer constant expression RSIZE_MAX"
+v=have; test x"$have_offt" = x"1" || v=lack
+echo >&2 "N: you $v off_t"
 
 echo >&2 'I: checking if compile-time checks pass'
 cat >mkt-int-t-in.$srcext <<EOF
@@ -489,40 +492,55 @@ hst hin1s, hin2s, houts;
 int iouts;
 const char *fstr;
 
-static void c2_(const char *where) {
-	fprintf(stderr, "E: %s(%02X, %u) failed, got %02X want %02X\n",
+static void
+cfu_(const char *where)
+{
+	fprintf(stderr, "E: %s(0x%02X, 0x%02X) overflow: got %d want %d\n",
+	    where, (unsigned)hin1u, (unsigned)hin2u,
+	    (int)hin1s, (int)houts);
+	rv = 1;
+}
+static void
+c2u_(const char *where)
+{
+	fprintf(stderr, "E: %s(0x%02X, 0x%02X) failed: got %02X want %02X\n",
 	    where, (unsigned)hin1u, (unsigned)hin2u,
 	    (unsigned)boutu, (unsigned)iouts);
 	rv = 1;
 }
-static void cs_(const char *where) {
-	fprintf(stderr, "E: %s(%d, %d) failed, got %d want %d\n",
-	    where, (signed)hin1s, (signed)hin2s,
-	    (signed)bouts, (signed)iouts);
+static void
+cfs_(const char *where)
+{
+	fprintf(stderr, "E: %s(%d, %d) overflow: got %d want %d\n",
+	    where, (int)hin1s, (int)hin2s,
+	    (int)hin1u, (int)houtu);
 	rv = 1;
 }
-static void cf_(const char *where) {
-	fprintf(stderr, "E: %s(%02X, %u) overflow: want %d got %d\n",
-	    where, (unsigned)hin1u, (unsigned)hin2u, houts, hin1s);
+static void
+c2s_(const char *where)
+{
+	fprintf(stderr, "E: %s(%d, %d) failed: got %d want %d\n",
+	    where, (int)hin1s, (int)hin2s,
+	    (int)bouts, (int)iouts);
 	rv = 1;
 }
-#define c2(where) do {				\
+#define c2u(where) do {				\
 	if (boutu != (unsigned)iouts)		\
-		c2_(where);			\
+		c2u_(where);			\
 } while (/* CONSTCOND */ 0)
 #define C2u(where) do {				\
 	if (hin1s != houts)			\
-		cf_(where);			\
-	else if (!hin1s &&			\
+		cfu_(where);			\
+	if (!hin1s &&				\
 	    (boutu != (unsigned)iouts))		\
-		c2_(where);			\
+		c2u_(where);			\
 } while (/* CONSTCOND */ 0)
 #define C2s(where) do {				\
 	if (hin1u != houtu)			\
-		cf_(where);			\
-	else if (!hin1u &&			\
+		cfs_(where);			\
+	if (!hin1u &&				\
 	    (bouts != iouts))			\
-		cs_(where);			\
+		c2s_(where);			\
 } while (/* CONSTCOND */ 0)
 
 typedef long larr[3];
@@ -635,7 +653,9 @@ mbCTA_END(fieldsizeof);
 static const char faml[] = "FAM label";
 
 void dfam(const char *what, const char *exp, struct want_fam *fam);
-void dfam(const char *what, const char *exp, struct want_fam *fam) {
+void
+dfam(const char *what, const char *exp, struct want_fam *fam)
+{
 	fprintf(stderr, "I: %s: the following text should read '%s':\n", what, exp);
 	fflush(stderr);
 	fprintf(stderr, "N: '%s'\n", fam->label);
@@ -698,14 +718,24 @@ tif_s(const char *t, size_t sz, const char *Min, const char *Max,
 		fprintf(stderr, " > %u\n", mbiTYPE_UBITS(mbiHUGE_U));
 }
 
-int main(void) {
+static const char little_endian[] = "little endian";
+
+int
+main(void)
+{
 	unsigned int b_rsz = 0, b_sz = 0, b_ptr = 0, b_mbi = 0, f_mbi;
-	const char *whichrepr;
+	const char *whichrepr, *endianness = "unknown endianness";
 	const char *mbiPTR_casttgt;
 	struct want_fam *fam;
 	struct fam_t *fam2;
 	struct ChkTest ct = { { 0 }, 1 };
+	union {
+		void *ptr;
+		unsigned char b[sizeof(void *)];
+	} nilreprtest;
+	size_t n;
 
+	fprintf(stderr, "I: initial tests...\n");
 	--ct.expr2;
 	--ct.expr2;
 
@@ -743,7 +773,6 @@ int main(void) {
     }
 #endif
 
-	fprintf(stderr, "I: initial tests...\n");
 	mbmscWd(4127);
 EOF
 
@@ -760,15 +789,17 @@ EOF
 }
 
 mbc1() {
+	xwant=0
 	:>mkt-int-t-bc
 	mbc1a "$@"
 }
 
 mbc1a() {
-	want=$(( ($1) * 2))
+	xwant=$(( $xwant + ($1) ))
+	want=$(( ($1) * 2 ))
 	bc >mkt-int-t-bc2 <<EOF
 define f(x) {
-${4#$nl}
+${4#"$nl"}
 }
 for (v = $2; v <= $3; ++v) {
 	v
@@ -776,21 +807,23 @@ for (v = $2; v <= $3; ++v) {
 }
 EOF
 	got=$(wc -l <mkt-int-t-bc2)
-	test $got -eq $want || \
+	test $got -eq "$want" || \
 	    die got $got lines, not "$want", from bc "'$4'"
 	cat mkt-int-t-bc2 >>mkt-int-t-bc
 }
 
 mbc2() {
+	xwant=0
 	:>mkt-int-t-bc
 	mbc2a "$@"
 }
 
 mbc2a() {
-	want=$(( ($1) * 3))
+	xwant=$(( $xwant + ($1) ))
+	want=$(( ($1) * 3 ))
 	bc >mkt-int-t-bc2 <<EOF
 define f(x,y) {
-${6#$nl}
+${6#"$nl"}
 }
 for (v = $2; v <= $3; ++v) {
 	for (w = $4; w <= $5; ++w) {
@@ -801,12 +834,14 @@ for (v = $2; v <= $3; ++v) {
 }
 EOF
 	got=$(wc -l <mkt-int-t-bc2)
-	test $got -eq $want || \
+	test $got -eq "$want" || \
 	    die got $got lines, not "$want", from bc "'$6'"
 	cat mkt-int-t-bc2 >>mkt-int-t-bc
 }
 
 mba() {
+	xwant=$(( $xwant + ($1) ))
+	shift
 	printf '%s\n' "$@" >>mkt-int-t-bc
 }
 
@@ -823,7 +858,7 @@ gett() {
 
 ubc1() {
 	fn=f$numf
-	numf=$(($numf + 1))
+	numf=$(( $numf + 1 ))
 	ti=$(gett $2)
 	to=$(gett $3)
 	echo "	$fn();" >>mkt-int-t-in.$srcext
@@ -834,8 +869,8 @@ ubc1() {
 	echo "extern const $ti ${fn}_i[];"
 	echo "static const $to ${fn}_o[] = {"
 	os=$ht
-	while read in; do
-		read out
+	while read -r in; do
+		read -r out
 		echo >&4 "$os$in"
 		echo "$os$out"
 		os=,$ht
@@ -845,15 +880,19 @@ ubc1() {
 	echo "void $fn(void) {"
 	echo "	size_t cnt = sizeof(${fn}_o) / sizeof(${fn}_o[0]);"
 	echo "	fstr = \"$1\";"
-	echo "	while (cnt--)"
+	echo "	testsrun = 0;"
+	echo "	while (cnt--) {"
 	echo "		tm1($2, $3, $1, ${fn}_i[cnt], ${fn}_o[cnt]);"
+	echo "		++testsrun;"
+	echo "	}"
+	echo "	expected(\"$fn\", $xwant);"
 	echo '}'
     } >>mkt-int-t-f0.$srcext 4>>mkt-int-t-f1.$srcext
 }
 
 ubc2() {
 	fn=f$numf
-	numf=$(($numf + 1))
+	numf=$(( $numf + 1 ))
 	ta=$(gett $2)
 	tb=$(gett $3)
 	ty=$(gett $4)
@@ -868,9 +907,9 @@ ubc2() {
 	echo "extern const $tb ${fn}_b[];"
 	echo "static const $ty ${fn}_y[] = {"
 	os=$ht
-	while read in; do
-		read in2
-		read out
+	while read -r in; do
+		read -r in2
+		read -r out
 		echo >&4 "$os$in"
 		echo >&5 "$os$in2"
 		echo "$os$out"
@@ -882,8 +921,12 @@ ubc2() {
 	echo "void $fn(void) {"
 	echo "	size_t cnt = sizeof(${fn}_y) / sizeof(${fn}_y[0]);"
 	echo "	fstr = \"$1\";"
-	echo "	while (cnt--)"
+	echo "	testsrun = 0;"
+	echo "	while (cnt--) {"
 	echo "		tm2($2, $3, $4, $1, ${fn}_a[cnt], ${fn}_b[cnt], ${fn}_y[cnt]);"
+	echo "		++testsrun;"
+	echo "	}"
+	echo "	expected(\"$fn\", $xwant);"
 	echo '}'
     } >>mkt-int-t-f0.$srcext 4>>mkt-int-t-f1.$srcext 5>>mkt-int-t-f2.$srcext
 }
@@ -916,7 +959,7 @@ ubc1 b_mbiA_U2VZ bin1u iouts
 mbc1 1024 0 1023 '
 	if (x > 511) return (1)
 	return (0)'
-mba	1024 0 \
+mba 6	1024 0 \
 	1534 0 \
 	1535 0 \
 	1536 1 \
@@ -930,7 +973,7 @@ ubc1 b_mbiA_U2S bin1u bouts
 
 mbc1 512 0 511 'return (x)'
 mbc1a 512 512 1023 'return (-(1024 - x))'
-mba	1024 0 \
+mba 5	1024 0 \
 	1535 511 \
 	1536 -512 \
 	2047 -1 \
@@ -961,7 +1004,7 @@ ubc1 b_mbiA_U2M bin1u boutu
 
 mbc1 512 0 511 'return (x)'
 mbc1a 512 512 1023 'return (1024 - x)'
-mba	1024 0 \
+mba 9	1024 0 \
 	1534 510 \
 	1535 511 \
 	1536 512 \
@@ -1012,8 +1055,8 @@ ubc2 h_mbiMA_VZU2U hin1u hin2u houtu
 
 cat >>mkt-int-t-in.$srcext <<\EOF
 
-#if ((SCHAR_MIN)+1 == -(SCHAR_MAX))
-	fprintf(stderr, "I: assuming two's complement, testing...\n");
+#if defined(mbiSAFECOMPLEMENT) && (mbiSAFECOMPLEMENT)
+	fprintf(stderr, "I: full two's complement, testing...\n");
 	fstr = "2b_mbiA_S2VZ";
 	tm1(bin1s, iouts, b_mbiA_S2VZ, -128, 1);
 	fstr = "2b_mbiA_U2S";
@@ -1024,8 +1067,22 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 	tm1(bin1s, boutu, b_mbiA_S2M, -128, 128);
 	fstr = "2b_mbiA_VZM2S";
 	tm2(bin1u, bin2u, bouts, b_mbiA_VZM2S, 1, 128, -128);
+#define mbiCfail hin1s = 1
+	hin1s = 0;
+	mbiCAsafeU2S(bs, but, 128);
+	if (hin1s) {
+		fprintf(stderr, "E: %s triggered\n", "mbiCAsafeU2S(128)");
+		rv = 1;
+	}
+	hin1s = 0;
+	mbiCAsafeVZM2S(bs, but, 1, 128);
+	if (hin1s) {
+		fprintf(stderr, "E: %s triggered\n", "mbiCAsafeVZM2S(1, 128)");
+		rv = 1;
+	}
+#undef mbiCfail
 #else
-	fprintf(stderr, "I: one's complement or sign-and-magnitude system!\n");
+	fprintf(stderr, "I: limited two's complement, one's complement or sign-and-magnitude system!\n");
 #define mbiCfail hin1s = 0
 	hin1s = 1;
 	mbiCAsafeU2S(bs, but, 128);
@@ -1044,16 +1101,32 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 
 	fprintf(stderr, "I: overflow/underflow-checking unsigned...\n");
 	mbmscWd(4242 4244);
+	testsrun = 0;
 
 #define mbiCfail hin1s = 1
-	for (hin1u = 0; hin1u < UCHAR_MAX; ++hin1u)
-		for (hin2u = 0; hin2u < UCHAR_MAX; ++hin2u) {
+	for (hin1u = 0; hin1u <= UCHAR_MAX; ++hin1u) {
+		/* see below about this */
+		hin1s = 0;
+		bin1u = hin1u;
+		mbiCAAlet(bin2u, bst, bin1u);
+		if (hin1s) {
+			fprintf(stderr, "E: mbiCAAlet(%d) failed\n", (int)bin1u);
+			rv = 1;
+		}
+		++testsrun;
+
+		for (hin2u = 0; hin2u <= UCHAR_MAX; ++hin2u) {
+			/*
+			 * mbiCAUinc, mbiCAUdec tested via add/sub
+			 */
+
 			hin1s = 0;
 			boutu = hin1u;
 			mbiCAUadd(boutu, hin2u);
 			iouts = hin1u + hin2u;
 			houts = (iouts < 0) || (iouts > UCHAR_MAX);
 			C2u("mbiCAUadd");
+			++testsrun;
 
 			hin1s = 0;
 			boutu = hin1u;
@@ -1061,6 +1134,7 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 			iouts = hin1u - hin2u;
 			houts = (iouts < 0) || (iouts > UCHAR_MAX);
 			C2u("mbiCAUsub");
+			++testsrun;
 
 			hin1s = 0;
 			boutu = hin1u;
@@ -1068,42 +1142,69 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 			iouts = hin1u * hin2u;
 			houts = (iouts < 0) || (iouts > UCHAR_MAX);
 			C2u("mbiCAUmul");
+			++testsrun;
 		}
+	}
+	expected("CAU", (1U + UCHAR_MAX) + (1U + UCHAR_MAX) * (1U + UCHAR_MAX) * 3);
 #undef mbiCfail
 
 	fprintf(stderr, "I: overflow/underflow-checking signed...\n");
 #define mbiCfail hin1u = 1
-	for (hin1s = SCHAR_MIN; hin1s < SCHAR_MAX; ++hin1s)
-		for (hin2s = SCHAR_MIN; hin2s < SCHAR_MAX; ++hin2s) {
-		    if (hin2s == 1) {
-			hin1u = 0;
-			mbiCASlet(bst, bin1s, hst, hin1s);
-			if (hin1u) {
-				fprintf(stderr, "E: mbiCASlet(%d) failed\n", hin1s);
-				rv = 1;
-			}
+	for (hin1s = SCHAR_MIN; hin1s <= SCHAR_MAX; ++hin1s) {
+		hin1u = 0;
+		mbiCASlet(bst, bin1s, hst, hin1s);
+		if (hin1u) {
+			fprintf(stderr, "E: mbiCASlet(%d) failed\n", hin1s);
+			rv = 1;
+		}
+		++testsrun;
 
-			hin1u = 0;
-			bouts = hin1s;
-			mbiCASinc(SCHAR, bouts);
-			iouts = hin1s + hin2s;
-			houtu = (iouts < SCHAR_MIN) || (iouts > SCHAR_MAX);
-			C2s("mbiCASinc");
+		/*
+		 * mbiCAAlet is special: it is supposed to be used
+		 * when both sides are of the same signedness, and
+		 * ideally of the same type width already but when
+		 * the type may be an unknown; e.g. parsing number
+		 * into tv_sec which is supposedly time_t, so with
+		 * time_t if unsigned, else mbiHUGE_S in the loop,
+		 * then the hopefully-not-narrowing assign; so, it
+		 * cannot be fail-tested as those should warn from
+		 * the compiler already so we syntax-check here.
+		 */
+		hin1u = 0;
+		mbiCAAlet(bin2s, bst, bin1s);
+		if (hin1u) {
+			fprintf(stderr, "E: mbiCAAlet(%d) failed\n", (int)bin1s);
+			rv = 1;
+		}
+		++testsrun;
 
-			hin1u = 0;
-			bouts = hin1s;
-			mbiCASdec(SCHAR, bouts);
-			iouts = hin1s - hin2s;
-			houtu = (iouts < SCHAR_MIN) || (iouts > SCHAR_MAX);
-			C2s("mbiCASdec");
-		    }
-		    if (hin2s >= 0) {
+		hin1u = 0;
+		bouts = hin1s;
+		mbiCASinc(SCHAR, bouts);
+		iouts = hin1s + 1;
+		houtu = (iouts < SCHAR_MIN) || (iouts > SCHAR_MAX);
+		C2s("mbiCASinc");
+		++testsrun;
+
+		hin1u = 0;
+		bouts = hin1s;
+		mbiCASdec(SCHAR, bouts);
+		iouts = hin1s - 1;
+		houtu = (iouts < SCHAR_MIN) || (iouts > SCHAR_MAX);
+		C2s("mbiCASdec");
+		++testsrun;
+
+		for (hin2s = SCHAR_MIN; hin2s <= SCHAR_MAX; ++hin2s) {
+			if (hin2s < 0)
+				goto hin2s_not_positive;
+
 			hin1u = 0;
 			bouts = hin1s;
 			mbiCAPadd(SCHAR, bouts, hin2s);
 			iouts = hin1s + hin2s;
 			houtu = (iouts < SCHAR_MIN) || (iouts > SCHAR_MAX);
 			C2s("mbiCAPadd");
+			++testsrun;
 
 			hin1u = 0;
 			bouts = hin1s;
@@ -1111,6 +1212,7 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 			iouts = hin1s - hin2s;
 			houtu = (iouts < SCHAR_MIN) || (iouts > SCHAR_MAX);
 			C2s("mbiCAPsub");
+			++testsrun;
 
 			hin1u = 0;
 			bouts = hin1s;
@@ -1118,14 +1220,16 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 			iouts = hin1s * hin2s;
 			houtu = (iouts < SCHAR_MIN) || (iouts > SCHAR_MAX);
 			C2s("mbiCAPmul");
-		    }
+			++testsrun;
 
+ hin2s_not_positive:
 			hin1u = 0;
 			bouts = hin1s;
 			mbiCASadd(SCHAR, bouts, hin2s);
 			iouts = hin1s + hin2s;
 			houtu = (iouts < SCHAR_MIN) || (iouts > SCHAR_MAX);
 			C2s("mbiCASadd");
+			++testsrun;
 
 			hin1u = 0;
 			bouts = hin1s;
@@ -1133,6 +1237,7 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 			iouts = hin1s - hin2s;
 			houtu = (iouts < SCHAR_MIN) || (iouts > SCHAR_MAX);
 			C2s("mbiCASsub");
+			++testsrun;
 
 			hin1u = 0;
 			bouts = hin1s;
@@ -1140,6 +1245,7 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 			iouts = hin1s * hin2s;
 			houtu = (iouts < SCHAR_MIN) || (iouts > SCHAR_MAX);
 			C2s("mbiCASmul");
+			++testsrun;
 #if 1 /* mbiCASlet validate overflow */
 			/*
 			 * note: these may also raise an implementation-defined
@@ -1154,7 +1260,14 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 				rv = 1;
 			}
 #endif /* mbiCASlet validate overflow */
+			++testsrun;
 		}
+	}
+	/* The calculations below fail on a box where sizes of char==int and
+	 * !mbiSAFECOMPLEMENT, but that should be rare enough to not bother. */
+	expected("CAS", ((unsigned)-(int)SCHAR_MIN + 1U + (unsigned)SCHAR_MAX) * (4U +
+	    3U * (1U + (unsigned)SCHAR_MAX) +
+	    4U * ((unsigned)-(int)SCHAR_MIN + 1U + (unsigned)SCHAR_MAX)));
 
 	fprintf(stderr, "I: manual two’s komplement calculations...\n");
 EOF
@@ -1176,42 +1289,47 @@ mbc2 4096 0 63 0 63 '
 ubc2 x_mbiMKcmp bin1u bin2u iouts
 
 cat >>mkt-int-t-in.$srcext <<\EOF
+	testsrun = 0;
 	for (hin1u = 0; hin1u < 256; ++hin1u)
 		for (hin2u = 0; hin2u < 8; ++hin2u) {
 			boutu = b_mbiKrol(hin1u, hin2u);
 			iouts = th_rol(8, hin1u, hin2u);
-			c2("b_mbiKrol");
+			c2u("b_mbiKrol");
 			boutu = b_mbiKror(hin1u, hin2u);
 			iouts = th_ror(8, hin1u, hin2u);
-			c2("b_mbiKror");
+			c2u("b_mbiKror");
 			boutu = b_mbiKshl(hin1u, hin2u);
 			iouts = th_shl(8, hin1u, hin2u);
-			c2("b_mbiKshl");
+			c2u("b_mbiKshl");
 			boutu = b_mbiKshr(hin1u, hin2u);
 			iouts = th_shr(8, hin1u, hin2u);
-			c2("b_mbiKshr");
+			c2u("b_mbiKshr");
 			boutu = b_mbiKsar(hin1u, hin2u);
 			iouts = th_sar(8, hin1u, hin2u);
-			c2("b_mbiKsar");
+			c2u("b_mbiKsar");
+			++testsrun;
 		}
+	expected("Krot", 256U * 8U);
 	for (hin1u = 0; hin1u < 64; ++hin1u)
 		for (hin2u = 0; hin2u <= 8; ++hin2u) {
 			boutu = x_mbiMKrol(hin1u, hin2u);
 			iouts = th_rol(6, hin1u, hin2u);
-			c2("x_mbiMKrol");
+			c2u("x_mbiMKrol");
 			boutu = x_mbiMKror(hin1u, hin2u);
 			iouts = th_ror(6, hin1u, hin2u);
-			c2("x_mbiMKror");
+			c2u("x_mbiMKror");
 			boutu = x_mbiMKshl(hin1u, hin2u);
 			iouts = th_shl(6, hin1u, hin2u);
-			c2("x_mbiMKshl");
+			c2u("x_mbiMKshl");
 			boutu = x_mbiMKshr(hin1u, hin2u);
 			iouts = th_shr(6, hin1u, hin2u);
-			c2("x_mbiMKshr");
+			c2u("x_mbiMKshr");
 			boutu = x_mbiMKsar(hin1u, hin2u);
 			iouts = th_sar(6, hin1u, hin2u);
-			c2("x_mbiMKsar");
+			c2u("x_mbiMKsar");
+			++testsrun;
 		}
+	expected("MKrot", 64U * 9U);
 
 	mbmscWpop;
 EOF
@@ -1306,6 +1424,49 @@ t1 'offsetof(struct fam_t, value)' 'offsetof(struct fam_t, value[0])'
 t1 'ct.expr2' 511
 
 cat >>mkt-int-t-in.$srcext <<\EOF
+
+#undef endiantype
+#if mbiMASK__BITS(UINT_MAX) == 32
+#define endiantype int
+#elif mbiMASK__BITS(ULONG_MAX) == 32
+#define endiantype long
+#endif
+#if mbiMASK__BITS(UCHAR_MAX) != 8
+#undef endiantype
+#endif
+#ifdef endiantype
+	{
+		union {
+			unsigned endiantype t;
+			unsigned char b[sizeof(unsigned endiantype) == 4 ? 4 : -1];
+		} endiantest;
+
+		endiantest.t = 0x1A2B3C4DUL;
+		switch (endiantest.b[0]) {
+		case 0x1AU:
+			if (endiantest.b[1] == 0x2BU &&
+			    endiantest.b[2] == 0x3CU &&
+			    endiantest.b[3] == 0x4DU)
+				endianness = "big endian";
+			break;
+		case 0x2BU:
+			if (endiantest.b[1] == 0x1AU &&
+			    endiantest.b[2] == 0x4DU &&
+			    endiantest.b[3] == 0x3CU)
+				endianness = "PDP endian";
+			break;
+		case 0x4DU:
+			if (endiantest.b[1] == 0x3CU &&
+			    endiantest.b[2] == 0x2BU &&
+			    endiantest.b[3] == 0x1AU)
+				endianness = little_endian;
+			break;
+		}
+	}
+#endif
+#undef endiantype
+	nilreprtest.ptr = mbnil;
+
 	switch ((unsigned int)bitrepr(-1)) {
 	case 0xFFU:
 		whichrepr = "two’s complement";
@@ -1321,7 +1482,18 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 		break;
 	}
 
-	fprintf(stderr, "I: architecture infos (0 may mean unknown):\n");
+	fprintf(stderr, "I: architecture infos (0 for min/max/w may mean unknown):\n");
+	fprintf(stderr, "N: %s; nil representation:", endianness);
+	for (n = 0; n < sizeof(void *); ++n)
+		fprintf(stderr, " %02X", (unsigned)nilreprtest.b[n]);
+	if (endianness == little_endian) {
+		fputs(" (0x", stderr);
+		n = sizeof(void *);
+		while (n--)
+			fprintf(stderr, "%02X", (unsigned)nilreprtest.b[n]);
+		fputc(')', stderr);
+	}
+	fputc('\n', stderr);
 	fprintf(stderr, "N: CHAR_BIT: %d\t\tcomplement: %s using %s\n",
 	    (int)CHAR_BIT, mbiSAFECOMPLEMENT ? "safe" : "UNSAFE", whichrepr);
 
@@ -1503,7 +1675,7 @@ if $cross; then
 	echo >&2 'I: compilation finished, copy mkt-int-t-t.exe to the target and run it'
 	echo >&2 "N: '$(pwd | sed "s,','\\\\'',g")/mkt-int-t-t.exe'"
 	echo >&2 'I: then press Return to continue'
-	read dummy
+	read -r dummy
 	exit 0
 fi
 echo >&2 'I: running tests'
@@ -1514,5 +1686,5 @@ if test "$rv" = 0; then
 	exit 0
 fi
 echo >&2 'E: tests failed; press Return to continue'
-read dummy
+read -r dummy
 exit 1
