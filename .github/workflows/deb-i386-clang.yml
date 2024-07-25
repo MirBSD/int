@@ -153,6 +153,23 @@
         "fail-fast": true
       }
     },
+    "clang23": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4.1.7"
+        },
+        {
+          "uses": "docker://i386/debian:sid-slim",
+          "with": {
+            "args": "sh .extra/i386.sh clang -std=c2x"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
     "clang89": {
       "runs-on": "ubuntu-latest",
       "steps": [
