@@ -25,7 +25,7 @@ die() {
 	echo >&2 "E: mkt-int.sh: $*"
 	if $w; then
 		echo >&2 'N: press Return to continue'
-		read dummy
+		read -r dummy
 	fi
 	exit 1
 }
@@ -796,10 +796,10 @@ mbc1() {
 
 mbc1a() {
 	xwant=$(( $xwant + ($1) ))
-	want=$(( ($1) * 2))
+	want=$(( ($1) * 2 ))
 	bc >mkt-int-t-bc2 <<EOF
 define f(x) {
-${4#$nl}
+${4#"$nl"}
 }
 for (v = $2; v <= $3; ++v) {
 	v
@@ -807,7 +807,7 @@ for (v = $2; v <= $3; ++v) {
 }
 EOF
 	got=$(wc -l <mkt-int-t-bc2)
-	test $got -eq $want || \
+	test $got -eq "$want" || \
 	    die got $got lines, not "$want", from bc "'$4'"
 	cat mkt-int-t-bc2 >>mkt-int-t-bc
 }
@@ -820,10 +820,10 @@ mbc2() {
 
 mbc2a() {
 	xwant=$(( $xwant + ($1) ))
-	want=$(( ($1) * 3))
+	want=$(( ($1) * 3 ))
 	bc >mkt-int-t-bc2 <<EOF
 define f(x,y) {
-${6#$nl}
+${6#"$nl"}
 }
 for (v = $2; v <= $3; ++v) {
 	for (w = $4; w <= $5; ++w) {
@@ -834,7 +834,7 @@ for (v = $2; v <= $3; ++v) {
 }
 EOF
 	got=$(wc -l <mkt-int-t-bc2)
-	test $got -eq $want || \
+	test $got -eq "$want" || \
 	    die got $got lines, not "$want", from bc "'$6'"
 	cat mkt-int-t-bc2 >>mkt-int-t-bc
 }
@@ -858,7 +858,7 @@ gett() {
 
 ubc1() {
 	fn=f$numf
-	numf=$(($numf + 1))
+	numf=$(( $numf + 1 ))
 	ti=$(gett $2)
 	to=$(gett $3)
 	echo "	$fn();" >>mkt-int-t-in.$srcext
@@ -869,8 +869,8 @@ ubc1() {
 	echo "extern const $ti ${fn}_i[];"
 	echo "static const $to ${fn}_o[] = {"
 	os=$ht
-	while read in; do
-		read out
+	while read -r in; do
+		read -r out
 		echo >&4 "$os$in"
 		echo "$os$out"
 		os=,$ht
@@ -892,7 +892,7 @@ ubc1() {
 
 ubc2() {
 	fn=f$numf
-	numf=$(($numf + 1))
+	numf=$(( $numf + 1 ))
 	ta=$(gett $2)
 	tb=$(gett $3)
 	ty=$(gett $4)
@@ -907,9 +907,9 @@ ubc2() {
 	echo "extern const $tb ${fn}_b[];"
 	echo "static const $ty ${fn}_y[] = {"
 	os=$ht
-	while read in; do
-		read in2
-		read out
+	while read -r in; do
+		read -r in2
+		read -r out
 		echo >&4 "$os$in"
 		echo >&5 "$os$in2"
 		echo "$os$out"
@@ -1675,7 +1675,7 @@ if $cross; then
 	echo >&2 'I: compilation finished, copy mkt-int-t-t.exe to the target and run it'
 	echo >&2 "N: '$(pwd | sed "s,','\\\\'',g")/mkt-int-t-t.exe'"
 	echo >&2 'I: then press Return to continue'
-	read dummy
+	read -r dummy
 	exit 0
 fi
 echo >&2 'I: running tests'
@@ -1686,5 +1686,5 @@ if test "$rv" = 0; then
 	exit 0
 fi
 echo >&2 'E: tests failed; press Return to continue'
-read dummy
+read -r dummy
 exit 1
