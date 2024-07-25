@@ -38,6 +38,13 @@ APT::Install-Recommends "0";
 EOF
 apt-get update
 case $1 in
+slink|potato|woody|sarge|etch)
+	;;
+*)
+	apt-get --purge -y dist-upgrade
+	;;
+esac
+case $1 in
 slink)
 	# work around a segfault
 	apt-get -d -y install bc gcc g++
