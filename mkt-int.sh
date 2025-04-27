@@ -1,5 +1,5 @@
 #!/bin/sh
-rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.48 2024/07/25 02:29:43 tg Exp $'
+rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.49 2025/02/11 03:56:08 tg Exp $'
 #-
 # © mirabilos Ⓕ MirBSD
 
@@ -1581,7 +1581,9 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 #ifdef FLT_RADIX
 	tif(float, FLT_MIN, FLT_MAX);
 	tif(double, DBL_MIN, DBL_MAX);
+#if defined(LDBL_MAX) && !defined(MBSDINT_H_NO_LDBL)
 	tif(long double, LDBL_MIN, LDBL_MAX);
+#endif
 #endif
 #if MBSDINT_H_MBIPTR_IS_SIZET || \
     (!defined(__CHERI__) && !defined(UINTPTR_MAX))
