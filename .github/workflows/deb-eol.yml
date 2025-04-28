@@ -4,7 +4,7 @@
       "runs-on": "ubuntu-latest",
       "steps": [
         {
-          "uses": "actions/checkout@v4.1.7"
+          "uses": "actions/checkout@v4.2.2"
         },
         {
           "run": "docker pull debian/eol:slink\ndocker run --privileged --workdir /github/workspace --rm -e HOME -v /home/runner/work/_temp/_github_home:/github/home -v /home/runner/work/_temp/_github_workflow:/github/workflow -v \"$PWD\":/github/workspace debian/eol:slink sh .extra/debeol.sh slink 2.1"
@@ -18,7 +18,7 @@
       "runs-on": "ubuntu-latest",
       "steps": [
         {
-          "uses": "actions/checkout@v4.1.7"
+          "uses": "actions/checkout@v4.2.2"
         },
         {
           "uses": "docker://debian/eol:potato",
@@ -35,7 +35,7 @@
       "runs-on": "ubuntu-latest",
       "steps": [
         {
-          "uses": "actions/checkout@v4.1.7"
+          "uses": "actions/checkout@v4.2.2"
         },
         {
           "uses": "docker://debian/eol:woody",
@@ -52,7 +52,7 @@
       "runs-on": "ubuntu-latest",
       "steps": [
         {
-          "uses": "actions/checkout@v4.1.7"
+          "uses": "actions/checkout@v4.2.2"
         },
         {
           "uses": "docker://debian/eol:sarge",
@@ -69,7 +69,7 @@
       "runs-on": "ubuntu-latest",
       "steps": [
         {
-          "uses": "actions/checkout@v4.1.7"
+          "uses": "actions/checkout@v4.2.2"
         },
         {
           "uses": "docker://debian/eol:etch",
@@ -86,7 +86,7 @@
       "runs-on": "ubuntu-latest",
       "steps": [
         {
-          "uses": "actions/checkout@v4.1.7"
+          "uses": "actions/checkout@v4.2.2"
         },
         {
           "uses": "docker://debian/eol:lenny",
@@ -103,7 +103,7 @@
       "runs-on": "ubuntu-latest",
       "steps": [
         {
-          "uses": "actions/checkout@v4.1.7"
+          "uses": "actions/checkout@v4.2.2"
         },
         {
           "uses": "docker://debian/eol:squeeze",
@@ -120,7 +120,7 @@
       "runs-on": "ubuntu-latest",
       "steps": [
         {
-          "uses": "actions/checkout@v4.1.7"
+          "uses": "actions/checkout@v4.2.2"
         },
         {
           "uses": "docker://debian/eol:wheezy",
@@ -137,7 +137,7 @@
       "runs-on": "ubuntu-latest",
       "steps": [
         {
-          "uses": "actions/checkout@v4.1.7"
+          "uses": "actions/checkout@v4.2.2"
         },
         {
           "uses": "docker://debian/eol:jessie",
@@ -154,7 +154,7 @@
       "runs-on": "ubuntu-latest",
       "steps": [
         {
-          "uses": "actions/checkout@v4.1.7"
+          "uses": "actions/checkout@v4.2.2"
         },
         {
           "uses": "docker://debian/eol:stretch",
@@ -171,7 +171,7 @@
       "runs-on": "ubuntu-latest",
       "steps": [
         {
-          "uses": "actions/checkout@v4.1.7"
+          "uses": "actions/checkout@v4.2.2"
         },
         {
           "uses": "docker://debian:buster",
@@ -188,7 +188,7 @@
       "runs-on": "ubuntu-latest",
       "steps": [
         {
-          "uses": "actions/checkout@v4.1.7"
+          "uses": "actions/checkout@v4.2.2"
         },
         {
           "uses": "docker://debian:bullseye",
@@ -205,7 +205,7 @@
       "runs-on": "ubuntu-latest",
       "steps": [
         {
-          "uses": "actions/checkout@v4.1.7"
+          "uses": "actions/checkout@v4.2.2"
         },
         {
           "uses": "docker://debian:bookworm",

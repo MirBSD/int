@@ -12,7 +12,7 @@
           }
         },
         {
-          "uses": "actions/checkout@v4.1.7"
+          "uses": "actions/checkout@v4.2.2"
         },
         {
           "run": "(git gc --quiet || :)"
@@ -29,7 +29,7 @@
       "runs-on": "ubuntu-latest",
       "steps": [
         {
-          "uses": "actions/checkout@v4.1.7"
+          "uses": "actions/checkout@v4.2.2"
         },
         {
           "run": "(git gc --quiet || :)"
@@ -46,7 +46,7 @@
       "runs-on": "${{ matrix.os }}",
       "steps": [
         {
-          "uses": "actions/checkout@v4.1.7"
+          "uses": "actions/checkout@v4.2.2"
         },
         {
           "run": "(git gc --quiet || :)"
@@ -72,13 +72,13 @@
       "runs-on": "ubuntu-latest",
       "steps": [
         {
-          "uses": "actions/checkout@v4.1.7"
+          "uses": "actions/checkout@v4.2.2"
         },
         {
           "run": "(git gc --quiet || :)"
         },
         {
-          "uses": "jirutka/setup-alpine@v1.2.0",
+          "uses": "jirutka/setup-alpine@v1.3.0",
           "with": {
             "arch": "${{ matrix.alpinearch }}",
             "branch": "edge",
