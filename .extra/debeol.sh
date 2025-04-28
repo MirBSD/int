@@ -82,6 +82,10 @@ case $1 in
 experimental)
 	CFLAGS="$CFLAGS -Wall -Wextra -Wformat -Wformat-security"
 	CXXFLAGS="$CXXFLAGS -Wall -Wextra -Wformat -Wformat-security"
+	if test x"$2" = x"experimental-next"; then
+		CFLAGS="$CFLAGS -std=c2y"
+		CXXFLAGS="$CXXFLAGS-std=c++2c"
+	fi
 	;;
 slink)
 	CFLAGS="$CFLAGS -Wall -W"
