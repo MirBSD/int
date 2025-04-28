@@ -59,7 +59,6 @@
         "fail-fast": true,
         "matrix": {
           "os": [
-            "ubuntu-20.04",
             "ubuntu-24.04",
             "macos-12",
             "macos-13",
