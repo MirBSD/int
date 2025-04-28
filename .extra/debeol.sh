@@ -1,6 +1,7 @@
 #!/bin/sh
 #-
 # © mirabilos Ⓕ MirBSD or CC0
+
 exec 2>&1
 set -ex
 LC_ALL=C LANGUAGE=C DEBIAN_FRONTEND=noninteractive
@@ -84,7 +85,7 @@ experimental)
 	CXXFLAGS="$CXXFLAGS -Wall -Wextra -Wformat -Wformat-security"
 	if test x"$2" = x"experimental-next"; then
 		CFLAGS="$CFLAGS -std=c2y"
-		CXXFLAGS="$CXXFLAGS-std=c++2c"
+		CXXFLAGS="$CXXFLAGS -std=c++2c"
 	fi
 	;;
 slink)
