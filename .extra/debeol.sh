@@ -23,6 +23,23 @@ deb http://archive.debian.org/debian-security/ stretch/updates main non-free con
 EOF
 	rm -f /etc/apt/sources.list.d/*
 	;;
+experimental)
+	rm -f /etc/apt/sources.list /etc/apt/sources.list.d/*
+	cat >/etc/apt/sources.list.d/sid.sources <<\EOF
+Types: deb
+URIs: http://deb.debian.org/debian/
+Suites: sid
+Components: main non-free-firmware non-free contrib
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+EOF
+	cat >/etc/apt/sources.list.d/experimental.sources <<\EOF
+Types: deb
+URIs: http://deb.debian.org/debian/
+Suites: experimental
+Components: main non-free-firmware non-free contrib
+Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
+EOF
+	;;
 esac
 cat >dummy.c <<\EOF
 int main(void) { return (0); }
@@ -50,6 +67,10 @@ slink)
 	apt-get -d -y install bc gcc g++
 	dpkg -i /var/cache/apt/archives/*.deb
 	;;
+experimental)
+	apt-get install -t experimental -y bc build-essential \
+	    binutils cpp gcc g++
+	;;
 *)
 	apt-get install -y bc build-essential
 	;;
@@ -57,12 +78,20 @@ esac
 : "${CC=cc}${CXX=c++}${CFLAGS=-O2}${CXXFLAGS=-O2}"
 export CC CXX
 eval "$(env DEB_BUILD_MAINT_OPTIONS=hardening=+all dpkg-buildflags --export=sh || :)"
-CFLAGS="$CFLAGS -Wall -W"
-CXXFLAGS="$CXXFLAGS -Wall -W"
 case $1 in
+experimental)
+	CFLAGS="$CFLAGS -Wall -Wextra -Wformat -Wformat-security"
+	CXXFLAGS="$CXXFLAGS -Wall -Wextra -Wformat -Wformat-security"
+	;;
 slink)
+	CFLAGS="$CFLAGS -Wall -W"
+	CXXFLAGS="$CXXFLAGS -Wall -W"
 	# work around issue in egcs system header
 	CFLAGS="$CFLAGS -Wno-missing-braces"
+	;;
+*)
+	CFLAGS="$CFLAGS -Wall -W"
+	CXXFLAGS="$CXXFLAGS -Wall -W"
 	;;
 esac
 export LDFLAGS

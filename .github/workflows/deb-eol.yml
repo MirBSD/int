@@ -217,6 +217,23 @@
       "strategy": {
         "fail-fast": true
       }
+    },
+    "v999-experimental": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4.2.2"
+        },
+        {
+          "uses": "docker://debian:sid",
+          "with": {
+            "args": "sh .extra/debeol.sh experimental experimental"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
     }
   },
   "name": "deb-eol",
