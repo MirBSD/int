@@ -4,7 +4,7 @@
       "runs-on": "windows-latest",
       "steps": [
         {
-          "uses": "Vampire/setup-wsl@v5.0.0",
+          "uses": "Vampire/setup-wsl@v5.0.1",
           "with": {
             "additional-packages": "bc build-essential",
             "update": true,
