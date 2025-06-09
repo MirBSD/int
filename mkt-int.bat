@@ -20,6 +20,7 @@ set args=%args:~3%
 shift
 :nocross
 if not "%1" == "-msys" goto nomsys
+set MSYS_NO_PATHCONV=1
 msys2 mkt-int.sh %cxx% %x% cmd /c do-cl.bat -DWINVER=0x0602 -D_WIN32_WINNT=0x0602 -DNTDDI_VERSION=NTDDI_WIN8 /Wall -D__STDC_WANT_SECURE_LIB__=1 /wd4514 /wd5045 -DMBSDINT_H_WANT_PTR_IN_SIZET -DMBSDINT_H_WANT_INT32 -DMBSDINT_H_WANT_LRG64 -DMBSDINT_H_WANT_SAFEC %args% /nologo
 if errorlevel 1 goto doerror
 del do-cl.bat
