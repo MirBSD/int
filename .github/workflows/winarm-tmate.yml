@@ -1,0 +1,19 @@
+{
+  "jobs": {
+    "Debug with action-tmate": {
+      "runs-on": "windows-11-arm",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4"
+        },
+        {
+          "uses": "mxschmitt/action-tmate@v3"
+        }
+      ]
+    }
+  },
+  "name": "action-tmate windows-11-arm",
+  "on": {
+    "workflow_dispatch": null
+  }
+}
