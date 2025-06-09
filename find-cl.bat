@@ -1,7 +1,7 @@
 @echo off
-REM $MirOS: src/kern/include/find-cl.bat,v 1.2 2024/01/03 23:26:51 tg Exp $
+REM $MirOS: src/kern/include/find-cl.bat,v 1.3 2025/06/09 23:19:36 tg Exp $
 REM
-REM (c) 2023 mirabilos (F) CC0 or MirBSD
+REM (c) mirabilos (F) MirBSD or CC0
 REM
 set __VSCMD_ARG_NO_LOGO=1
 set VSCMD_SKIP_SENDTELEMETRY=1
@@ -20,6 +20,6 @@ exit /b 0
 :dohelp
 call "%VSINSTALLDIR%VC\Auxiliary\Build\vcvarsall.bat" /help
 echo.
-echo Call this with e.g. x86 or amd64 as parameter, see above.
+echo Call this with e.g. x86, amd64 or arm64 as parameter, see above.
 echo.
 exit /b 1
