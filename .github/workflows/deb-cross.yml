@@ -17,6 +17,23 @@
         "fail-fast": true
       }
     },
+    "arm64": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4.2.2"
+        },
+        {
+          "uses": "docker://debian:sid-slim",
+          "with": {
+            "args": "sh .extra/cross.sh arm64 aarch64-linux-gnu qemu-arm64"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
     "armel": {
       "runs-on": "ubuntu-latest",
       "steps": [
@@ -34,6 +51,23 @@
         "fail-fast": true
       }
     },
+    "armhf": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4.2.2"
+        },
+        {
+          "uses": "docker://debian:sid-slim",
+          "with": {
+            "args": "sh .extra/cross.sh armhf arm-linux-gnueabihf qemu-armhf"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
     "hppa": {
       "runs-on": "ubuntu-latest",
       "steps": [
@@ -44,6 +78,23 @@
           "uses": "docker://debian:sid-slim",
           "with": {
             "args": "sh .extra/cross.sh hppa hppa-linux-gnu qemu-hppa"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "loong64": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4.2.2"
+        },
+        {
+          "uses": "docker://debian:sid-slim",
+          "with": {
+            "args": "sh .extra/cross.sh loong64 loongarch64-linux-gnu qemu-loong64"
           }
         }
       ],
@@ -112,6 +163,57 @@
           "uses": "docker://debian:sid-slim",
           "with": {
             "args": "sh .extra/cross.sh ppc64 powerpc64-linux-gnu qemu-ppc64"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "ppc64el": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4.2.2"
+        },
+        {
+          "uses": "docker://debian:sid-slim",
+          "with": {
+            "args": "sh .extra/cross.sh ppc64el powerpc64le-linux-gnu qemu-ppc64el"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "riscv64": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4.2.2"
+        },
+        {
+          "uses": "docker://debian:sid-slim",
+          "with": {
+            "args": "sh .extra/cross.sh riscv64 riscv64-linux-gnu qemu-riscv64"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "s390x": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v4.2.2"
+        },
+        {
+          "uses": "docker://debian:sid-slim",
+          "with": {
+            "args": "sh .extra/cross.sh s390x s390x-linux-gnu qemu-s390x"
           }
         }
       ],
