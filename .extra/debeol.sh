@@ -52,7 +52,12 @@ HAVE_CAN_XIPO_0=0
 export HAVE_CAN_QNOIPA HAVE_CAN_XIPO_0
 cat >>/etc/apt/apt.conf <<\EOF
 debug::pkgproblemresolver "true";
+Dpkg::Progress-Fancy "false";
+// undo lenny breakage
 APT::Install-Recommends "0";
+APT::Install-Suggests "0";
+APT::Get::Always-Include-Phased-Updates "true";
+APT::Periodic::Enable "0";
 EOF
 apt-get update
 case $1 in
