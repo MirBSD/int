@@ -4,19 +4,18 @@
       "runs-on": "windows-latest",
       "steps": [
         {
-          "uses": "Vampire/setup-wsl@v5.0.1",
-          "with": {
-            "additional-packages": "bc build-essential",
-            "update": true,
-            "wsl-version": 1
-          }
-        },
-        {
           "name": "unfuck line endings (GitHub by default converts them on checkout)",
           "run": "git config --global core.autocrlf false\ngit config --global core.eol lf"
         },
         {
           "uses": "actions/checkout@v4.2.2"
+        },
+        {
+          "id": "setup-msys2",
+          "uses": "msys2/setup-msys2@v2",
+          "with": {
+            "install": "bc ed"
+          }
         },
         {
           "name": "prepare i386 C",
@@ -25,7 +24,7 @@
         },
         {
           "name": "build i386 C",
-          "run": "mkt-int.bat",
+          "run": "mkt-int.bat -msys",
           "shell": "cmd"
         },
         {
@@ -35,7 +34,7 @@
         },
         {
           "name": "build amd64 C",
-          "run": "mkt-int.bat",
+          "run": "mkt-int.bat -msys",
           "shell": "cmd"
         },
         {
@@ -45,7 +44,7 @@
         },
         {
           "name": "build i386 C++",
-          "run": "mkt-int.bat -cxx",
+          "run": "mkt-int.bat -cxx -msys",
           "shell": "cmd"
         },
         {
@@ -55,7 +54,7 @@
         },
         {
           "name": "build amd64 C++",
-          "run": "mkt-int.bat -cxx",
+          "run": "mkt-int.bat -cxx -msys",
           "shell": "cmd"
         },
         {
