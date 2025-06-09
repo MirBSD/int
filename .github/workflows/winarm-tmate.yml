@@ -28,6 +28,7 @@
   },
   "name": "action-tmate windows-11-arm",
   "on": {
+    "pull_request": null,
     "workflow_dispatch": null
   }
 }
