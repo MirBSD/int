@@ -45,6 +45,7 @@
   },
   "name": "Windows/ARM",
   "on": {
+    "pull_request": null,
     "workflow_dispatch": null
   }
 }
