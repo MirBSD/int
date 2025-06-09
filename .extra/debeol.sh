@@ -75,7 +75,7 @@ slink)
 	;;
 experimental)
 	apt-get install -t experimental -y bc build-essential \
-	    binutils cpp gcc g++
+	    binutils cpp gcc g++ libc6-dev
 	;;
 *)
 	apt-get install -y bc build-essential
