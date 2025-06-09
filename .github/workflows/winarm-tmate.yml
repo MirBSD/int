@@ -1,6 +1,6 @@
 {
   "jobs": {
-    "Debug with action-tmate": {
+    "action-tmate": {
       "runs-on": "windows-11-arm",
       "steps": [
         {
