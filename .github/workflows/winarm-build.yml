@@ -18,23 +18,23 @@
           }
         },
         {
-          "name": "prepare batch wrapper for MSYS",
-          "run": "msys2 -c 'printf \"%s\\n\" \"/wsl .bin.sh/s//msys2/\" \"s/...wslpath ..COMSPEC..../cmd/\" i \"set MSYS_NO_PATHCONV=1\" . w q | ed -s mkt-int.bat'",
-          "shell": "cmd"
-        },
-        {
-          "name": "prepare arm64 C and C++",
+          "name": "prepare arm64 C",
           "run": "find-cl.bat arm64",
           "shell": "cmd"
         },
         {
           "name": "build arm64 C",
-          "run": "mkt-int.bat",
+          "run": "mkt-int.bat -msys",
+          "shell": "cmd"
+        },
+        {
+          "name": "prepare arm64 C++",
+          "run": "find-cl.bat arm64",
           "shell": "cmd"
         },
         {
           "name": "build arm64 C++",
-          "run": "mkt-int.bat -cxx",
+          "run": "mkt-int.bat -cxx -msys",
           "shell": "cmd"
         }
       ],

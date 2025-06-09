@@ -19,6 +19,12 @@ set x=-x
 set args=%args:~3%
 shift
 :nocross
+if not "%1" == "-msys" goto nomsys
+msys2 mkt-int.sh %cxx% %x% cmd /c do-cl.bat -DWINVER=0x0602 -D_WIN32_WINNT=0x0602 -DNTDDI_VERSION=NTDDI_WIN8 /Wall -D__STDC_WANT_SECURE_LIB__=1 /wd4514 /wd5045 -DMBSDINT_H_WANT_PTR_IN_SIZET -DMBSDINT_H_WANT_INT32 -DMBSDINT_H_WANT_LRG64 -DMBSDINT_H_WANT_SAFEC %args% /nologo
+if errorlevel 1 goto doerror
+del do-cl.bat
+exit /b 0
+:nomsys
 wsl /bin/sh mkt-int.sh %cxx% %x% "$(wslpath "%COMSPEC%")" /c do-cl.bat -DWINVER=0x0602 -D_WIN32_WINNT=0x0602 -DNTDDI_VERSION=NTDDI_WIN8 /Wall -D__STDC_WANT_SECURE_LIB__=1 /wd4514 /wd5045 -DMBSDINT_H_WANT_PTR_IN_SIZET -DMBSDINT_H_WANT_INT32 -DMBSDINT_H_WANT_LRG64 -DMBSDINT_H_WANT_SAFEC %args% /nologo
 if errorlevel 1 goto doerror
 del do-cl.bat
@@ -32,5 +38,6 @@ echo Call find-cl.bat first, with e.g. x86 or amd64 as parameter.
 echo Afterwards, run mkt-int.bat with an optional first parameter
 echo of -x when cross-compiling plus optional CL.EXE arguments.
 echo Pass an initial -cxx before everything else to build as C++ not C.
+echo After an optional -cxx and -x pass -msys should WSL be missing.
 echo.
 exit /b 1
