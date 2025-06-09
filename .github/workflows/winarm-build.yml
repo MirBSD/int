@@ -1,0 +1,52 @@
+{
+  "jobs": {
+    "build": {
+      "runs-on": "windows-11-arm",
+      "steps": [
+        {
+          "name": "unfuck line endings (GitHub by default converts them on checkout)",
+          "run": "git config --global core.autocrlf false\ngit config --global core.eol lf"
+        },
+        {
+          "uses": "actions/checkout@v4.2.2"
+        },
+        {
+          "id": "setup-msys2",
+          "uses": "msys2/setup-msys2@v2",
+          "with": {
+            "install": "bc ed",
+            "update": true
+          }
+        },
+        {
+          "name": "prepare batch wrapper for MSYS",
+          "run": "msys2 -c 'printf \"%s\\n\" \"/wsl .bin.sh/s//msys2/\" \"s/...wslpath ..COMSPEC..../cmd/\" i \"set MSYS_NO_PATHCONV=1\" . w q | ed -s mkt-int.bat'",
+          "shell": "cmd"
+        },
+        {
+          "name": "prepare arm64 C and C++",
+          "run": "find-cl.bat arm64",
+          "shell": "cmd"
+        },
+        {
+          "name": "build arm64 C",
+          "run": "mkt-int.bat",
+          "shell": "cmd"
+        },
+        {
+          "name": "build arm64 C++",
+          "run": "mkt-int.bat -cxx",
+          "shell": "cmd"
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    }
+  },
+  "name": "Windows/ARM",
+  "on": {
+    "pull_request": null,
+    "workflow_dispatch": null
+  }
+}
