@@ -14,8 +14,7 @@
           "id": "setup-msys2",
           "uses": "msys2/setup-msys2@v2",
           "with": {
-            "install": "bc ed",
-            "update": true
+            "install": "bc ed"
           }
         },
         {
