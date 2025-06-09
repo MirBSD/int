@@ -1,6 +1,6 @@
 {
   "jobs": {
-    "build": {
+    "amd64": {
       "runs-on": "windows-latest",
       "steps": [
         {
@@ -59,7 +59,54 @@
           "shell": "cmd"
         },
         {
-          "name": "unfortunately GHA does not support running this on ARM",
+          "name": "unfortunately GHA does not support cross-compiling on x86 then running the result on ARM within one build",
+          "run": "rem",
+          "shell": "cmd"
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
+    "arm64": {
+      "runs-on": "windows-11-arm",
+      "steps": [
+        {
+          "name": "unfuck line endings (GitHub by default converts them on checkout)",
+          "run": "git config --global core.autocrlf false\ngit config --global core.eol lf"
+        },
+        {
+          "uses": "actions/checkout@v4.2.2"
+        },
+        {
+          "id": "setup-msys2",
+          "uses": "msys2/setup-msys2@v2",
+          "with": {
+            "install": "bc ed"
+          }
+        },
+        {
+          "name": "prepare arm64 C",
+          "run": "find-cl.bat arm64",
+          "shell": "cmd"
+        },
+        {
+          "name": "build arm64 C",
+          "run": "mkt-int.bat -msys",
+          "shell": "cmd"
+        },
+        {
+          "name": "prepare arm64 C++",
+          "run": "find-cl.bat arm64",
+          "shell": "cmd"
+        },
+        {
+          "name": "build arm64 C++",
+          "run": "mkt-int.bat -cxx -msys",
+          "shell": "cmd"
+        },
+        {
+          "name": "unfortunately the GHA runner fails at building for arm64_arm due to missing kernel32.lib",
           "run": "rem",
           "shell": "cmd"
         }
