@@ -4,6 +4,18 @@
       "runs-on": "windows-11-arm",
       "steps": [
         {
+          "uses": "Vampire/setup-wsl@v5.0.1",
+          "with": {
+            "additional-packages": "bc build-essential",
+            "update": true,
+            "wsl-version": 1
+          }
+        },
+        {
+          "name": "unfuck line endings (GitHub by default converts them on checkout)",
+          "run": "git config --global core.autocrlf false\ngit config --global core.eol lf"
+        },
+        {
           "uses": "actions/checkout@v4"
         },
         {
