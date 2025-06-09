@@ -23,11 +23,6 @@
   },
   "name": "vm-obsd",
   "on": {
-    "push": {
-      "branches": [
-        "GHA"
-      ]
-    },
     "workflow_dispatch": null
   }
 }
