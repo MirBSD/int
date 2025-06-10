@@ -33,6 +33,7 @@ sh mkt-int.sh $CC $CPPFLAGS $CFLAGS -Wall -Wextra -Wformat \
 echo ::endgroup::
 echo ::group::Build ILP32 for C++
 sh mkt-int.sh -cxx $CXX $CPPFLAGS $CXXFLAGS -Wall -Wextra -Wformat \
+    -Wno-type-limits \
     -DMBSDINT_H_WANT_PTR_IN_SIZET -DMBSDINT_H_WANT_SIZET_IN_LONG \
     -DMBSDINT_H_WANT_INT32 -DMBSDINT_H_WANT_LRG64 -DMBSDINT_H_WANT_SAFEC
 echo ::endgroup::
