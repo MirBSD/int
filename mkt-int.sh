@@ -1,5 +1,5 @@
 #!/bin/sh
-rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.49 2025/02/11 03:56:08 tg Exp $'
+rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.50 2025/06/10 21:26:43 tg Exp $'
 #-
 # © mirabilos Ⓕ MirBSD
 
@@ -1671,6 +1671,7 @@ rm -f mkt-int-t-*.$objext
 "$@" -c mkt-int-t-f2.$srcext || die -w compiling tests-f2 failed
 "$@" $LDFLAGS ${Fe}mkt-int-t-t.exe mkt-int-t-*.$objext || die -w linking tests failed
 (ls -l mkt-int-t-t.exe || :)
+(file mkt-int-t-t.exe || :)
 (size mkt-int-t-t.exe || :)
 set +ex
 if $cross; then
