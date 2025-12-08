@@ -1,0 +1,31 @@
+all:
+- run ghav-updater for new versions etc.
+- install file(1)
+
+deb-cross:
+- armel - trixie not sid
+- mips64el - gone, bookworm
+- x32 - needs vmaction with debian kernel and custom kernel parameters
+- others gone:
+  - mipsel in bullseye on archive.d.o
+  - mips in buster
+  - arm in lenny
+  - ia64 in wheezy
+  - sparc in etch (v8+ until wheezy)
+  - s390 in wheezy
+
+vmactions:
+- freebsd - add aarch64 riscv64
+- openbsd - add aarch64 riscv64
+- netbsd - add aarch64
+- omnios - add (amd64)
+- openindiana - add (amd64)
+⚠ currently failing, wait for author to fix
+
+runners:
+- drop macos-15
+- add  macos-15-intel		(upper for lower=macos-13)
+- add  macos-26			(upper for lower=macos-14)
+
+source:
+- update from MirBSD CVS
