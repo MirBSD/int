@@ -1,9 +1,13 @@
 #!/bin/sh
-rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.50 2025/06/10 21:26:43 tg Exp $'
+rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.51 2025/12/08 01:25:12 tg Exp $'
 #-
 # © mirabilos Ⓕ MirBSD
 
 # Warning: stress test, creates multiple multi-MiB .c files, .o about half each
+
+# Define -DMBSDINT_H_NO_LDBL should the compiler lack long double,
+# -DMBSDCC_H_NO_FAM if its FAM support is broken; report these to MirBSD.
+# See usage below for help.
 
 set -e
 echo >&2 "I: Hi from $rcsid"
@@ -14,7 +18,21 @@ export BC_ENV_ARGS LC_ALL
 nl='
 '
 ht='	'
-rcsid="$rcsid ($*|$LDFLAGS)"
+IFS=" $ht$nl"
+xargs="($*|$LDFLAGS)"
+xargs=$(sed 's![\\"]!\\&!g' <<EOF
+$xargs
+EOF
+)
+w=true
+while $w; do
+	case $xargs in
+	*"$nl"*)
+		xargs=${xargs%%"$nl"*}'\n'${xargs#*"$nl"} ;;
+	*)
+		w=false ;;
+	esac
+done
 
 die() {
 	w=false
@@ -352,9 +370,67 @@ $use_basetsd
 #include "mbsdcc.h"
 #include "mbsdint.h"
 #include <stdio.h>
+mbCTA_BEG(check);
+ /* some extra checks */
+ mbCTA(mbito1, mbito(1) == 1);
+ mbCTA(mbito2, mbito(-1) == -1);
+ mbCTA(mbito3, mbitou(-1) == (0U - 1U));
+ mbCTA(mbfto1, mbfto(1) == 1);
+ mbCTA(mbfto2, mbfto(-1) == -1);
+ mbCTA(mbfto3, mbftou(-1) == (0U - 1U));
+ mbCTA(mbfto4a, mbfto(1.1) == 1.1);
+ mbCTA(mbfto4b, mbfto(1.1) != 0);
+ mbCTA(mbfto4c, mbfto(1.1) != 1);
+ mbCTA(mbfto4d, mbfto(1.1) != 2);
+ mbCTA(mbfto5, mbftou(1.1) == 1);
+mbCTA_END(check);
 int main(void) { return (printf("Hi!\\n")); }
 EOF
 v "$@" $LDFLAGS ${Fe}mkt-int-t-t.exe mkt-int-t-in.$srcext || die compile-time checks fail
+
+echo >&2 'I: running should-compile-time-fail tests...'
+cftf=
+cat >mkt-int-t-in.$srcext <<EOF
+#ifndef __STDC_WANT_LIB_EXT1__
+#define __STDC_WANT_LIB_EXT1__ 1
+#endif
+$use_systypes
+$use_inttypes
+$use_stdint
+$use_basetsd
+#undef MBSDINT_H_SKIP_CTAS
+#include "mbsdcc.h"
+#include "mbsdint.h"
+volatile int i = 1;
+int main(void) { OURTEST return (i); }
+EOF
+v "$@" -DOURTEST= $LDFLAGS ${Fe}mkt-int-t-t.exe mkt-int-t-in.$srcext || die positive-test fails
+for totest in \
+	'extern void thiswillneverbedefinedIhope(void); thiswillneverbedefinedIhope();' \
+	'mbccChkExpr(i);' \
+	'mbccCEX(i);' \
+	'mbCTA_BEG(x); mbccCTA(mustfail, 0); mbCTA_END(x);' \
+	'mbito(1.1);' \
+	'mbito(&i);' \
+	'struct { int x; } a = { 1 }; mbito(a);' \
+	'mbito(&main);' \
+	'mbfto(&i);' \
+	'struct { int x; } a = { 1 }; mbfto(a);' \
+	'mbfto(&main);' \
+	'mbCTA_BEG(x); mbccCTA(mustfail, mbiMASK_CHK(9)); mbCTA_END(x);' \
+	'mbCTA_BEG(x); mbccCTA(mustfail, mbiTYPE_ISF(int)); mbCTA_END(x);' \
+	'mbCTA_BEG(x); mbccCTA(mustfail, mbiTYPE_ISU(int)); mbCTA_END(x);' \
+	'mbCTA_BEG(x); mbccCTA(mustfail, !mbiTYPE_ISF(float)); mbCTA_END(x);' \
+    ; do
+	echo >&2 "N: $totest"
+	if v "$@" -DOURTEST="$totest" $LDFLAGS ${Fe}mkt-int-t-t.exe mkt-int-t-in.$srcext; then
+		cftf="$cftf${nl}N: $totest"
+	else
+		echo >&2 "   ... passed"
+	fi
+done
+test -z "$cftf" || die "should-compile-time-fail tests failed:$cftf"
+echo >&2 'N: should-compile-time-fail tests passed'
 
 use_float='#include <float.h>'
 echo >&2 'I: checking if we have <float.h>'
@@ -480,6 +556,7 @@ static const char use_stdint[] = "$use_stdint";
 static const char use_basetsd[] = "$use_basetsd";
 
 static const char test_rcsid[] = "$rcsid";
+static const char cmplrflags[] = "$xargs";
 extern const char xxtc_rcsid[];
 
 EOF
@@ -1654,10 +1731,10 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 	a(MBSDINT_H_WANT_SAFEC, 0);
 #undef a
 
-	fprintf(stderr, "\nI: tests finished with errorlevel %d\n"
-	    "N: by %s\nN: and %s\nN: with %s\nN: for %s\nN: and %s\n",
-	    rv, test_rcsid, xxtc_rcsid, XXTH_RCSID, SYSKERN_MBSDCC_H,
-	    SYSKERN_MBSDINT_H);
+	fprintf(stderr, "\nI: tests finished with errorlevel %d using %s\n"
+	    "N: by %s\nN: and %s\nN: with %s\nN: for %s\nN:  and %s\n",
+	    rv, cmplrflags, test_rcsid, xxtc_rcsid, XXTH_RCSID,
+	    SYSKERN_MBSDINT_H, SYSKERN_MBSDCC_H);
 	return (rv);
 }
 EOF
