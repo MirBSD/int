@@ -11,12 +11,8 @@ deb-cross:
   - s390 in wheezy
 
 vmactions:
-- freebsd - add aarch64 riscv64
-- openbsd - add aarch64 riscv64
-- netbsd - add aarch64
 - omnios - add (amd64)
 - openindiana - add (amd64)
-⚠ currently failing, wait for author to fix
 
 runners:
 - drop macos-15
