@@ -81,7 +81,7 @@ APT::Periodic::Enable "0";
 EOF
 apt-get update
 apt-get --purge -y dist-upgrade
-apt-get install -y bc build-essential $xpkg
+apt-get install -y bc build-essential file $xpkg
 if test x"$xpkg" = x"gcc-snapshot"; then
 	mkdir -p /usr/local/bin
 	cat >/usr/local/bin/gcc-snapshot <<\EOF

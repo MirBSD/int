@@ -23,6 +23,9 @@
           "run": "(git gc --quiet || :)"
         },
         {
+          "run": "sudo apt-get install file"
+        },
+        {
           "name": "Initialise CodeQL",
           "uses": "github/codeql-action/init@v3",
           "with": {

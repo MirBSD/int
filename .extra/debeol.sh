@@ -70,15 +70,15 @@ esac
 case $1 in
 slink)
 	# work around a segfault
-	apt-get -d -y install bc gcc g++
+	apt-get -d -y install bc file gcc g++
 	dpkg -i /var/cache/apt/archives/*.deb
 	;;
 experimental)
 	apt-get install -t experimental -y bc build-essential \
-	    binutils cpp gcc g++ libc6-dev
+	    binutils cpp file gcc g++ libc6-dev
 	;;
 *)
-	apt-get install -y bc build-essential
+	apt-get install -y bc build-essential file
 	;;
 esac
 : "${CC=cc}${CXX=c++}${CFLAGS=-O2}${CXXFLAGS=-O2}"

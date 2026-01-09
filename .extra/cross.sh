@@ -29,7 +29,7 @@ APT::Periodic::Enable "0";
 EOF
 apt-get update
 apt-get --purge -y dist-upgrade
-apt-get install -y bc build-essential
+apt-get install -y bc build-essential file
 apt-get install -y --install-recommends gcc-$xtriplet g++-$xtriplet
 CC=$xtriplet-gcc CXX=$xtriplet-g++
 export CC CXX

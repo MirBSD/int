@@ -1,7 +1,3 @@
-all:
-- run ghav-updater for new versions etc.
-- install file(1)
-
 deb-cross:
 - armel - trixie not sid
 - mips64el - gone, bookworm
