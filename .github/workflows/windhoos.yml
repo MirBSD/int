@@ -8,7 +8,7 @@
           "run": "git config --global core.autocrlf false\ngit config --global core.eol lf"
         },
         {
-          "uses": "actions/checkout@v4.2.2"
+          "uses": "actions/checkout@v6.0.1"
         },
         {
           "id": "setup-msys2",
@@ -75,7 +75,7 @@
           "run": "git config --global core.autocrlf false\ngit config --global core.eol lf"
         },
         {
-          "uses": "actions/checkout@v4.2.2"
+          "uses": "actions/checkout@v6.0.1"
         },
         {
           "id": "setup-msys2",
