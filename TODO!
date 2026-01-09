@@ -13,11 +13,7 @@ deb-cross:
 vmactions:
 - omnios - add (amd64)
 - openindiana - add (amd64)
-
-runners:
-- drop macos-15
-- add  macos-15-intel		(upper for lower=macos-13)
-- add  macos-26			(upper for lower=macos-14)
+- haiku - add (amd64)
 
 source:
 - update from MirBSD CVS
