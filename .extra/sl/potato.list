@@ -1,3 +1,3 @@
 deb http://archive.debian.org/debian/ potato main
-deb http://archive.debian.org/debian-security/ potato/updates main
+#deb http://archive.debian.org/debian-security/ potato/updates main
 deb http://archive.debian.org/debian/ dists/potato-proposed-updates/
