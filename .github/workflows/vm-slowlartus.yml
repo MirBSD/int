@@ -21,6 +21,27 @@
         }
       ]
     },
+    "vm-openindiana": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v6.0.1"
+        },
+        {
+          "run": "(git gc --quiet || :)"
+        },
+        {
+          "uses": "vmactions/openindiana-vm@v1.0.1",
+          "with": {
+            "copyback": false,
+            "mem": 5120,
+            "prepare": "pkg install build-essential",
+            "run": "sh .extra/vm-slowlartus.sh",
+            "usesh": true
+          }
+        }
+      ]
+    },
     "vm-slowlartus": {
       "runs-on": "ubuntu-latest",
       "steps": [

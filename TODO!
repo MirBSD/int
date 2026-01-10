@@ -11,10 +11,5 @@ deb-cross:
   - s390 in wheezy
   but the current job builds with cross-gcc in sid, as long as it works…
 
-vmactions:
-- openindiana - add (amd64)
-  + pkg install build-essential
-  ‣ …?
-
 source:
 - update from MirBSD CVS
