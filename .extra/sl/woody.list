@@ -1,4 +1,4 @@
-deb http://archive.debian.org/debian/ woody main non-free contrib
-deb http://archive.debian.org/debian-non-US/ woody/non-US main non-free contrib
-deb http://archive.debian.org/debian-security/ woody/updates main non-free contrib
-deb http://archive.debian.org/debian-non-US/ woody-proposed-updates/non-US main non-free contrib
+deb http://archive.debian.org/debian/ woody main
+deb http://archive.debian.org/debian-non-US/ woody/non-US main
+deb http://archive.debian.org/debian-security/ woody/updates main
+deb http://archive.debian.org/debian-non-US/ woody-proposed-updates/non-US main

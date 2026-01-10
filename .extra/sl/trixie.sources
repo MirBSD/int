@@ -1,23 +1,23 @@
 Types: deb
 URIs: http://deb.debian.org/debian/
 Suites: trixie
-Components: main non-free-firmware non-free contrib
+Components: main
 Signed-By: /usr/share/keyrings/debian-archive-keyring.pgp
 
 Types: deb
 URIs: http://deb.debian.org/debian-security/
 Suites: trixie-security
-Components: main non-free-firmware non-free contrib
+Components: main
 Signed-By: /usr/share/keyrings/debian-archive-keyring.pgp
 
 Types: deb
 URIs: http://deb.debian.org/debian/
 Suites: trixie-updates
-Components: main non-free-firmware non-free contrib
+Components: main
 Signed-By: /usr/share/keyrings/debian-archive-keyring.pgp
 
 Types: deb
 URIs: http://deb.debian.org/debian/
 Suites: trixie-proposed-updates
-Components: main non-free-firmware non-free contrib
+Components: main
 Signed-By: /usr/share/keyrings/debian-archive-keyring.pgp

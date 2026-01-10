@@ -1,5 +1,5 @@
-deb http://archive.debian.org/debian/ potato main non-free contrib
-deb http://archive.debian.org/debian-non-US/ potato/non-US main non-free contrib
-deb http://archive.debian.org/debian-security/ potato/updates main non-free contrib
+deb http://archive.debian.org/debian/ potato main
+deb http://archive.debian.org/debian-non-US/ potato/non-US main
+deb http://archive.debian.org/debian-security/ potato/updates main
 deb http://archive.debian.org/debian/ dists/potato-proposed-updates/
 deb http://archive.debian.org/debian-non-US/ dists/potato-proposed-updates/

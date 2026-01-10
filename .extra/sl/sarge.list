@@ -1,4 +1,4 @@
-deb http://archive.debian.org/debian/ sarge main non-free contrib
-deb http://archive.debian.org/debian-security/ sarge/updates main non-free contrib
-#deb http://archive.debian.org/debian-volatile/ sarge/volatile main contrib
+deb http://archive.debian.org/debian/ sarge main
+deb http://archive.debian.org/debian-security/ sarge/updates main
+#deb http://archive.debian.org/debian-volatile/ sarge/volatile main
 #deb http://archive.debian.org/debian-volatile/ sarge/volatile-sloppy main
