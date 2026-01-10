@@ -1,5 +1,5 @@
 #!/bin/sh
-rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.51 2025/12/08 01:25:12 tg Exp $'
+rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.52 2026/01/10 05:30:30 tg Exp $'
 #-
 # © mirabilos Ⓕ MirBSD
 
@@ -405,6 +405,8 @@ volatile int i = 1;
 int main(void) { OURTEST return (i); }
 EOF
 v "$@" -DOURTEST= $LDFLAGS ${Fe}mkt-int-t-t.exe mkt-int-t-in.$srcext || die positive-test fails
+cxxisweird=yep
+$usecxx || unset cxxisweird
 for totest in \
 	'extern void thiswillneverbedefinedIhope(void); thiswillneverbedefinedIhope();' \
 	'mbccChkExpr(i);' \
@@ -414,9 +416,9 @@ for totest in \
 	'mbito(&i);' \
 	'struct { int x; } a = { 1 }; mbito(a);' \
 	'mbito(&main);' \
-	'mbfto(&i);' \
+	${cxxisweird-'mbfto(&i);'} \
 	'struct { int x; } a = { 1 }; mbfto(a);' \
-	'mbfto(&main);' \
+	${cxxisweird-'mbfto(&main);'} \
 	'mbCTA_BEG(x); mbccCTA(mustfail, mbiMASK_CHK(9)); mbCTA_END(x);' \
 	'mbCTA_BEG(x); mbccCTA(mustfail, mbiTYPE_ISF(int)); mbCTA_END(x);' \
 	'mbCTA_BEG(x); mbccCTA(mustfail, mbiTYPE_ISU(int)); mbCTA_END(x);' \
