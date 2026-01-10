@@ -1,5 +1,3 @@
-# 2.2, details tbd
-
 deb http://archive.debian.org/debian/ potato main non-free contrib
 deb http://archive.debian.org/debian-non-US/ potato/non-US main non-free contrib
 deb http://archive.debian.org/debian-security/ potato/updates main non-free contrib

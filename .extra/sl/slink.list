@@ -1,5 +1,3 @@
-# 2.1, details tbd, apt is new and highly experimental
-
 deb http://archive.debian.org/debian/ slink main non-free contrib
 deb http://archive.debian.org/debian-non-US/ slink non-US
 deb http://archive.debian.org/debian-security/ slink updates
