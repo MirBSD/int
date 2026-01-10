@@ -13,7 +13,7 @@
           "uses": "vmactions/omnios-vm@v1.2.1",
           "with": {
             "copyback": false,
-            "mem": 2048,
+            "mem": 5120,
             "prepare": "pkg install developer/gcc14 system/header",
             "run": "sh .extra/vm-slowlartus.sh",
             "usesh": true
@@ -34,7 +34,7 @@
           "uses": "vmactions/solaris-vm@v1.2.4",
           "with": {
             "copyback": false,
-            "mem": 2048,
+            "mem": 4096,
             "prepare": "pkgutil -y -i gcc5core gcc5g++",
             "release": "11.4-gcc",
             "run": "sh .extra/vm-slowlartus.sh",
