@@ -222,7 +222,7 @@ et="unknown"
 EOF
 	ct=untested
 	et=untested
-	vv ']' "$CPP $CFLAGS $CPPFLAGS $NOWARN $cmplrflgs conftest.c | \
+	vv ']' "$CC -E $CFLAGS $CPPFLAGS $NOWARN $cmplrflgs conftest.c | \
 	    sed -n '/^ *[ce]t *= */s/^ *\([ce]t\) *= */\1=/p' | tr -d \\\\015 >x"
 	sed 's/^/[ /' x
 	eval `cat x`
