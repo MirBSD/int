@@ -1,3 +1,2 @@
 deb http://archive.debian.org/debian/ lenny main
 deb http://archive.debian.org/debian-security/ lenny/updates main
-deb http://archive.debian.org/debian-volatile/ lenny/volatile main
