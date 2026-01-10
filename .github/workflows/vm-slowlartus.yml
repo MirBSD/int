@@ -56,7 +56,6 @@
           "with": {
             "copyback": false,
             "mem": 4096,
-            "prepare": "pkgutil -y -i gcc5core gcc5g++",
             "release": "11.4-gcc",
             "run": "sh .extra/vm-slowlartus.sh",
             "usesh": true
