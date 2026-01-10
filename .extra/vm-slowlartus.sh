@@ -3,8 +3,7 @@
 # © mirabilos Ⓕ MirBSD or CC0
 
 switchgroup() {
-	echo "::endgroup::
-::group::$*"
+	printf '::%s\n' 'endgroup::' "group::$*"
 }
 exec 2>&1
 set -ex

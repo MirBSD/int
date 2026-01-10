@@ -1,9 +1,10 @@
+#!/bin/sh
+#-
 # from: mksh/Build.sh,v 1.863
 # © mirabilos Ⓕ MirBSD
 
 switchgroup() {
-	echo "::endgroup::
-::group::$*"
+	printf '::%s\n' 'endgroup::' "group::$*"
 }
 switchgroup sysinfo general
 
