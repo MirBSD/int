@@ -1,4 +1,3 @@
 deb http://archive.debian.org/debian/ slink main
-deb http://archive.debian.org/debian-non-US/ slink non-US
 deb http://archive.debian.org/debian-security/ slink updates
 deb http://archive.debian.org/debian/ dists/slink-proposed-updates/
