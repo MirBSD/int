@@ -218,6 +218,23 @@
         "fail-fast": true
       }
     },
+    "v13-trixie": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v6.0.1"
+        },
+        {
+          "uses": "docker://debian:trixie",
+          "with": {
+            "args": "sh .extra/debeol.sh trixie 13"
+          }
+        }
+      ],
+      "strategy": {
+        "fail-fast": true
+      }
+    },
     "v999-experimental": {
       "runs-on": "ubuntu-latest",
       "steps": [
