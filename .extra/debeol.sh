@@ -13,39 +13,6 @@ export LC_ALL DEBIAN_FRONTEND
 unset LANGUAGE
 echo ::group::Setup $0 on Debian $2
 nocxx=false
-case $1 in
-jessie)
-	cat >/etc/apt/sources.list <<\EOF
-deb http://archive.debian.org/debian/ jessie main non-free contrib
-deb http://archive.debian.org/debian-security/ jessie/updates main non-free contrib
-EOF
-	rm -f /etc/apt/sources.list.d/*
-	;;
-stretch)
-	cat >/etc/apt/sources.list <<\EOF
-deb http://archive.debian.org/debian/ stretch main non-free contrib
-deb http://archive.debian.org/debian-security/ stretch/updates main non-free contrib
-EOF
-	rm -f /etc/apt/sources.list.d/*
-	;;
-experimental)
-	rm -f /etc/apt/sources.list /etc/apt/sources.list.d/*
-	cat >/etc/apt/sources.list.d/sid.sources <<\EOF
-Types: deb
-URIs: http://deb.debian.org/debian/
-Suites: sid
-Components: main non-free-firmware non-free contrib
-Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
-EOF
-	cat >/etc/apt/sources.list.d/experimental.sources <<\EOF
-Types: deb
-URIs: http://deb.debian.org/debian/
-Suites: experimental
-Components: main non-free-firmware non-free contrib
-Signed-By: /usr/share/keyrings/debian-archive-keyring.gpg
-EOF
-	;;
-esac
 cat >dummy.c <<\EOF
 int main(void) { return (0); }
 EOF
@@ -63,6 +30,12 @@ APT::Install-Suggests "0";
 APT::Get::Always-Include-Phased-Updates "true";
 APT::Periodic::Enable "0";
 EOF
+rm -f /etc/apt/sources.list /etc/apt/sources.list.d/*
+if test -s .extra/sl/$1.sources; then
+	cp .extra/sl/$1.sources /etc/apt/sources.list.d/
+else
+	cp .extra/sl/$1.list /etc/apt/sources.list
+fi
 apt-get update
 case $1 in
 slink|potato|woody|sarge|etch)
