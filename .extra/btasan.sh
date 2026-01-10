@@ -5,7 +5,7 @@ eval "$(env DEB_BUILD_MAINT_OPTIONS='future=+all qa=+all,-canary optimize=+all,-
     dpkg-buildflags --export=sh || :)"
 export LDFLAGS
 exec sh mkt-int.sh $CC $CPPFLAGS $CFLAGS \
-    -Og -fstack-protector-strong -Wformat -Werror=format-security -Wall -Wextra \
+    -Wall -Wextra -Wformat -Werror=format-security -Og -fstack-protector-strong \
     -fsanitize=address -fno-omit-frame-pointer -fno-common -fsanitize=pointer-compare \
     -fsanitize=pointer-subtract -fsanitize=undefined -fsanitize=shift -fsanitize=shift-exponent \
     -fsanitize=shift-base -fsanitize=integer-divide-by-zero -fsanitize=unreachable \
