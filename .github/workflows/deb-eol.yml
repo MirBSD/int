@@ -174,7 +174,7 @@
           "uses": "actions/checkout@v6.0.1"
         },
         {
-          "uses": "docker://debian:buster",
+          "uses": "docker://debian/eol:buster",
           "with": {
             "args": "sh .extra/debeol.sh buster 10"
           }
