@@ -1,0 +1,10 @@
+# datefudge 2019-01-01
+# use: apt-get -o Acquire::Check-Valid-Until=false update
+
+deb http://archive.debian.org/debian/ wheezy main non-free contrib
+deb http://archive.debian.org/debian-security/ wheezy/updates main non-free contrib
+deb http://archive.debian.org/debian/ wheezy-backports main non-free contrib
+deb http://archive.debian.org/debian/ wheezy-backports-sloppy main
+deb http://deb.freexian.com/extended-lts/ wheezy-lts main non-free contrib
+deb http://deb.freexian.com/extended-lts/ wheezy-lts-kernel main non-free contrib
+deb http://deb.freexian.com/extended-lts/ wheezy main non-free contrib

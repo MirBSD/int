@@ -1,0 +1,8 @@
+# datefudge 2012-05-01
+# use apt, debian-archive-keyring from squeeze
+
+deb http://archive.debian.org/debian/ lenny main non-free contrib
+deb http://archive.debian.org/debian-security/ lenny/updates main contrib
+deb http://archive.debian.org/debian-volatile/ lenny/volatile main non-free
+deb http://archive.debian.org/debian-backports/ lenny-backports main non-free contrib
+deb http://archive.debian.org/debian-backports/ lenny-backports-sloppy main

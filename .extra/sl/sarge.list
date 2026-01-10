@@ -1,0 +1,10 @@
+# datefudge 2008-01-01
+# use apt from squeeze, debian-backports-keyring from lenny,
+# debian-archive-keyring from etch, then downgrade
+# to debian-archive-keyring from sarge-backports
+
+deb http://archive.debian.org/debian/ sarge main non-free contrib
+deb http://archive.debian.org/debian-security/ sarge/updates main non-free contrib
+#deb http://archive.debian.org/debian-volatile/ sarge/volatile main contrib
+#deb http://archive.debian.org/debian-volatile/ sarge/volatile-sloppy main
+deb http://archive.debian.org/debian-backports/ sarge-backports main non-free contrib

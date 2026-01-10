@@ -1,0 +1,9 @@
+# datefudge 2020-01-01
+# use apt-get -o Acquire::Check-Valid-Until=false update
+
+deb http://archive.debian.org/debian/ jessie main non-free contrib
+deb http://archive.debian.org/debian-security/ jessie/updates main non-free contrib
+deb http://archive.debian.org/debian jessie-backports main non-free contrib
+deb http://archive.debian.org/debian jessie-backports-sloppy main non-free contrib
+deb http://deb.freexian.com/extended-lts/ jessie-lts main non-free contrib
+deb http://deb.freexian.com/extended-lts/ jessie main non-free contrib
