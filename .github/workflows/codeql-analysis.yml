@@ -33,7 +33,7 @@
           }
         },
         {
-          "run": "sh .extra/btcodeql.sh"
+          "run": "sh .extra/btnormal.sh"
         },
         {
           "name": "Perform CodeQL Analysis",
