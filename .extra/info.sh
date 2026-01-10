@@ -222,7 +222,7 @@ et="unknown"
 EOF
 	ct=untested
 	et=untested
-	vv ']' "$CC -E $CFLAGS $CPPFLAGS $NOWARN $cmplrflgs conftest.$ext | \
+	vv ']' "$CC -E $CFLAGS $CPPFLAGS $cmplrflgs conftest.$ext | \
 	    sed -n '/^ *[ce]t *= */s/^ *\([ce]t\) *= */\1=/p' | tr -d \\\\015 >x"
 	sed 's/^/[ /' x
 	eval `cat x`
@@ -250,41 +250,41 @@ EOF
 	case $ct in
 	clang)
 		# does not work with current "ccc" compiler driver
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS $NOWARN $LIBS --version"
+		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS --version"
 		# one of these two works, for now
 		vv '|' "${CLANG-clang} -version"
 		;;
 	dec)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS $NOWARN $LIBS -V"
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS $NOWARN -Wl,-V conftest.$ext $LIBS"
+		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -V"
+		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -Wl,-V conftest.$ext"
 		;;
 	gcc1)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS $NOWARN -v conftest.$ext $LIBS"
-		vv '|' 'eval echo "\`$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS $NOWARN $LIBS -dumpmachine\`" \
-			 "gcc\`$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS $NOWARN $LIBS -dumpversion\`"'
+		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -v conftest.$ext"
+		vv '|' 'eval echo "\`$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -dumpmachine\`" \
+			 "gcc\`$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -dumpversion\`"'
 		;;
 	gcc)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS $NOWARN -v conftest.$ext $LIBS"
-		vv '|' 'eval echo "\`$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS $NOWARN $LIBS -dumpmachine\`" \
-			 "gcc\`$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS $NOWARN $LIBS -dumpversion\`"'
+		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -v conftest.$ext"
+		vv '|' 'eval echo "\`$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -dumpmachine\`" \
+			 "gcc\`$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -dumpversion\`"'
 		;;
 	hpcc)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS $NOWARN -V conftest.$ext $LIBS"
+		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -V conftest.$ext"
 		;;
 	icc)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS $NOWARN $LIBS -V"
+		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -V"
 		;;
 	kencc)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS $NOWARN -v conftest.$ext $LIBS"
+		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -v conftest.$ext"
 		;;
 	lacc)
 		# no version information
 		;;
 	lcc)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS $NOWARN -v conftest.$ext $LIBS"
+		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -v conftest.$ext"
 		;;
 	mipspro)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS $NOWARN $LIBS -version"
+		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -version"
 		;;
 	msc)
 		case $TARGET_OS in
@@ -308,30 +308,30 @@ EOF
 		vv '|' "$CC"
 		;;
 	nwcc)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS $NOWARN $LIBS -version"
+		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -version"
 		;;
 	pcc)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS $NOWARN $LIBS -v"
+		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -v"
 		;;
 	quickc)
 		# no version information
 		;;
 	scde)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS $NOWARN -V conftest.$ext $LIBS"
+		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -V conftest.$ext"
 		;;
 	sunpro)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS $NOWARN -V conftest.$ext $LIBS"
+		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -V conftest.$ext"
 		;;
 	tcc)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS $NOWARN $LIBS -v"
+		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -v"
 		;;
 	tendra)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS $NOWARN $LIBS -V 2>&1 | \
+		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -V 2>&1 | \
 		    grep -i -e version -e release"
 		;;
 	ucode)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS $NOWARN $LIBS -V"
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS $NOWARN -Wl,-V conftest.$ext $LIBS"
+		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -V"
+		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -Wl,-V conftest.$ext"
 		;;
 	uslc)
 		test_n "$TARGET_OSREV" || TARGET_OSREV=`uname -r`
@@ -341,21 +341,21 @@ EOF
 			CFLAGS="$CFLAGS -g"
 			;;
 		esac
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS $NOWARN -V conftest.$ext $LIBS"
+		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -V conftest.$ext"
 		;;
 	watcom)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS $NOWARN -v conftest.$ext $LIBS"
+		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -v conftest.$ext"
 		;;
 	xlc)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS $NOWARN $LIBS -qversion"
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS $NOWARN $LIBS -qversion=verbose"
+		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -qversion"
+		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -qversion=verbose"
 		vv '|' "ld -V"
 		;;
 	*)
 		test x"$ct" = x"untested" && $e "!!! detecting preprocessor failed"
 		vv '|' "$CC --version"
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS $NOWARN -v conftest.$ext $LIBS"
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS $NOWARN -V conftest.$ext $LIBS"
+		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -v conftest.$ext"
+		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -V conftest.$ext"
 		;;
 	esac
 	echo "::notice::Using $ct on $et"
