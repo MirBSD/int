@@ -2,6 +2,10 @@
 #-
 # © mirabilos Ⓕ MirBSD or CC0
 
+switchgroup() {
+	echo "::endgroup::
+::group::$*"
+}
 exec 2>&1
 set -ex
 LC_ALL=C.UTF-8 LANGUAGE=C DEBIAN_FRONTEND=noninteractive
@@ -45,8 +49,7 @@ LDFLAGS="$LDFLAGS -static"
 export LDFLAGS
 ($CC $CPPFLAGS $CFLAGS $LDFLAGS -v dummy.c || :)
 $nocxx || ($CXX $CPPFLAGS $CXXFLAGS $LDFLAGS -v dummy.cc || :)
-echo ::endgroup::
-echo ::group::Build for C on sid/$xarch
+switchgroup Build for C on sid/$xarch
 <dummy.c DEBUG=' ' sh mkt-int.sh -x \
     $CC $CPPFLAGS $CFLAGS \
     -DMBSDINT_H_WANT_PTR_IN_SIZET \
@@ -55,11 +58,10 @@ echo ::group::Build for C on sid/$xarch
     -DMBSDINT_H_WANT_LRG64 \
     -DMBSDINT_H_WANT_SAFEC
 mv mkt-int-t-t.exe .result-c
-echo ::endgroup::
 if $nocxx; then
-	echo ::group::No C++ here
+	switchgroup No C++ here
 else
-	echo ::group::Build for C++ on sid/$xarch
+	switchgroup Build for C++ on sid/$xarch
 	<dummy.cc DEBUG=' ' sh mkt-int.sh -cxx -x \
 	    $CXX $CPPFLAGS $CXXFLAGS \
 	    -DMBSDINT_H_WANT_PTR_IN_SIZET \
@@ -69,11 +71,9 @@ else
 	    -DMBSDINT_H_WANT_SAFEC
 	mv mkt-int-t-t.exe .result-cxx
 fi
-echo ::endgroup::
-echo ::group::Installing qemu-user
+switchgroup Installing qemu-user
 apt-get install -y qemu-user
-echo ::endgroup::
-echo ::group::Running under qemu-user
+switchgroup Running under qemu-user
 $xqemu ./.result-c
 if $nocxx; then
 	echo "(for C)"

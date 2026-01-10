@@ -2,6 +2,10 @@
 #-
 # © mirabilos Ⓕ MirBSD or CC0
 
+switchgroup() {
+	echo "::endgroup::
+::group::$*"
+}
 exec 2>&1
 set -ex
 LC_ALL=C LANGUAGE=C DEBIAN_FRONTEND=noninteractive
@@ -107,17 +111,18 @@ esac
 export LDFLAGS
 ($CC $CPPFLAGS $CFLAGS $LDFLAGS -v dummy.c || :)
 $nocxx || ($CXX $CPPFLAGS $CXXFLAGS $LDFLAGS -v dummy.cc || :)
-echo ::endgroup::
-echo ::group::Build for C on $1
+switchgroup Build for C on $1
 sh mkt-int.sh \
     $CC $CPPFLAGS $CFLAGS \
     -DMBSDINT_H_WANT_PTR_IN_SIZET \
     -DMBSDINT_H_WANT_SIZET_IN_LONG \
     -DMBSDINT_H_WANT_INT32 \
     -DMBSDINT_H_WANT_SAFEC
-echo ::endgroup::
-if $nocxx; then exit 0; fi
-echo ::group::Build for C++ on $1
+if $nocxx; then
+	echo ::endgroup::
+	exit 0
+fi
+switchgroup Build for C++ on $1
 sh mkt-int.sh -cxx \
     $CXX $CPPFLAGS $CXXFLAGS \
     -DMBSDINT_H_WANT_PTR_IN_SIZET \

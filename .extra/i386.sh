@@ -2,6 +2,10 @@
 #-
 # © mirabilos Ⓕ MirBSD or CC0
 
+switchgroup() {
+	echo "::endgroup::
+::group::$*"
+}
 exec 2>&1
 set -ex
 LC_ALL=C.UTF-8 LANGUAGE=C DEBIAN_FRONTEND=noninteractive
@@ -176,8 +180,7 @@ if test -z "$usecxx"; then
 else
 	($CC $CPPFLAGS $CFLAGS $LDFLAGS -v dummy.cc || :)
 fi
-echo ::endgroup::
-echo ::group::Build and run testsuite
+switchgroup Build and run testsuite
 exec sh mkt-int.sh $usecxx \
     $CC $CPPFLAGS $cfs $cft $CFLAGS \
     -DMBSDINT_H_WANT_PTR_IN_SIZET \

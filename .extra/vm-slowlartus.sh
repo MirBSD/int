@@ -2,6 +2,10 @@
 #-
 # © mirabilos Ⓕ MirBSD or CC0
 
+switchgroup() {
+	echo "::endgroup::
+::group::$*"
+}
 exec 2>&1
 set -ex
 LC_ALL=C LANGUAGE=C
@@ -13,25 +17,21 @@ CC=gcc
 CXX=g++
 : "${CC=cc}${CXX=c++}${CFLAGS=-O2}${CXXFLAGS=-O2}"
 export LDFLAGS
-echo ::endgroup::
-echo ::group::Build for C
+switchgroup Build for C
 sh mkt-int.sh $CC $CPPFLAGS $CFLAGS -Wall -Wextra -Wformat \
     -DMBSDINT_H_WANT_PTR_IN_SIZET -DMBSDINT_H_WANT_SIZET_IN_LONG \
     -DMBSDINT_H_WANT_INT32 -DMBSDINT_H_WANT_LRG64 -DMBSDINT_H_WANT_SAFEC
-echo ::endgroup::
-echo ::group::Build for C++
+Build for C Build for C++
 sh mkt-int.sh -cxx $CXX $CPPFLAGS $CXXFLAGS -Wall -Wextra -Wformat \
     -DMBSDINT_H_WANT_PTR_IN_SIZET -DMBSDINT_H_WANT_SIZET_IN_LONG \
     -DMBSDINT_H_WANT_INT32 -DMBSDINT_H_WANT_LRG64 -DMBSDINT_H_WANT_SAFEC
-echo ::endgroup::
+switchgroup Build ILP32 for C
 CFLAGS="$CFLAGS -m32"
 CXXFLAGS="$CXXFLAGS -m32"
-echo ::group::Build ILP32 for C
 sh mkt-int.sh $CC $CPPFLAGS $CFLAGS -Wall -Wextra -Wformat \
     -DMBSDINT_H_WANT_PTR_IN_SIZET -DMBSDINT_H_WANT_SIZET_IN_LONG \
     -DMBSDINT_H_WANT_INT32 -DMBSDINT_H_WANT_LRG64 -DMBSDINT_H_WANT_SAFEC
-echo ::endgroup::
-echo ::group::Build ILP32 for C++
+switchgroup Build ILP32 for C++
 sh mkt-int.sh -cxx $CXX $CPPFLAGS $CXXFLAGS -Wall -Wextra -Wformat \
     -Wno-type-limits \
     -DMBSDINT_H_WANT_PTR_IN_SIZET -DMBSDINT_H_WANT_SIZET_IN_LONG \
