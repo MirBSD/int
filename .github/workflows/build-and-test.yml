@@ -58,7 +58,7 @@
           "run": "(git gc --quiet || :)"
         },
         {
-          "run": "sudo apt-get install file"
+          "run": "(sudo apt-get install file || :)"
         },
         {
           "run": "sh .extra/btnormal.sh"
