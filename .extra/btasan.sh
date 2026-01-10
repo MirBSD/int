@@ -24,8 +24,10 @@ set -- -Wall -Wextra -Wformat \
     -fsanitize-address-use-after-scope \
     -fstack-clash-protection
 CFLAGS="$CFLAGS $*"
-export LDFLAGS
+CXX= CXXFLAGS=
 set -ex
+export CC CXX CPPFLAGS CFLAGS CXXFLAGS LDFLAGS
+sh .extra/info.sh
 switchgroup Build for C with ASan/UBSan
 sh mkt-int.sh $CC $CPPFLAGS $CFLAGS \
     -DMBSDINT_H_WANT_PTR_IN_SIZET -DMBSDINT_H_WANT_SIZET_IN_LONG \

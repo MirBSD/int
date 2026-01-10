@@ -46,9 +46,11 @@ CFLAGS="$CFLAGS -Wall -Wextra -Wvla"
 CXXFLAGS="$CXXFLAGS -Wall -Wextra -Wvla"
 # avoid qemu-m68k: Could not open '/lib/ld.so.1': No such file or directory
 LDFLAGS="$LDFLAGS -static"
-export LDFLAGS
 ($CC $CPPFLAGS $CFLAGS $LDFLAGS -v dummy.c || :)
 $nocxx || ($CXX $CPPFLAGS $CXXFLAGS $LDFLAGS -v dummy.cc || :)
+if $nocxx; then CXX= CXXFLAGS=; fi
+export CC CXX CPPFLAGS CFLAGS CXXFLAGS LDFLAGS
+sh .extra/info.sh
 switchgroup Build for C on sid/$xarch
 <dummy.c DEBUG=' ' sh mkt-int.sh -x \
     $CC $CPPFLAGS $CFLAGS \

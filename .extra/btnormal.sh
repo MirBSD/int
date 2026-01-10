@@ -10,8 +10,9 @@ eval "$(env DEB_BUILD_MAINT_OPTIONS='future=+all qa=+all,-canary optimize=+all,-
 set -- -Wall -Wextra -Wformat
 CFLAGS="$CFLAGS $*"
 CXXFLAGS="$CXXFLAGS $*"
-export LDFLAGS
 set -ex
+export CC CXX CPPFLAGS CFLAGS CXXFLAGS LDFLAGS
+sh .extra/info.sh
 switchgroup Build for C
 sh mkt-int.sh $CC $CPPFLAGS $CFLAGS \
     -DMBSDINT_H_WANT_PTR_IN_SIZET -DMBSDINT_H_WANT_SIZET_IN_LONG \

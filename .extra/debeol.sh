@@ -81,9 +81,11 @@ slink)
 	CXXFLAGS="$CXXFLAGS -Wall -W"
 	;;
 esac
-export LDFLAGS
 ($CC $CPPFLAGS $CFLAGS $LDFLAGS -v dummy.c || :)
 $nocxx || ($CXX $CPPFLAGS $CXXFLAGS $LDFLAGS -v dummy.cc || :)
+if $nocxx; then CXX= CXXFLAGS=; fi
+export CC CXX CPPFLAGS CFLAGS CXXFLAGS LDFLAGS
+sh .extra/info.sh
 switchgroup Build for C on $1
 sh mkt-int.sh \
     $CC $CPPFLAGS $CFLAGS \

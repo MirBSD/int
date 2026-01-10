@@ -9,8 +9,10 @@ eval "$(env DEB_BUILD_MAINT_OPTIONS='future=+all optimize=+all,-lto hardening=+a
     dpkg-buildflags --export=sh || :)"
 set -- -Wall -Wextra -Wformat
 CFLAGS="$CFLAGS $*"
-export LDFLAGS
+CXX= CXXFLAGS=
 set -ex
+export CC CXX CPPFLAGS CFLAGS CXXFLAGS LDFLAGS
+sh .extra/info.sh
 switchgroup Build for C with LLVM/clang
 sh mkt-int.sh clang $CPPFLAGS $CFLAGS \
     -DMBSDINT_H_WANT_PTR_IN_SIZET -DMBSDINT_H_WANT_SIZET_IN_LONG \

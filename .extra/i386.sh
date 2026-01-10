@@ -166,7 +166,6 @@ if test -n "$libc"; then
 		exit 1 ;;
 	esac
 fi
-export LDFLAGS
 case $cfx in
 (*'++'*) usecxx=-cxx CC=$CXX CFLAGS=$CXXFLAGS ;;
 esac
@@ -174,15 +173,20 @@ case $CC in
 (*clang*) ;;
 (*) CFLAGS="$CFLAGS -Wvla" ;;
 esac
+CPPFLAGS="$CPPFLAGS $cfs $cft"
 CFLAGS="$CFLAGS -Wall -Wextra $cfx"
 if test -z "$usecxx"; then
 	($CC $CPPFLAGS $CFLAGS $LDFLAGS -v dummy.c || :)
+	CXX= CXXFLAGS=
 else
 	($CC $CPPFLAGS $CFLAGS $LDFLAGS -v dummy.cc || :)
+	CXX=$CC CXXFLAGS=$CFLAGS
 fi
+export CC CXX CPPFLAGS CFLAGS CXXFLAGS LDFLAGS
+sh .extra/info.sh $usecxx
 switchgroup Build and run testsuite
 exec sh mkt-int.sh $usecxx \
-    $CC $CPPFLAGS $cfs $cft $CFLAGS \
+    $CC $CPPFLAGS $CFLAGS \
     -DMBSDINT_H_WANT_PTR_IN_SIZET \
     -DMBSDINT_H_WANT_SIZET_IN_LONG \
     -DMBSDINT_H_WANT_INT32 \
