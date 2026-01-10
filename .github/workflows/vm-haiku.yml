@@ -14,7 +14,7 @@
           "with": {
             "copyback": false,
             "mem": 2048,
-            "run": "sh .extra/vm-haiku.sh",
+            "run": "sh .extra/vmnormal.sh",
             "usesh": true
           }
         }

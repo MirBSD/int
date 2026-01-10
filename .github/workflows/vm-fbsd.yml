@@ -15,7 +15,7 @@
             "arch": "${{ matrix.arch }}",
             "copyback": false,
             "mem": 2048,
-            "run": "sh .extra/vm-fbsd.sh",
+            "run": "sh .extra/vmnormal.sh",
             "usesh": true
           }
         }

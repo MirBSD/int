@@ -96,7 +96,7 @@
           }
         },
         {
-          "run": "sh .extra/btalpine.sh",
+          "run": "sh .extra/btnormal.sh",
           "shell": "alpine.sh {0}"
         }
       ],
