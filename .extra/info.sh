@@ -92,6 +92,40 @@ fi
 
 echo "::notice::Running on $TARGET_OS"
 
+cmplrflgs=
+# Configuration depending on OS name
+case $TARGET_OS in
+NEXTSTEP)
+	: "${CC=cc -posix -traditional-cpp}"
+	;;
+OS/390)
+	: "${CC=xlc}"
+	;;
+Plan9)
+	# this is for detecting kencc
+	cmplrflgs=-DMKSH_MAYBE_KENCC
+	;;
+scosysv)
+	cmplrflgs=-DMKSH_MAYBE_QUICK_C
+	;;
+SINIX-Z)
+	: "${CC=cc -Xa}"
+	cmplrflgs=-DMKSH_MAYBE_SCDE
+	;;
+ULTRIX)
+	: "${CC=cc -YPOSIX}"
+	;;
+XENIX)
+	# mostly when crosscompiling from scosysv
+	cmplrflgs=-DMKSH_MAYBE_QUICK_C
+	;;
+_svr4)
+	# generic target for SVR4 Unix with uname -s = uname -n
+	: "${CC=cc -Xa}"
+	cmplrflgs=-DMKSH_MAYBE_SCDE
+	;;
+esac
+
 case $TARGET_OS in
 AIX)
 	vv '|' "oslevel >&2"
@@ -216,7 +250,7 @@ et="klibc"
 #elif defined(__dietlibc__)
 et="dietlibc"
 #else
-et="unknown"
+et="generic libc"
 #endif
 ;
 EOF
@@ -250,41 +284,41 @@ EOF
 	case $ct in
 	clang)
 		# does not work with current "ccc" compiler driver
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS --version"
+		vv '|' "$CC $CFLAGS $CPPFLAGS $LDFLAGS --version"
 		# one of these two works, for now
 		vv '|' "${CLANG-clang} -version"
 		;;
 	dec)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -V"
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -Wl,-V conftest.$ext"
+		vv '|' "$CC $CFLAGS $CPPFLAGS $LDFLAGS -V"
+		vv '|' "$CC $CFLAGS $CPPFLAGS $LDFLAGS -Wl,-V conftest.$ext"
 		;;
 	gcc1)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -v conftest.$ext"
-		vv '|' 'eval echo "\`$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -dumpmachine\`" \
-			 "gcc\`$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -dumpversion\`"'
+		vv '|' "$CC $CFLAGS $CPPFLAGS $LDFLAGS -v conftest.$ext"
+		vv '|' 'eval echo "\`$CC $CFLAGS $CPPFLAGS $LDFLAGS -dumpmachine\`" \
+			 "gcc\`$CC $CFLAGS $CPPFLAGS $LDFLAGS -dumpversion\`"'
 		;;
 	gcc)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -v conftest.$ext"
-		vv '|' 'eval echo "\`$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -dumpmachine\`" \
-			 "gcc\`$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -dumpversion\`"'
+		vv '|' "$CC $CFLAGS $CPPFLAGS $LDFLAGS -v conftest.$ext"
+		vv '|' 'eval echo "\`$CC $CFLAGS $CPPFLAGS $LDFLAGS -dumpmachine\`" \
+			 "gcc\`$CC $CFLAGS $CPPFLAGS $LDFLAGS -dumpversion\`"'
 		;;
 	hpcc)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -V conftest.$ext"
+		vv '|' "$CC $CFLAGS $CPPFLAGS $LDFLAGS -V conftest.$ext"
 		;;
 	icc)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -V"
+		vv '|' "$CC $CFLAGS $CPPFLAGS $LDFLAGS -V"
 		;;
 	kencc)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -v conftest.$ext"
+		vv '|' "$CC $CFLAGS $CPPFLAGS $LDFLAGS -v conftest.$ext"
 		;;
 	lacc)
 		# no version information
 		;;
 	lcc)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -v conftest.$ext"
+		vv '|' "$CC $CFLAGS $CPPFLAGS $LDFLAGS -v conftest.$ext"
 		;;
 	mipspro)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -version"
+		vv '|' "$CC $CFLAGS $CPPFLAGS $LDFLAGS -version"
 		;;
 	msc)
 		case $TARGET_OS in
@@ -308,30 +342,30 @@ EOF
 		vv '|' "$CC"
 		;;
 	nwcc)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -version"
+		vv '|' "$CC $CFLAGS $CPPFLAGS $LDFLAGS -version"
 		;;
 	pcc)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -v"
+		vv '|' "$CC $CFLAGS $CPPFLAGS $LDFLAGS -v"
 		;;
 	quickc)
 		# no version information
 		;;
 	scde)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -V conftest.$ext"
+		vv '|' "$CC $CFLAGS $CPPFLAGS $LDFLAGS -V conftest.$ext"
 		;;
 	sunpro)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -V conftest.$ext"
+		vv '|' "$CC $CFLAGS $CPPFLAGS $LDFLAGS -V conftest.$ext"
 		;;
 	tcc)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -v"
+		vv '|' "$CC $CFLAGS $CPPFLAGS $LDFLAGS -v"
 		;;
 	tendra)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -V 2>&1 | \
+		vv '|' "$CC $CFLAGS $CPPFLAGS $LDFLAGS -V 2>&1 | \
 		    grep -i -e version -e release"
 		;;
 	ucode)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -V"
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -Wl,-V conftest.$ext"
+		vv '|' "$CC $CFLAGS $CPPFLAGS $LDFLAGS -V"
+		vv '|' "$CC $CFLAGS $CPPFLAGS $LDFLAGS -Wl,-V conftest.$ext"
 		;;
 	uslc)
 		test_n "$TARGET_OSREV" || TARGET_OSREV=`uname -r`
@@ -341,21 +375,21 @@ EOF
 			CFLAGS="$CFLAGS -g"
 			;;
 		esac
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -V conftest.$ext"
+		vv '|' "$CC $CFLAGS $CPPFLAGS $LDFLAGS -V conftest.$ext"
 		;;
 	watcom)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -v conftest.$ext"
+		vv '|' "$CC $CFLAGS $CPPFLAGS $LDFLAGS -v conftest.$ext"
 		;;
 	xlc)
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -qversion"
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -qversion=verbose"
+		vv '|' "$CC $CFLAGS $CPPFLAGS $LDFLAGS -qversion"
+		vv '|' "$CC $CFLAGS $CPPFLAGS $LDFLAGS -qversion=verbose"
 		vv '|' "ld -V"
 		;;
 	*)
 		test x"$ct" = x"untested" && $e "!!! detecting preprocessor failed"
 		vv '|' "$CC --version"
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -v conftest.$ext"
-		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS -V conftest.$ext"
+		vv '|' "$CC $CFLAGS $CPPFLAGS $LDFLAGS -v conftest.$ext"
+		vv '|' "$CC $CFLAGS $CPPFLAGS $LDFLAGS -V conftest.$ext"
 		;;
 	esac
 	echo "::notice::Using $ct on $et"
