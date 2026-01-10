@@ -4,5 +4,3 @@ deb http://archive.debian.org/debian/ buster-updates main non-free contrib
 deb http://archive.debian.org/debian/ buster-proposed-updates main
 deb http://archive.debian.org/debian/ buster-backports main non-free contrib
 deb http://archive.debian.org/debian/ buster-backports-sloppy main non-free contrib
-deb http://deb.freexian.com/extended-lts/ buster-lts main non-free contrib
-deb http://deb.freexian.com/extended-lts/ buster main non-free contrib

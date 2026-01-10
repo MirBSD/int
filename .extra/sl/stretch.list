@@ -3,5 +3,3 @@ deb http://archive.debian.org/debian-security/ stretch/updates main non-free con
 deb http://archive.debian.org/debian/ stretch-proposed-updates main
 deb http://archive.debian.org/debian/ stretch-backports main non-free contrib
 deb http://archive.debian.org/debian/ stretch-backports-sloppy main non-free contrib
-deb http://deb.freexian.com/extended-lts/ stretch-lts main non-free contrib
-deb http://deb.freexian.com/extended-lts/ stretch main non-free contrib
