@@ -90,7 +90,7 @@ if test_z "$TARGET_OS"; then
 	echo "::warning::Set TARGET_OS, your uname is broken!"
 fi
 
-echo "::info::Running on $TARGET_OS"
+echo "::notice::Running on $TARGET_OS"
 
 case $TARGET_OS in
 AIX)
@@ -358,7 +358,7 @@ EOF
 		vv '|' "$CC $CFLAGS $Cg $CPPFLAGS $LDFLAGS $NOWARN -V conftest.c $LIBS"
 		;;
 	esac
-	echo "::info::Using $ct on $et"
+	echo "::notice::Using $ct on $et"
 }
 
 ext=c
