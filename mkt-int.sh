@@ -1,5 +1,5 @@
 #!/bin/sh
-rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.52 2026/01/10 05:30:30 tg Exp $'
+rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.53 2026/01/10 06:05:05 tg Exp $'
 #-
 # © mirabilos Ⓕ MirBSD
 
@@ -405,20 +405,18 @@ volatile int i = 1;
 int main(void) { OURTEST return (i); }
 EOF
 v "$@" -DOURTEST= $LDFLAGS ${Fe}mkt-int-t-t.exe mkt-int-t-in.$srcext || die positive-test fails
-cxxisweird=yep
-$usecxx || unset cxxisweird
 for totest in \
 	'extern void thiswillneverbedefinedIhope(void); thiswillneverbedefinedIhope();' \
-	'mbccChkExpr(i);' \
-	'mbccCEX(i);' \
+	'i = mbccChkExpr(i);' \
+	'i = mbccCEX(i);' \
 	'mbCTA_BEG(x); mbccCTA(mustfail, 0); mbCTA_END(x);' \
-	'mbito(1.1);' \
-	'mbito(&i);' \
-	'struct { int x; } a = { 1 }; mbito(a);' \
-	'mbito(&main);' \
-	${cxxisweird-'mbfto(&i);'} \
-	'struct { int x; } a = { 1 }; mbfto(a);' \
-	${cxxisweird-'mbfto(&main);'} \
+	'i = mbito(1.1);' \
+	'i = mbito(&i);' \
+	'struct { int x; } a = { 1 }; i = mbito(a);' \
+	'i = mbito(&main);' \
+	'i = mbfto(&i);' \
+	'struct { int x; } a = { 1 }; i = mbfto(a);' \
+	'i = mbfto(&main);' \
 	'mbCTA_BEG(x); mbccCTA(mustfail, mbiMASK_CHK(9)); mbCTA_END(x);' \
 	'mbCTA_BEG(x); mbccCTA(mustfail, mbiTYPE_ISF(int)); mbCTA_END(x);' \
 	'mbCTA_BEG(x); mbccCTA(mustfail, mbiTYPE_ISU(int)); mbCTA_END(x);' \
@@ -426,10 +424,22 @@ for totest in \
     ; do
 	echo >&2 "N: $totest"
 	if v "$@" -DOURTEST="$totest" $LDFLAGS ${Fe}mkt-int-t-t.exe mkt-int-t-in.$srcext; then
-		cftf="$cftf${nl}N: $totest"
+		verb=failed
 	else
-		echo >&2 "   ... passed"
+		verb=passed
 	fi
+	if $usecxx; then
+		case $verb:$totest in
+		failed:*'mbfto(&'*)
+			verb='failed, flaky C++ thing' ;;
+		passed:*'mbfto(&'*)
+			verb='passed unexpectedly on C++' ;;
+		esac
+	fi
+	if test x"$verb" = x"failed"; then
+		cftf="$cftf${nl}N: $totest"
+	fi
+	echo >&2 "   ... $verb"
 done
 test -z "$cftf" || die "should-compile-time-fail tests failed:$cftf"
 echo >&2 'N: should-compile-time-fail tests passed'
