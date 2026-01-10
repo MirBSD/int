@@ -2,5 +2,3 @@ deb http://archive.debian.org/debian/ squeeze main non-free contrib
 deb http://archive.debian.org/debian-security/ squeeze/updates main contrib
 deb http://archive.debian.org/debian/ squeeze-proposed-updates main
 deb http://archive.debian.org/debian/ squeeze-lts main non-free contrib
-deb http://archive.debian.org/debian-backports/ squeeze-backports main non-free contrib
-deb http://archive.debian.org/debian-backports/ squeeze-backports-sloppy main

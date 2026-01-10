@@ -2,4 +2,3 @@ deb http://archive.debian.org/debian/ sarge main non-free contrib
 deb http://archive.debian.org/debian-security/ sarge/updates main non-free contrib
 #deb http://archive.debian.org/debian-volatile/ sarge/volatile main contrib
 #deb http://archive.debian.org/debian-volatile/ sarge/volatile-sloppy main
-deb http://archive.debian.org/debian-backports/ sarge-backports main non-free contrib

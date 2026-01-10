@@ -2,5 +2,3 @@ deb http://deb.debian.org/debian/ bookworm main non-free-firmware non-free contr
 deb http://deb.debian.org/debian-security/ bookworm-security main non-free-firmware non-free contrib
 deb http://deb.debian.org/debian/ bookworm-updates main non-free-firmware non-free contrib
 deb http://deb.debian.org/debian/ bookworm-proposed-updates main non-free-firmware non-free contrib
-deb http://deb.debian.org/debian/ bookworm-backports main non-free-firmware non-free contrib
-deb http://deb.debian.org/debian/ bookworm-backports-sloppy main non-free-firmware non-free contrib

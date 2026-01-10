@@ -2,5 +2,3 @@ deb http://deb.debian.org/debian/ bullseye main non-free contrib
 deb http://deb.debian.org/debian-security/ bullseye-security main non-free contrib
 deb http://deb.debian.org/debian/ bullseye-updates main non-free contrib
 deb http://deb.debian.org/debian/ bullseye-proposed-updates main non-free contrib
-deb http://archive.debian.org/debian/ bullseye-backports main non-free contrib
-deb http://archive.debian.org/debian/ bullseye-backports-sloppy main non-free contrib

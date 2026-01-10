@@ -1,4 +1,3 @@
 deb http://archive.debian.org/debian/ etch main non-free contrib
 deb http://archive.debian.org/debian-security/ etch/updates main non-free contrib
 deb http://archive.debian.org/debian-volatile/ etch/volatile main contrib
-deb http://archive.debian.org/debian-backports/ etch-backports main non-free contrib
