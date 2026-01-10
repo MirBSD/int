@@ -12,14 +12,9 @@ deb-cross:
   but the current job builds with cross-gcc in sid, as long as it works…
 
 vmactions:
-- omnios - add (amd64)
-  + pkg install developer/gcc14 system/header
-  ‣ gcc
 - openindiana - add (amd64)
   + pkg install build-essential
   ‣ …?
-- haiku - add (amd64)
-  ‣ cc
 
 source:
 - update from MirBSD CVS
