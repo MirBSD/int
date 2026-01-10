@@ -12,7 +12,7 @@ LC_ALL=C.UTF-8 LANGUAGE=C DEBIAN_FRONTEND=noninteractive
 export LC_ALL DEBIAN_FRONTEND
 unset LANGUAGE
 xarch=$1 xtriplet=$2 xqemu=$3
-echo ::group::Setup $0 on Debian sid/$xarch
+echo ::group::Setup $0 on Debian/$xarch
 nocxx=false
 cat >dummy.c <<\EOF
 int main(void) { return (0); }

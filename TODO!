@@ -1,14 +1,15 @@
 deb-cross:
-- armel - trixie not sid
-- mips64el - gone, bookworm
 - x32 - needs vmaction with debian kernel and custom kernel parameters
 - others gone:
+  - armel in trixie
+  - mips64el in bookworm
   - mipsel in bullseye on archive.d.o
   - mips in buster
   - arm in lenny
   - ia64 in wheezy
   - sparc in etch (v8+ until wheezy)
   - s390 in wheezy
+  but the current job builds with cross-gcc in sid, as long as it works…
 
 vmactions:
 - omnios - add (amd64)
