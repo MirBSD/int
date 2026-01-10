@@ -1,5 +1,5 @@
 #!/bin/sh
-rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.53 2026/01/10 06:05:05 tg Exp $'
+rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.54 2026/01/10 06:35:03 tg Exp $'
 #-
 # © mirabilos Ⓕ MirBSD
 
@@ -431,9 +431,7 @@ for totest in \
 	if $usecxx; then
 		case $verb:$totest in
 		failed:*'mbfto(&'*)
-			verb='failed, flaky C++ thing' ;;
-		passed:*'mbfto(&'*)
-			verb='passed unexpectedly on C++' ;;
+			verb='failed, mbfto() in C++ does that sometimes' ;;
 		esac
 	fi
 	if test x"$verb" = x"failed"; then
