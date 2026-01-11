@@ -24,6 +24,7 @@
         "matrix": {
           "arch": [
             "aarch64",
+            "riscv64",
             "x86_64"
           ]
         }
