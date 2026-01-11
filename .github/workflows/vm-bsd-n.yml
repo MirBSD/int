@@ -30,7 +30,7 @@
       }
     }
   },
-  "name": "vm-nbsd",
+  "name": "vm-bsd-net",
   "on": {
     "push": {
       "branches": [

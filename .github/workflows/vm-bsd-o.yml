@@ -31,7 +31,7 @@
       }
     }
   },
-  "name": "vm-obsd",
+  "name": "vm-bsd-open",
   "on": {
     "push": {
       "branches": [

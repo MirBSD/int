@@ -1,6 +1,6 @@
 {
   "jobs": {
-    "vm-dflybsd": {
+    "vm-fbsd": {
       "runs-on": "ubuntu-latest",
       "steps": [
         {
@@ -10,18 +10,29 @@
           "run": "(git gc --quiet || :)"
         },
         {
-          "uses": "vmactions/dragonflybsd-vm@v1.2.1",
+          "uses": "vmactions/freebsd-vm@v1.3.6",
           "with": {
+            "arch": "${{ matrix.arch }}",
             "copyback": false,
             "mem": 2048,
             "run": "sh .extra/btnormal.sh",
+            "sync": "scp",
             "usesh": true
           }
         }
-      ]
+      ],
+      "strategy": {
+        "matrix": {
+          "arch": [
+            "aarch64",
+            "riscv64",
+            "x86_64"
+          ]
+        }
+      }
     }
   },
-  "name": "vm-dfbsd",
+  "name": "vm-bsd-free",
   "on": {
     "push": {
       "branches": [
