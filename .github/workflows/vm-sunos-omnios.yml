@@ -24,6 +24,11 @@
   },
   "name": "vm-sunos-omnios",
   "on": {
+    "push": {
+      "branches": [
+        "GHA"
+      ]
+    },
     "workflow_dispatch": null
   }
 }
