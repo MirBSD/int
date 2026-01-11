@@ -1,0 +1,29 @@
+{
+  "jobs": {
+    "vm-omnios": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v6.0.1"
+        },
+        {
+          "run": "(git gc --quiet || :)"
+        },
+        {
+          "uses": "vmactions/omnios-vm@v1.2.1",
+          "with": {
+            "copyback": false,
+            "mem": 5120,
+            "prepare": "pkg install developer/gcc14 system/header",
+            "run": "sh .extra/vm-slowlartus.sh",
+            "usesh": true
+          }
+        }
+      ]
+    }
+  },
+  "name": "vm-sunos-omnios",
+  "on": {
+    "workflow_dispatch": null
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "jobs": {
+    "vm-slowlartus": {
+      "runs-on": "ubuntu-latest",
+      "steps": [
+        {
+          "uses": "actions/checkout@v6.0.1"
+        },
+        {
+          "run": "(git gc --quiet || :)"
+        },
+        {
+          "uses": "vmactions/solaris-vm@v1.2.4",
+          "with": {
+            "copyback": false,
+            "mem": 4096,
+            "release": "11.4-gcc",
+            "run": "sh .extra/vm-slowlartus.sh",
+            "usesh": true
+          }
+        }
+      ]
+    }
+  },
+  "name": "vm-sunos-solaris",
+  "on": {
+    "workflow_dispatch": null
+  }
+}
