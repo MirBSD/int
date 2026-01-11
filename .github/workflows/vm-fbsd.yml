@@ -16,6 +16,7 @@
             "copyback": false,
             "mem": 2048,
             "run": "sh .extra/btnormal.sh",
+            "sync": "scp",
             "usesh": true
           }
         }
