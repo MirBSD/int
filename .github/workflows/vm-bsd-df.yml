@@ -4,13 +4,13 @@
       "runs-on": "ubuntu-latest",
       "steps": [
         {
-          "uses": "actions/checkout@v6.0.1"
+          "uses": "actions/checkout@v6.0.2"
         },
         {
           "run": "(git gc --quiet || :)"
         },
         {
-          "uses": "vmactions/dragonflybsd-vm@v1.2.1",
+          "uses": "vmactions/dragonflybsd-vm@v1.2.5",
           "with": {
             "copyback": false,
             "mem": 2048,

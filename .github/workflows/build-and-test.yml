@@ -5,14 +5,14 @@
       "steps": [
         {
           "name": "Cancel previous runs",
-          "uses": "styfle/cancel-workflow-action@0.12.1",
+          "uses": "styfle/cancel-workflow-action@0.13.0",
           "with": {
             "access_token": "${{ github.token }}",
             "all_but_latest": true
           }
         },
         {
-          "uses": "actions/checkout@v6.0.1"
+          "uses": "actions/checkout@v6.0.2"
         },
         {
           "run": "(git gc --quiet || :)"
@@ -32,7 +32,7 @@
       "runs-on": "ubuntu-latest",
       "steps": [
         {
-          "uses": "actions/checkout@v6.0.1"
+          "uses": "actions/checkout@v6.0.2"
         },
         {
           "run": "(git gc --quiet || :)"
@@ -52,7 +52,7 @@
       "runs-on": "${{ matrix.os }}",
       "steps": [
         {
-          "uses": "actions/checkout@v6.0.1"
+          "uses": "actions/checkout@v6.0.2"
         },
         {
           "run": "(git gc --quiet || :)"
@@ -81,7 +81,7 @@
       "runs-on": "ubuntu-latest",
       "steps": [
         {
-          "uses": "actions/checkout@v6.0.1"
+          "uses": "actions/checkout@v6.0.2"
         },
         {
           "run": "(git gc --quiet || :)"
