@@ -12,7 +12,7 @@
           }
         },
         {
-          "uses": "actions/checkout@v6.0.1"
+          "uses": "actions/checkout@v6.0.2"
         },
         {
           "run": "(git gc --quiet || :)"
@@ -32,7 +32,7 @@
       "runs-on": "ubuntu-latest",
       "steps": [
         {
-          "uses": "actions/checkout@v6.0.1"
+          "uses": "actions/checkout@v6.0.2"
         },
         {
           "run": "(git gc --quiet || :)"
@@ -52,7 +52,7 @@
       "runs-on": "${{ matrix.os }}",
       "steps": [
         {
-          "uses": "actions/checkout@v6.0.1"
+          "uses": "actions/checkout@v6.0.2"
         },
         {
           "run": "(git gc --quiet || :)"
@@ -81,7 +81,7 @@
       "runs-on": "ubuntu-latest",
       "steps": [
         {
-          "uses": "actions/checkout@v6.0.1"
+          "uses": "actions/checkout@v6.0.2"
         },
         {
           "run": "(git gc --quiet || :)"
