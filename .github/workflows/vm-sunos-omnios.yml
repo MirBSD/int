@@ -14,7 +14,7 @@
           "with": {
             "copyback": false,
             "mem": 5120,
-            "prepare": "pkg install developer/gcc14 system/header",
+            "prepare": "pkg install build-essential",
             "run": "sh .extra/vm-slowlartus.sh",
             "usesh": true
           }
