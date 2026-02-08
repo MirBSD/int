@@ -14,7 +14,7 @@
           "with": {
             "copyback": false,
             "mem": 5120,
-            "prepare": "pkg install build-essential",
+            "release": "202510-build",
             "run": "sh .extra/vm-slowlartus.sh",
             "usesh": true
           }
