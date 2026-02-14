@@ -1,5 +1,5 @@
 @echo off
-REM $MirOS: src/kern/include/mkt-int.bat,v 1.12 2026/02/14 17:26:16 tg Exp $
+REM $MirOS: src/kern/include/mkt-int.bat,v 1.14 2026/02/14 17:38:38 tg Exp $
 REM
 REM (c) mirabilos (F) MirBSD or CC0
 REM
@@ -22,12 +22,12 @@ shift
 if not "%1" == "-msys" goto nomsys
 set args=%args:~6%
 set MSYS_NO_PATHCONV=1
-msys2 mkt-int.sh %cxx% %x% cmd /c do-cl.bat -DWINVER=0x0602 -D_WIN32_WINNT=0x0602 -DNTDDI_VERSION=NTDDI_WIN8 /Wall -D__STDC_WANT_SECURE_LIB__=1 /wd4514 /wd4746 /wd5045 -DMBSDINT_H_WANT_PTRV_IN_SIZET -DMBSDINT_H_WANT_INT32 -DMBSDINT_H_WANT_LRG64 -DMBSDINT_H_WANT_SAFEC %args% /nologo
+msys2 mkt-int.sh %cxx% %x% cmd /c do-cl.bat -DWINVER=0x0A00 -D_WIN32_WINNT=0x0A00 -DNTDDI_VERSION=NTDDI_WIN10_RS1 /Wall -D__STDC_WANT_SECURE_LIB__=1 /wd4514 /wd4746 /wd5045 -DMBSDINT_H_WANT_PTRV_IN_SIZET -DMBSDINT_H_WANT_INT32 -DMBSDINT_H_WANT_LRG64 -DMBSDINT_H_WANT_SAFEC %args% /nologo
 if errorlevel 1 goto doerror
 del do-cl.bat
 exit /b 0
 :nomsys
-wsl /bin/sh mkt-int.sh %cxx% %x% "$(wslpath "%COMSPEC%")" /c do-cl.bat -DWINVER=0x0602 -D_WIN32_WINNT=0x0602 -DNTDDI_VERSION=NTDDI_WIN8 /Wall -D__STDC_WANT_SECURE_LIB__=1 /wd4514 /wd4746 /wd5045 -DMBSDINT_H_WANT_PTRV_IN_SIZET -DMBSDINT_H_WANT_INT32 -DMBSDINT_H_WANT_LRG64 -DMBSDINT_H_WANT_SAFEC %args% /nologo
+wsl /bin/sh mkt-int.sh %cxx% %x% "$(wslpath "%COMSPEC%")" /c do-cl.bat -DWINVER=0x0A00 -D_WIN32_WINNT=0x0A00 -DNTDDI_VERSION=NTDDI_WIN10_RS1 /Wall -D__STDC_WANT_SECURE_LIB__=1 /wd4514 /wd4746 /wd5045 -DMBSDINT_H_WANT_PTRV_IN_SIZET -DMBSDINT_H_WANT_INT32 -DMBSDINT_H_WANT_LRG64 -DMBSDINT_H_WANT_SAFEC %args% /nologo
 if errorlevel 1 goto doerror
 del do-cl.bat
 exit /b 0
