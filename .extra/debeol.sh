@@ -88,7 +88,7 @@ sh .extra/info.sh
 switchgroup Build for C on $1
 sh mkt-int.sh \
     $CC $CPPFLAGS $CFLAGS \
-    -DMBSDINT_H_WANT_PTR_IN_SIZET \
+    -DMBSDINT_H_WANT_PTRV_IN_SIZET \
     -DMBSDINT_H_WANT_SIZET_IN_LONG \
     -DMBSDINT_H_WANT_INT32 \
     -DMBSDINT_H_WANT_SAFEC
@@ -99,7 +99,7 @@ fi
 switchgroup Build for C++ on $1
 sh mkt-int.sh -cxx \
     $CXX $CPPFLAGS $CXXFLAGS \
-    -DMBSDINT_H_WANT_PTR_IN_SIZET \
+    -DMBSDINT_H_WANT_PTRV_IN_SIZET \
     -DMBSDINT_H_WANT_SIZET_IN_LONG \
     -DMBSDINT_H_WANT_INT32 \
     -DMBSDINT_H_WANT_SAFEC

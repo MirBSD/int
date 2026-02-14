@@ -53,7 +53,7 @@ sh .extra/info.sh
 switchgroup Build for C on sid/$xarch
 <dummy.c DEBUG=' ' sh mkt-int.sh -x \
     $CC $CPPFLAGS $CFLAGS \
-    -DMBSDINT_H_WANT_PTR_IN_SIZET \
+    -DMBSDINT_H_WANT_PTRV_IN_SIZET \
     -DMBSDINT_H_WANT_SIZET_IN_LONG \
     -DMBSDINT_H_WANT_INT32 \
     -DMBSDINT_H_WANT_LRG64 \
@@ -65,7 +65,7 @@ else
 	switchgroup Build for C++ on sid/$xarch
 	<dummy.cc DEBUG=' ' sh mkt-int.sh -cxx -x \
 	    $CXX $CPPFLAGS $CXXFLAGS \
-	    -DMBSDINT_H_WANT_PTR_IN_SIZET \
+	    -DMBSDINT_H_WANT_PTRV_IN_SIZET \
 	    -DMBSDINT_H_WANT_SIZET_IN_LONG \
 	    -DMBSDINT_H_WANT_INT32 \
 	    -DMBSDINT_H_WANT_LRG64 \

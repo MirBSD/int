@@ -186,7 +186,7 @@ sh .extra/info.sh $usecxx
 switchgroup Build and run testsuite
 exec sh mkt-int.sh $usecxx \
     $CC $CPPFLAGS $CFLAGS \
-    -DMBSDINT_H_WANT_PTR_IN_SIZET \
+    -DMBSDINT_H_WANT_PTRV_IN_SIZET \
     -DMBSDINT_H_WANT_SIZET_IN_LONG \
     -DMBSDINT_H_WANT_INT32 \
     -DMBSDINT_H_WANT_LRG64 \
