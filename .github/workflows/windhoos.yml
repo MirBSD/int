@@ -1,7 +1,7 @@
 {
   "jobs": {
     "amd64": {
-      "runs-on": "windows-latest",
+      "runs-on": "${{ matrix.os }}",
       "steps": [
         {
           "name": "unfuck line endings (GitHub by default converts them on checkout)",
@@ -64,7 +64,14 @@
         }
       ],
       "strategy": {
-        "fail-fast": true
+        "fail-fast": true,
+        "matrix": {
+          "os": [
+            "windows-2022",
+            "windows-2025",
+            "windows-2025-vs2026"
+          ]
+        }
       }
     },
     "arm64": {
