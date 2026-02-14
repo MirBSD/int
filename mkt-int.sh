@@ -1,5 +1,5 @@
 #!/bin/sh
-rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.56 2026/02/14 18:05:46 tg Exp $'
+rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.57 2026/02/14 18:42:20 tg Exp $'
 #-
 # © mirabilos Ⓕ MirBSD
 
@@ -1752,6 +1752,7 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 	a(MBSDINT_H_WANT_SAFEC, 0);
 #undef a
 
+	mbmscWd(4127);
 #define a(n,v) if (!(v)) { rv = 1; fprintf(stderr, "\nE: %s (%s) failed\n", #n, #v); }
 	/* expressions with floats are not constexpr so can’t be compile-time checked */
 	a(mbfto4a, mbfto(1.1) == 1.1);
@@ -1760,6 +1761,7 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 	a(mbfto4d, mbfto(1.1) != 2);
 	a(mbfto5, mbftou(1.1) == 1);
 #undef a
+	mbmscWpop;
 
 	fprintf(stderr, "\nI: tests finished with errorlevel %d using %s\n"
 	    "N: by %s\nN: and %s\nN: with %s\nN: for %s\nN:  and %s\n",
