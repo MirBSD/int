@@ -10,7 +10,7 @@
           "run": "(git gc --quiet || :)"
         },
         {
-          "uses": "vmactions/openindiana-vm@v1.0.5",
+          "uses": "vmactions/openindiana-vm@v1.0.6",
           "with": {
             "copyback": false,
             "mem": 5120,

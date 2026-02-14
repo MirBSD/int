@@ -10,7 +10,7 @@
           "run": "(git gc --quiet || :)"
         },
         {
-          "uses": "vmactions/openbsd-vm@v1.3.5",
+          "uses": "vmactions/openbsd-vm@v1.3.6",
           "with": {
             "arch": "${{ matrix.arch }}",
             "copyback": false,

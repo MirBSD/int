@@ -10,7 +10,7 @@
           "run": "(git gc --quiet || :)"
         },
         {
-          "uses": "vmactions/freebsd-vm@v1.4.1",
+          "uses": "vmactions/freebsd-vm@v1.4.2",
           "with": {
             "arch": "${{ matrix.arch }}",
             "copyback": false,

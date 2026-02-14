@@ -10,7 +10,7 @@
           "run": "(git gc --quiet || :)"
         },
         {
-          "uses": "vmactions/omnios-vm@v1.2.5",
+          "uses": "vmactions/omnios-vm@v1.2.6",
           "with": {
             "copyback": false,
             "mem": 5120,
