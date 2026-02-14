@@ -1,5 +1,5 @@
 #!/bin/sh
-rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.54 2026/01/10 06:35:03 tg Exp $'
+rcsid='$MirOS: src/kern/include/mkt-int.sh,v 1.56 2026/02/14 18:05:46 tg Exp $'
 #-
 # © mirabilos Ⓕ MirBSD
 
@@ -77,7 +77,7 @@ N:  -DMBSDINT_H_SMALL_SYSTEM=1/2/3
 N:  -DMBSDINT_H_MBIPTR_IS_SIZET=0 (if sizet_mbiPTRU fails)
 N:  -DMBSDINT_H_MBIPTR_IN_LARGE=0 (+ mbiPTRU_inlarge, do report!)
 N:  -DMBSDINT_H_WANT_LONG_IN_SIZET=0 (for 16-bit size_t from int)
-N:  -DMBSDINT_H_WANT_PTR_IN_SIZET (extra check, see below)
+N:  -DMBSDINT_H_WANT_PTRV_IN_SIZET (extra check, see below)
 N:  -DMBSDINT_H_WANT_SIZET_IN_LONG (extra check, !Win64)
 N:  -DMBSDINT_H_WANT_INT32 (extra check, POSIX guaranteed)
 N:  -DMBSDINT_H_WANT_LRG64 (ensure a 64-bit type exists)
@@ -378,11 +378,7 @@ mbCTA_BEG(check);
  mbCTA(mbfto1, mbfto(1) == 1);
  mbCTA(mbfto2, mbfto(-1) == -1);
  mbCTA(mbfto3, mbftou(-1) == (0U - 1U));
- mbCTA(mbfto4a, mbfto(1.1) == 1.1);
- mbCTA(mbfto4b, mbfto(1.1) != 0);
- mbCTA(mbfto4c, mbfto(1.1) != 1);
- mbCTA(mbfto4d, mbfto(1.1) != 2);
- mbCTA(mbfto5, mbftou(1.1) == 1);
+ /* see below for mbfto4+, they may not be compile-time checks */
 mbCTA_END(check);
 int main(void) { return (printf("Hi!\\n")); }
 EOF
@@ -518,6 +514,11 @@ static const char oMBSDINT_H_WANT_PTR_IN_SIZET[] = "passed '" s(MBSDINT_H_WANT_P
 #else
 static const char oMBSDINT_H_WANT_PTR_IN_SIZET[] = "not passed";
 #endif
+#ifdef MBSDINT_H_WANT_PTRV_IN_SIZET
+static const char oMBSDINT_H_WANT_PTRV_IN_SIZET[] = "passed '" s(MBSDINT_H_WANT_PTRV_IN_SIZET) "'";
+#else
+static const char oMBSDINT_H_WANT_PTRV_IN_SIZET[] = "not passed";
+#endif
 #ifdef MBSDINT_H_WANT_SIZET_IN_LONG
 static const char oMBSDINT_H_WANT_SIZET_IN_LONG[] = "passed '" s(MBSDINT_H_WANT_SIZET_IN_LONG) "'";
 #else
@@ -650,6 +651,9 @@ static const int xMBSDINT_H_WANT_PTR_IN_SIZET =
 	sizeof(int *) == sizeof(size_t) &&
 	sizeof(larrp) == sizeof(size_t) &&
 	sizeof(void (*)(void)) == sizeof(size_t);
+static const int xMBSDINT_H_WANT_PTRV_IN_SIZET =
+	sizeof(size_t) == sizeof(mbiPTR_U) &&
+	(mbiTYPE_UMAX(size_t) == mbiPTR_U_MAX);
 static const int xMBSDINT_H_WANT_SIZET_IN_LONG =
 	sizeof(size_t) <= sizeof(long);
 static const int xMBSDINT_H_WANT_INT32 =
@@ -679,6 +683,11 @@ static const char dMBSDINT_H_WANT_LONG_IN_SIZET[] = "undef";
 static const char dMBSDINT_H_WANT_PTR_IN_SIZET[] = s(MBSDINT_H_WANT_PTR_IN_SIZET);
 #else
 static const char dMBSDINT_H_WANT_PTR_IN_SIZET[] = "undef";
+#endif
+#ifdef MBSDINT_H_WANT_PTRV_IN_SIZET
+static const char dMBSDINT_H_WANT_PTRV_IN_SIZET[] = s(MBSDINT_H_WANT_PTRV_IN_SIZET);
+#else
+static const char dMBSDINT_H_WANT_PTRV_IN_SIZET[] = "undef";
 #endif
 #ifdef MBSDINT_H_WANT_SIZET_IN_LONG
 static const char dMBSDINT_H_WANT_SIZET_IN_LONG[] = s(MBSDINT_H_WANT_SIZET_IN_LONG);
@@ -1735,10 +1744,21 @@ cat >>mkt-int-t-in.$srcext <<\EOF
 	a(MBSDINT_H_MBIPTR_IN_LARGE, 1);
 	a(MBSDINT_H_WANT_LONG_IN_SIZET, 1);
 	a(MBSDINT_H_WANT_PTR_IN_SIZET, 0);
+	a(MBSDINT_H_WANT_PTRV_IN_SIZET, 0);
+	fprintf(stderr, "\t\t\t\t(implies MBSDINT_H_WANT_PTR_IN_SIZET on !CHERI)\n");
 	a(MBSDINT_H_WANT_SIZET_IN_LONG, 0);
 	a(MBSDINT_H_WANT_INT32, 0);
 	a(MBSDINT_H_WANT_LRG64, 0);
 	a(MBSDINT_H_WANT_SAFEC, 0);
+#undef a
+
+#define a(n,v) if (!(v)) { rv = 1; fprintf(stderr, "\nE: %s (%s) failed\n", #n, #v); }
+	/* expressions with floats are not constexpr so can’t be compile-time checked */
+	a(mbfto4a, mbfto(1.1) == 1.1);
+	a(mbfto4b, mbfto(1.1) != 0);
+	a(mbfto4c, mbfto(1.1) != 1);
+	a(mbfto4d, mbfto(1.1) != 2);
+	a(mbfto5, mbftou(1.1) == 1);
 #undef a
 
 	fprintf(stderr, "\nI: tests finished with errorlevel %d using %s\n"
